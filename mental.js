@@ -186,18 +186,23 @@ window.addEventListener('DOMContentLoaded', () => {
 });
 
 function updateWaterUI() {
-    document.getElementById('water-current').innerText = window.appData.water.current;
-    document.getElementById('water-goal').innerText = window.appData.water.goal;
+    const currentEl = document.getElementById('water-current');
+    const goalEl = document.getElementById('water-goal');
+    if (currentEl) currentEl.innerText = window.appData.water.current;
+    if (goalEl) goalEl.innerText = window.appData.water.goal;
     
     const container = document.getElementById('glasses-container');
+    if (!container) return;
     container.innerHTML = '';
     
-    // Считаем сколько всего стаканов нужно отобразить
     const totalGlasses = Math.ceil(window.appData.water.goal / window.appData.water.glassSize);
     
     for (let i = 0; i < totalGlasses; i++) {
         const glass = document.createElement('div');
+        // Добавляем класс active, если стакан выпит
         glass.className = 'glass-icon' + (i < window.appData.water.consumedGlasses ? ' active' : '');
+        
+        // Внутри стакана лежит блок воды для анимации
         glass.innerHTML = '<div class="water"></div>';
         
         glass.onclick = () => toggleGlass(i);
