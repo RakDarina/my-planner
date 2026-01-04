@@ -311,7 +311,7 @@ button:active, .goal-card:active, .nav-item:active, .task-main:active {
     margin-bottom: 4px;
 }
 
-* Увеличиваем область клика для всей задачи */
+/* Увеличиваем область клика для всей задачи */
 .task-item {
     padding: 12px 4px; /* Больше пространства сверху и снизу */
     margin-bottom: 8px;
