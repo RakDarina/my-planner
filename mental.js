@@ -387,3 +387,58 @@ function renderSleepChart() {
         }
     });
 }
+
+// Функция скрыть/показать историю
+function toggleSleepHistory() {
+    const container = document.getElementById('sleep-history-container');
+    const btn = event.target;
+    if (container.style.display === 'block') {
+        container.style.display = 'none';
+        btn.innerText = 'История';
+    } else {
+        container.style.display = 'block';
+        btn.innerText = 'Скрыть';
+    }
+}
+
+// Обновленная функция отрисовки графика
+function renderSleepChart() {
+    const ctx = document.getElementById('sleepChart');
+    if (!ctx) return;
+
+    // Берем все данные сна
+    const sleepData = window.appData.sleep || [];
+    const labels = sleepData.map(d => d.date);
+    const dataPoints = sleepData.map(d => d.duration);
+    const colors = sleepData.map(d => d.duration >= 8 ? '#4caf50' : (d.duration >= 6 ? '#ffc107' : '#f44336'));
+
+    if (sleepChart) sleepChart.destroy();
+
+    sleepChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                data: dataPoints,
+                backgroundColor: colors,
+                borderRadius: 6,
+                barThickness: 25 // Фиксированная ширина столбика
+            }]
+        },
+        options: {
+            maintainAspectRatio: false, // Важно для прокрутки
+            responsive: true,
+            scales: {
+                y: { beginAtZero: true, max: 12, ticks: { stepSize: 2 } },
+                x: { grid: { display: false } }
+            },
+            plugins: { legend: { display: false } }
+        }
+    });
+
+    // Авто-скролл графика в самый конец (к последним дням)
+    const scrollContainer = document.querySelector('.chart-scroll-container');
+    setTimeout(() => {
+        scrollContainer.scrollLeft = scrollContainer.scrollWidth;
+    }, 100);
+}
