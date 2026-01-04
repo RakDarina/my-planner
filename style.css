@@ -21,26 +21,6 @@ body {
     background-color: var(--bg-body);
     color: var(--text-main);
     padding-bottom: calc(var(--nav-height) + 20px);
-    height: 100vh;
-    overflow: hidden;
-}
-
-/* --- Страницы --- */
-.page {
-    display: none;
-    height: 100%;
-    overflow-y: auto;
-    flex-direction: column;
-}
-
-.page.active {
-    display: flex;
-    animation: fadeIn 0.2s ease;
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
 }
 
 /* --- Навигация --- */
@@ -73,26 +53,59 @@ body {
 .nav-item .material-icons-round { font-size: 26px; margin-bottom: 2px; }
 .nav-label { font-size: 11px; font-weight: 500; }
 
-/* --- Заголовки --- */
-.app-header {
+/* --- Страницы --- */
+.page { display: none; flex-direction: column; min-height: 100vh; }
+.page.active { display: flex; }
+
+/* --- Прогресс (ИСПРАВЛЕНИЕ IMG_0436.jpeg) --- */
+.total-progress-wrapper {
+    padding: 10px 20px 20px 20px;
+    margin-top: 5px;
+}
+
+.total-progress-info {
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+    color: var(--text-sec);
+    margin-bottom: 8px;
+}
+
+.progress-container { 
+    background: #E5E5EA; 
+    border-radius: 10px; 
+    height: 8px; 
+    overflow: hidden; 
+}
+
+.progress-fill { 
+    background: var(--primary); 
+    height: 100%; 
+    transition: width 0.3s; 
+}
+
+/* --- Кнопка добавить (КАК В IMG_0433.png) --- */
+.add-category-btn {
+    width: 100%;
+    background: none;
+    border: 2px dashed #C7C7CC;
+    border-radius: 18px;
     padding: 20px;
+    color: var(--text-sec);
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    background: var(--bg-body);
+    justify-content: center;
+    gap: 8px;
+    font-size: 16px;
+    font-weight: 500;
+    margin-top: 20px;
+    cursor: pointer;
 }
 
+/* --- Задачи и карточки --- */
+.app-header { padding: 40px 20px 10px 20px; display: flex; align-items: center; justify-content: space-between; }
 .app-header h1 { font-size: 32px; font-weight: 800; }
-.app-header h2 { font-size: 22px; font-weight: 700; }
 
-.icon-btn {
-    background: none;
-    border: none;
-    color: var(--primary);
-    padding: 10px;
-}
-
-/* --- Карточки категорий на главной --- */
 .content-container { padding: 0 20px 100px 20px; }
 
 .goal-card {
@@ -101,142 +114,43 @@ body {
     border-radius: 18px;
     margin-bottom: 12px;
     box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-    cursor: pointer;
 }
 
-/* --- СТИЛЬ ЗАДАЧ (КАК В IMG_0433.png) --- */
 .task-item {
     background: var(--bg-card);
     border-radius: 18px;
     margin-bottom: 15px;
     padding: 20px;
     box-shadow: 0 4px 15px rgba(0,0,0,0.06);
-    border: none;
 }
 
-.task-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    width: 100%;
-}
+.task-header { display: flex; align-items: center; justify-content: space-between; }
+.task-main { display: flex; align-items: center; gap: 12px; flex: 1; }
+.task-text { font-size: 19px; font-weight: 600; }
+.task-text.done { text-decoration: line-through; color: var(--text-sec); opacity: 0.6; }
 
-.task-main {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    flex: 1;
-}
-
-.task-text {
-    font-size: 19px !important; 
-    font-weight: 600;
-    color: var(--text-main);
-}
-
-.task-text.done {
-    text-decoration: line-through;
-    color: var(--text-sec);
-    opacity: 0.6;
-}
-
-/* Главный круглый чекбокс */
-.task-main .material-icons-round {
-    font-size: 32px !important;
-    color: var(--primary);
-}
-
-/* Кнопка удаления */
-.task-controls .material-icons-round {
-    color: var(--danger);
-    font-size: 24px !important;
-}
-
-/* --- ШАГИ В СТОЛБИК (ИСПРАВЛЕНИЕ IMG_0434.png) --- */
 .sub-tasks {
     margin-top: 15px;
-    padding-left: 5px;
-    display: flex !important;
-    flex-direction: column !important; /* Строго вертикально */
-    width: 100%;
+    display: flex;
+    flex-direction: column;
 }
 
-.sub-tasks div {
-    display: flex !important;
-    align-items: center !important;
-    width: 100% !important;
-    padding: 12px 0 !important;
+.sub-task-row {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding: 12px 0;
     border-bottom: 1px solid #f2f2f7;
 }
 
-.sub-tasks div:last-child {
-    border-bottom: none;
-}
-
-/* Иконка шага (квадратик) */
-.sub-tasks .material-icons-round {
-    font-size: 26px !important;
-    margin-right: 12px;
-    color: #C7C7CC;
-}
-
-/* Текст шага */
-.sub-tasks span:not(.material-icons-round) {
-    font-size: 17px !important;
-    color: #3A3A3C !important;
-}
-
-/* Поле ввода шага внутри карточки */
 .sub-input {
     flex: 1;
-    border: none !important;
-    background: #f2f2f7 !important;
-    padding: 12px 15px !important;
-    border-radius: 12px !important;
-    font-size: 16px !important;
-    outline: none;
-    margin-top: 5px;
-}
-
-/* --- ПОЛЕ ВВОДА НОВОЙ ЗАДАЧИ ВНИЗУ --- */
-.input-area {
-    position: fixed;
-    bottom: var(--nav-height);
-    left: 0;
-    width: 100%;
-    background: white;
-    padding: 15px 20px;
-    display: flex;
-    gap: 12px;
-    border-top: 1px solid #E5E5EA;
-    z-index: 90;
-}
-
-.input-area input {
-    flex: 1;
-    background: #F2F2F7;
     border: none;
-    padding: 14px 18px;
-    border-radius: 25px;
+    background: #f2f2f7;
+    padding: 12px 15px;
+    border-radius: 12px;
     font-size: 16px;
     outline: none;
 }
 
-.input-area button {
-    width: 50px;
-    height: 50px;
-    background: var(--primary);
-    border-radius: 50%;
-    border: none;
-    color: white;
-    box-shadow: 0 4px 10px rgba(74, 144, 226, 0.3);
-}
-
-/* --- ПРОГРЕСС-БАРЫ --- */
-.progress-container { background: #E5E5EA; border-radius: 10px; height: 8px; overflow: hidden; margin-top: 10px;}
-.progress-fill { background: var(--primary); height: 100%; transition: width 0.3s; }
-
-/* Эффект нажатия */
-button:active, .goal-card:active, .task-item:active { transform: scale(0.96); transition: 0.1s; }
-
-/* CSS END */
+.icon-btn { background: none; border: none; padding: 5px; cursor: pointer; }
