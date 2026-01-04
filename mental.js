@@ -40,28 +40,31 @@ function renderDiaryEntries() {
     list.innerHTML = '';
     
     const type = window.currentDiaryType;
-    // Защита: если вдруг данных нет, создаем их на лету
-    if (!window.appData.mental) window.appData.mental = {};
-    if (!window.appData.mental[type]) window.appData.mental[type] = [];
-    
-    const entries = window.appData.mental[type];
+    const entries = window.appData.mental[type] || [];
     
     if (entries.length === 0) {
-        list.innerHTML = `<p style="text-align:center; color:var(--text-sec); margin-top:50px;">Записей пока нет. Нажмите "Добавить", чтобы создать первую!</p>`;
+        list.innerHTML = <p style="text-align:center; color:var(--text-sec); margin-top:50px;">Записей пока нет...</p>;
         return;
     }
 
-    entries.forEach((text, index) => {
+    entries.forEach((item, index) => {
+        // Проверка: если запись старая (просто текст), делаем заглушку даты
+        const text = typeof item === 'object' ? item.text : item;
+        const date = typeof item === 'object' ? item.date : "";
+
         const div = document.createElement('div');
         div.className = 'goal-card';
         div.style.marginBottom = '15px';
         div.innerHTML = `
-            <div style="display:flex; justify-content:space-between; align-items:flex-start;">
-                <span style="font-size:18px; line-height:1.4; flex:1;">${index + 1}. ${text}</span>
-                <div style="display:flex; gap:15px; margin-left:10px;">
-                    <span class="material-icons-round" style="font-size:22px; color:var(--text-sec); cursor:pointer;" onclick="editDiaryEntry(${index})">edit</span>
-                    <span class="material-icons-round" style="font-size:22px; color:var(--danger); cursor:pointer;" onclick="deleteDiaryEntry(${index})">delete_outline</span>
+            <div style="display:flex; flex-direction:column; gap:5px;">
+                <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                    <span style="font-size:18px; line-height:1.4; flex:1; font-weight:500;">${index + 1}. ${text}</span>
+                    <div style="display:flex; gap:15px; margin-left:10px;">
+                        <span class="material-icons-round" style="font-size:20px; color:var(--text-sec); cursor:pointer;" onclick="editDiaryEntry(${index})">edit</span>
+                        <span class="material-icons-round" style="font-size:20px; color:var(--danger); cursor:pointer;" onclick="deleteDiaryEntry(${index})">delete_outline</span>
+                    </div>
                 </div>
+                ${date ? <span style="font-size:12px; color:var(--text-sec); margin-left:22px;">${date}</span> : ''}
             </div>
         `;
         list.appendChild(div);
@@ -70,23 +73,26 @@ function renderDiaryEntries() {
 
 function addDiaryEntry() {
     const type = window.currentDiaryType;
-    let question = "Запишите ваши мысли:";
-    
+    let question = "Введите запись:";
     if (type === 'gratitude') question = "За что вы благодарны сегодня?";
-    if (type === 'emotions') question = "Что вы чувствуете прямо сейчас?";
-    if (type === 'achievements') question = "Какое достижение сегодня было главным?";
-    if (type === 'good_day') question = "Что хорошего произошло за день?";
+    if (type === 'emotions') question = "Что вы чувствуете?";
+    if (type === 'achievements') question = "Какое достижение сегодня?";
+    if (type === 'good_day') question = "Что хорошего случилось?";
 
     const text = prompt(question);
     if (text && text.trim() !== "") {
-        window.appData.mental[type].push(text.trim());
-        
-        // Пытаемся сохранить через главную функцию или напрямую
-        if (typeof saveData === 'function') {
-            saveData();
-        } else {
-            localStorage.setItem('myPlannerData', JSON.stringify(window.appData));
-        }
+        // Создаем текущую дату в формате "04.01.2026"
+        const now = new Date();
+        const dateStr = now.toLocaleDateString('ru-RU'); 
+
+        // Сохраняем как объект
+        const newEntry = {
+            text: text.trim(),
+            date: dateStr
+        };
+
+        window.appData.mental[type].push(newEntry);
+        if (typeof saveData === 'function') saveData();
         renderDiaryEntries();
     }
 }
@@ -102,10 +108,19 @@ function deleteDiaryEntry(index) {
 
 function editDiaryEntry(index) {
     const type = window.currentDiaryType;
-    const oldText = window.appData.mental[type][index];
-    const newText = prompt("Отредактируйте запись:", oldText);
+    const entry = window.appData.mental[type][index];
+    
+    // Получаем старый текст в зависимости от формата (объект или строка)
+    const oldText = typeof entry === 'object' ? entry.text : entry;
+    
+    const newText = prompt("Редактировать запись:", oldText);
     if (newText && newText.trim() !== "") {
-        window.appData.mental[type][index] = newText.trim();
+        if (typeof entry === 'object') {
+            window.appData.mental[type][index].text = newText.trim();
+        } else {
+            // Если была старая строка, превращаем её в объект с текущей датой
+            window.appData.mental[type][index] = { text: newText.trim(), date: new Date().toLocaleDateString('ru-RU') };
+        }
         if (typeof saveData === 'function') saveData();
         renderDiaryEntries();
     }
