@@ -176,3 +176,32 @@ body {
     overflow-wrap: break-word;   /* Современный стандарт переноса */
     word-break: break-word;      /* Для поддержки старых браузеров */
 }
+.glass-icon {
+    width: 40px;
+    height: 50px;
+    border: 3px solid #ccc;
+    border-top: none;
+    border-radius: 0 0 10px 10px;
+    position: relative;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: flex-end;
+    overflow: hidden;
+}
+
+.glass-icon.active {
+    border-color: #2196F3;
+}
+
+.glass-icon .water {
+    width: 100%;
+    height: 0%;
+    background-color: #bbdefb; /* Светло-голубой до нажатия */
+    transition: height 0.3s ease, background-color 0.3s ease;
+}
+
+.glass-icon.active .water {
+    height: 90%;
+    background-color: #2196F3; /* Насыщенный голубой при наполнении */
+}
