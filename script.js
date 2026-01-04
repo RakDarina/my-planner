@@ -1,6 +1,4 @@
-// JS START
-
-let appData = JSON.parse(localStorage.getItem('myPlannerData')) || {
+et appData = JSON.parse(localStorage.getItem('myPlannerData')) || {
     year: "2026",
     categories: [
         { id: 1, title: "Обязательно", tasks: [] }
@@ -10,7 +8,11 @@ let appData = JSON.parse(localStorage.getItem('myPlannerData')) || {
 let currentCatId = null;
 
 window.onload = () => {
-    document.getElementById('year-title').innerHTML = `${appData.year} <span class="material-icons">edit</span>`;
+    // Устанавливаем год
+    const yearEl = document.getElementById('year-title');
+    if(yearEl) {
+        yearEl.innerHTML = `${appData.year} <span class="material-icons">edit</span>`;
+    }
     renderCategories();
 };
 
@@ -18,10 +20,12 @@ function saveData() {
     localStorage.setItem('myPlannerData', JSON.stringify(appData));
 }
 
-// Рендер главных карточек (категорий)
+// 1. Отображение вкладок (Обязательно, Здоровье и т.д.)
 function renderCategories() {
     const list = document.getElementById('goals-list');
+    if(!list) return;
     list.innerHTML = '';
+    
     appData.categories.forEach(cat => {
         const div = document.createElement('div');
         div.className = 'goal-card';
@@ -34,7 +38,7 @@ function renderCategories() {
     });
 }
 
-// Открытие категории и ее задач
+// 2. Открытие вкладки
 function openCategory(id) {
     currentCatId = id;
     const cat = appData.categories.find(c => c.id === id);
@@ -44,21 +48,23 @@ function openCategory(id) {
     renderTasks();
 }
 
-// Рендер списка задач внутри категории
+// 3. Отображение задач (исправленные иконки!)
 function renderTasks() {
     const list = document.getElementById('tasks-list');
+    if(!list) return;
     list.innerHTML = '';
     const cat = appData.categories.find(c => c.id === currentCatId);
     
     cat.tasks.forEach((task, index) => {
         const item = document.createElement('div');
         item.className = 'task-item';
+        // Тут мы используем тег <span class="material-icons">, чтобы текст стал иконкой
         item.innerHTML = `
             <div class="task-main">
                 <span class="material-icons" style="margin-right:10px; color:#6200ee">radio_button_unchecked</span>
                 <span>${task}</span>
             </div>
-            <button class="icon-btn" onclick="deleteTask(${index})">
+            <button class="icon-btn" onclick="deleteTask(${index}); event.stopPropagation();">
                 <span class="material-icons" style="color:#ff5252">delete</span>
             </button>
         `;
@@ -66,7 +72,26 @@ function renderTasks() {
     });
 }
 
-// ФУНКЦИИ УПРАВЛЕНИЯ
+// 4. Добавление задачи
+function addTask() {
+    const input = document.getElementById('new-task-input');
+    if(!input || !input.value.trim()) return;
+    const cat = appData.categories.find(c => c.id === currentCatId);
+    cat.tasks.push(input.value.trim());
+    input.value = '';
+    saveData();
+    renderTasks();
+}
+
+// 5. Удаление задачи
+function deleteTask(idx) {
+    const cat = appData.categories.find(c => c.id === currentCatId);
+    cat.tasks.splice(idx, 1);
+    saveData();
+    renderTasks();
+}
+
+// 6. Добавление новой категории (вкладки)
 function addCategory() {
     const name = prompt("Название новой категории:");
     if(name) {
@@ -76,6 +101,7 @@ function addCategory() {
     }
 }
 
+// 7. Удаление всей категории
 function deleteCurrentCategory() {
     if(confirm("Удалить эту категорию полностью?")) {
         appData.categories = appData.categories.filter(c => c.id !== currentCatId);
@@ -85,7 +111,7 @@ function deleteCurrentCategory() {
     }
 }
 
-// Редактирование названия через клик на заголовок
+// 8. Редактирование названия вкладки (клик по заголовку)
 document.getElementById('category-title').onclick = () => {
     const cat = appData.categories.find(c => c.id === currentCatId);
     const newName = prompt("Новое название категории:", cat.title);
@@ -96,23 +122,6 @@ document.getElementById('category-title').onclick = () => {
         renderCategories();
     }
 };
-
-function addTask() {
-    const input = document.getElementById('new-task-input');
-    if(!input.value.trim()) return;
-    const cat = appData.categories.find(c => c.id === currentCatId);
-    cat.tasks.push(input.value);
-    input.value = '';
-    saveData();
-    renderTasks();
-}
-
-function deleteTask(idx) {
-    const cat = appData.categories.find(c => c.id === currentCatId);
-    cat.tasks.splice(idx, 1);
-    saveData();
-    renderTasks();
-}
 
 function goBackToGoals() {
     document.getElementById('view-goal-details').classList.remove('active');
@@ -134,4 +143,3 @@ function editYearTitle() {
         saveData();
     }
 }
-// JS END
