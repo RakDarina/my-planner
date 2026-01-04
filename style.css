@@ -105,56 +105,73 @@ body {
 }
 
 /* --- ЗАДАЧИ И ПОДЗАДАЧИ (Тут исправления) --- */
+/* --- ВОЗВРАЩАЕМ СТИЛЬ КАРТОЧЕК --- */
 .task-item {
-    background: var(--bg-card);
+    background: var(--bg-card); /* Снова белая карточка */
     border-radius: 16px;
     margin-bottom: 12px;
     padding: 16px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05); /* Мягкая тень как на первом скрине */
+    border: none; /* Убираем лишние линии */
 }
 
-.task-main { display: flex; align-items: center; flex: 1; }
-
+/* Основной текст задачи */
 .task-text {
-    font-size: 18px !important; /* Крупнее */
-    font-weight: 500;
-    color: #1C1C1E;
+    font-size: 18px !important; 
+    font-weight: 600;
+    color: var(--text-main);
 }
 
-.task-text.done { text-decoration: line-through; opacity: 0.5; }
-
-/* Иконки кружков */
+/* Круглый чекбокс (Material Icon) */
 .task-main .material-icons-round {
-    font-size: 30px !important; 
-    margin-right: 14px;
+    font-size: 28px !important;
+    margin-right: 12px;
 }
 
-/* Шаги (подзадачи) */
+/* --- ПОДЗАДАЧИ В СТОЛБИК --- */
 .sub-tasks {
     margin-top: 15px;
-    padding-left: 44px !important;
-}
-
-.sub-tasks div {
+    padding-left: 10px; /* Сдвигаем чуть вправо для аккуратности */
     display: flex;
-    align-items: center;
-    padding: 12px 0 !important; /* Огромная зона клика */
-    font-size: 17px !important;
-    color: #3A3A3C !important;
+    flex-direction: column; /* ЭТО ЗАСТАВИТ ИХ ИДТИ В СТОЛБИК */
+    gap: 8px; /* Расстояние между шагами */
 }
 
+/* Каждый отдельный шаг */
+.sub-tasks div {
+    display: flex !important;
+    align-items: center !important;
+    padding: 10px 0 !important;
+    border-bottom: 1px solid #f0f0f5; /* Разделитель между шагами */
+}
+
+/* Текст шага */
+.sub-tasks span:not(.material-icons-round) {
+    font-size: 16px !important;
+    color: #444 !important;
+}
+
+/* Иконка шага (квадратик) */
 .sub-tasks .material-icons-round {
     font-size: 24px !important;
-    margin-right: 12px;
-    color: var(--primary);
+    margin-right: 10px;
+    color: #C7C7CC;
+}
+
+/* Поле ввода шага */
+.sub-input-container {
+    display: flex;
+    align-items: center;
+    margin-top: 10px;
 }
 
 .sub-input {
-    width: 100%;
-    padding: 12px;
-    font-size: 16px;
-    border: 1px solid #E5E5EA;
-    border-radius: 10px;
-    margin-top: 8px;
+    flex: 1;
+    border: none !important;
+    background: #f2f2f7 !important;
+    padding: 12px !important;
+    border-radius: 10px !important;
+    font-size: 15px !important;
 }
 
 /* --- МЕНТАЛКА И ВОДА --- */
