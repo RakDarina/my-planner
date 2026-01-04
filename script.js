@@ -32,7 +32,8 @@ function updateTotalProgress() {
 
 function renderCategories() {
     const list = document.getElementById('goals-list');
-    list.innerHTML = '';
+    if (!list) return;
+    list.innerHTML = ''; // Очищаем только список карточек
     
     window.appData.categories.forEach(cat => {
         const total = cat.tasks.length;
@@ -47,17 +48,12 @@ function renderCategories() {
                 <span style="font-weight:700; font-size:20px">${cat.title}</span>
                 <span style="color:var(--text-sec)">${percent}%</span>
             </div>
-            <div class="progress-container"><div class="progress-fill" style="width:${percent}%"></div></div>
+            <div class="progress-container">
+                <div class="progress-fill" style="width:${percent}%"></div>
+            </div>
         `;
         list.appendChild(div);
     });
-
-    // Добавляем ПУНКТИРНУЮ КНОПКУ в конец списка
-    const addBtn = document.createElement('button');
-    addBtn.className = 'add-category-btn';
-    addBtn.onclick = addCategory;
-    addBtn.innerHTML = `<span class="material-icons-round">add</span> Добавить категорию`;
-    list.appendChild(addBtn);
 
     updateTotalProgress();
 }
