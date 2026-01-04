@@ -211,3 +211,138 @@ function deleteDiaryEntry(index) {
         saveData(); renderDiaryEntries();
     }
 }
+
+// Инициализация данных сна
+if (!window.appData.sleep) {
+    window.appData.sleep = [];
+}
+
+let sleepChart = null;
+let editingSleepIndex = null;
+
+// Запуск при загрузке
+window.addEventListener('DOMContentLoaded', () => {
+    updateSleepUI();
+});
+
+function openSleepModal(index = null) {
+    editingSleepIndex = index;
+    const modal = document.getElementById('sleep-modal');
+    const startInput = document.getElementById('sleep-start');
+    const endInput = document.getElementById('sleep-end');
+    
+    if (index !== null) {
+        const entry = window.appData.sleep[index];
+        startInput.value = entry.start;
+        endInput.value = entry.end;
+        document.getElementById('sleep-modal-title').innerText = "Редактировать сон";
+    } else {
+        startInput.value = "";
+        endInput.value = "";
+        document.getElementById('sleep-modal-title').innerText = "Запись сна";
+    }
+    modal.style.display = 'flex';
+}
+
+function closeSleepModal() {
+    document.getElementById('sleep-modal').style.display = 'none';
+}
+
+function saveSleepEntry() {
+    const start = document.getElementById('sleep-start').value;
+    const end = document.getElementById('sleep-end').value;
+
+    if (!start || !end) return alert("Заполни время!");
+
+    const duration = (new Date(end) - new Date(start)) / (1000 * 60 * 60); // часы
+    if (duration <= 0) return alert("Время вставания должно быть позже времени начала сна!");
+
+    const entry = {
+        start,
+        end,
+        duration: parseFloat(duration.toFixed(1)),
+        date: new Date(end).toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' })
+    };
+
+    if (editingSleepIndex !== null) {
+        window.appData.sleep[editingSleepIndex] = entry;
+    } else {
+        window.appData.sleep.push(entry);
+    }
+
+    saveData();
+    closeSleepModal();
+    updateSleepUI();
+}
+
+function deleteSleepEntry(index) {
+    if (confirm("Удалить запись о сне?")) {
+        window.appData.sleep.splice(index, 1);
+        saveData();
+        updateSleepUI();
+    }
+}
+
+function updateSleepUI() {
+    renderSleepList();
+    renderSleepChart();
+}
+
+function renderSleepList() {
+    const list = document.getElementById('sleep-list');
+    if (!list) return;
+    list.innerHTML = '';
+
+    // Показываем последние 5 записей
+    const displayEntries = [...window.appData.sleep].reverse().slice(0, 5);
+
+    displayEntries.forEach((entry, actualIndex) => {
+        const index = window.appData.sleep.indexOf(entry);
+        const color = entry.duration >= 8 ? '#4caf50' : (entry.duration >= 6 ? '#ffc107' : '#f44336');
+        
+        const div = document.createElement('div');
+        div.style.cssText = "display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-top:1px solid #eee;";
+        div.innerHTML = `
+            <div>
+                <b style="font-size:14px;">${entry.date}</b>
+                <div style="font-size:12px; color:var(--text-sec);">${entry.duration} ч.</div>
+            </div>
+            <div style="width:12px; height:12px; border-radius:50%; background:${color};"></div>
+            <div>
+                <span class="material-icons-round" style="font-size:20px; color:var(--text-sec); cursor:pointer;" onclick="openSleepModal(${index})">edit</span>
+                <span class="material-icons-round" style="font-size:20px; color:var(--danger); cursor:pointer; margin-left:10px;" onclick="deleteSleepEntry(${index})">delete_outline</span>
+            </div>
+        `;
+        list.appendChild(div);
+    });
+}
+
+function renderSleepChart() {
+    const ctx = document.getElementById('sleepChart');
+    if (!ctx) return;
+
+    const last7Days = window.appData.sleep.slice(-7);
+    const labels = last7Days.map(d => d.date);
+    const dataPoints = last7Days.map(d => d.duration);
+    const colors = last7Days.map(d => d.duration >= 8 ? '#4caf50' : (d.duration >= 6 ? '#ffc107' : '#f44336'));
+
+    if (sleepChart) sleepChart.destroy();
+
+    sleepChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Часы сна',
+                data: dataPoints,
+                backgroundColor: colors,
+                borderRadius: 8
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: { y: { beginAtZero: true, max: 12 } },
+            plugins: { legend: { display: false } }
+        }
+    });
+}
