@@ -197,12 +197,17 @@ body {
     bottom: 0;
     left: 0;
     width: 100%;
-    height: 0%; /* Изначально пусто */
+    height: 0%; 
     background: linear-gradient(180deg, #4fc3f7 0%, #2196f3 100%);
-    transition: height 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    /* Убираем постоянный transition отсюда */
 }
 
-/* Эффект волны сверху воды */
+/* Анимация только при добавлении класса .animating */
+.glass-icon.animating .water {
+    transition: height 1s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Эффект волны (оставляем как был) */
 .glass-icon .water::before {
     content: "";
     position: absolute;
@@ -216,27 +221,14 @@ body {
     display: none;
 }
 
-/* Когда стакан активен */
 .glass-icon.active {
     border-color: #2196f3;
-    transform: scale(1.05);
 }
 
 .glass-icon.active .water {
-    height: 85%; /* Уровень наполнения */
+    height: 85%; 
 }
 
 .glass-icon.active .water::before {
-    display: block; /* Показываем волну только в полном стакане */
-}
-
-/* Анимация движения волны */
-@keyframes wave {
-    from { transform: translateX(0) rotate(0deg); }
-    to { transform: translateX(-50%) rotate(360deg); }
-}
-
-/* Эффект при нажатии */
-.glass-icon:active {
-    transform: scale(0.9);
+    display: block; 
 }
