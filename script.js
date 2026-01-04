@@ -5,25 +5,13 @@ let appData = {
     yearTitle: "2026",
     categories: [
         { 
-            id: 1704060001, 
+            id: 1, 
             title: "Обязательно", 
-            tasks: [
-                {
-                    id: 1,
-                    text: "Поменять счетчик",
-                    done: false,
-                    expanded: false,
-                    steps: [
-                        { text: "Загуглить модель", done: false },
-                        { text: "Купить", done: false }
-                    ]
-                }
-            ] 
+            tasks: [] 
         }
     ]
 };
 
-// Загрузка данных при старте
 window.onload = function() {
     const saved = localStorage.getItem('plannerAppData');
     if (saved) {
@@ -33,27 +21,19 @@ window.onload = function() {
     document.getElementById('year-title').innerHTML = `${appData.yearTitle} <span class="material-icons" style="font-size: 16px; opacity: 0.5;">edit</span>`;
 };
 
-// Функция сохранения
 function saveData() {
     localStorage.setItem('plannerAppData', JSON.stringify(appData));
 }
 
-// --- НАВИГАЦИЯ ---
 function switchTab(tabId, btn) {
-    // Скрываем все страницы
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-    // Убираем активный класс с кнопок
     document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
-    
-    // Показываем нужную
     document.getElementById(tabId).classList.add('active');
     btn.classList.add('active');
 }
 
-// --- ЛОГИКА ВКЛАДКИ "ЦЕЛИ" (ГЛАВНАЯ) ---
-
 function editYearTitle() {
-    const newTitle = prompt("Введите год или название:", appData.yearTitle);
+    const newTitle = prompt("Введите год или заголовок:", appData.yearTitle);
     if (newTitle) {
         appData.yearTitle = newTitle;
         document.getElementById('year-title').innerHTML = `${newTitle} <span class="material-icons" style="font-size: 16px; opacity: 0.5;">edit</span>`;
@@ -67,13 +47,8 @@ function renderGoals() {
     appData.categories.forEach(cat => {
         const div = document.createElement('div');
         div.className = 'goal-card';
-        div.innerHTML = `
-            <span>${cat.title}</span>
-            <span class="material-icons" style="color: #C7C7CC">chevron_right</span>
-        `;
+        div.innerHTML = `<span>${cat.title}</span><span class="material-icons" style="color: #C7C7CC">chevron_right</span>`;
         div.onclick = () => openCategory(cat.id);
-        
-        // Долгий клик для редактирования названия категории (опционально, тут просто клик для входа)
         list.appendChild(div);
     });
 }
@@ -81,42 +56,30 @@ function renderGoals() {
 function addCategory() {
     const title = prompt("Название новой категории:");
     if (title) {
-        appData.categories.push({
-            id: Date.now(),
-            title: title,
-            tasks: []
-        });
+        appData.categories.push({ id: Date.now(), title: title, tasks: [] });
         saveData();
         renderGoals();
     }
 }
-
-// --- ЛОГИКА ВКЛАДКИ "ЦЕЛИ" (ДЕТАЛИ) ---
 
 let currentCategoryId = null;
 
 function openCategory(id) {
     currentCategoryId = id;
     const category = appData.categories.find(c => c.id === id);
-    if (!category) return;
-
     document.getElementById('category-title').innerText = category.title;
-    
-    // Переключаем экран вручную (как переход на страницу)
     document.getElementById('view-goals').classList.remove('active');
     document.getElementById('view-goal-details').classList.add('active');
-    
     renderTasks();
 }
 
 function goBackToGoals() {
-    currentCategoryId = null;
     document.getElementById('view-goal-details').classList.remove('active');
     document.getElementById('view-goals').classList.add('active');
 }
 
 function deleteCurrentCategory() {
-    if(confirm("Удалить эту категорию и все задачи внутри?")) {
+    if(confirm("Удалить эту категорию?")) {
         appData.categories = appData.categories.filter(c => c.id !== currentCategoryId);
         saveData();
         renderGoals();
@@ -127,21 +90,17 @@ function deleteCurrentCategory() {
 function renderTasks() {
     const list = document.getElementById('tasks-list');
     list.innerHTML = '';
-    
     const category = appData.categories.find(c => c.id === currentCategoryId);
-    if (!category) return;
-
+    
     category.tasks.forEach(task => {
         const taskDiv = document.createElement('div');
         taskDiv.className = 'task-item';
         
-        // Генерируем HTML для шагов
         let stepsHtml = '';
         task.steps.forEach((step, index) => {
             stepsHtml += `
                 <div class="sub-task-item">
-                    <div class="custom-checkbox ${step.done ? 'checked' : ''}" 
-                         onclick="toggleStep(${task.id}, ${index})">
+                    <div class="custom-checkbox ${step.done ? 'checked' : ''}" onclick="toggleStep(${task.id}, ${index})">
                          <span class="material-icons">check</span>
                     </div>
                     <span class="${step.done ? 'task-text done' : 'task-text'}">${step.text}</span>
@@ -152,8 +111,8 @@ function renderTasks() {
 
         taskDiv.innerHTML = `
             <div class="task-header">
-                <div class="task-main">
-                    <div class="custom-checkbox ${task.done ? 'checked' : ''}" onclick="toggleTask(${task.id})">
+                <div class="task-main" onclick="toggleTask(${task.id})">
+                    <div class="custom-checkbox ${task.done ? 'checked' : ''}">
                         <span class="material-icons">check</span>
                     </div>
                     <span class="task-text ${task.done ? 'done' : ''}">${task.text}</span>
@@ -163,16 +122,14 @@ function renderTasks() {
                         <span class="material-icons">${task.expanded ? 'expand_less' : 'expand_more'}</span>
                     </button>
                     <button onclick="deleteTask(${task.id})">
-                        <span class="material-icons">close</span>
+                        <span class="material-icons">delete</span>
                     </button>
                 </div>
             </div>
             <div class="sub-tasks ${task.expanded ? 'open' : ''}">
                 ${stepsHtml}
-                <div class="sub-task-item" style="margin-top:5px;">
-                    <span class="material-icons" style="font-size:18px; color:var(--primary);">add</span>
-                    <input type="text" class="sub-input" placeholder="Добавить шаг..." 
-                           onkeydown="if(event.key === 'Enter') addStep(this, ${task.id})">
+                <div class="sub-task-item">
+                    <input type="text" class="sub-input" placeholder="Добавить шаг..." onkeydown="if(event.key === 'Enter') addStep(this, ${task.id})">
                 </div>
             </div>
         `;
@@ -182,56 +139,42 @@ function renderTasks() {
 
 function addTask() {
     const input = document.getElementById('new-task-input');
-    const text = input.value.trim();
-    if (!text) return;
-
+    if (!input.value.trim()) return;
     const category = appData.categories.find(c => c.id === currentCategoryId);
-    category.tasks.push({
-        id: Date.now(),
-        text: text,
-        done: false,
-        expanded: false,
-        steps: []
-    });
-    
+    category.tasks.push({ id: Date.now(), text: input.value, done: false, expanded: false, steps: [] });
     input.value = '';
     saveData();
     renderTasks();
 }
 
-function deleteTask(taskId) {
+function toggleTask(id) {
     const category = appData.categories.find(c => c.id === currentCategoryId);
-    category.tasks = category.tasks.filter(t => t.id !== taskId);
-    saveData();
-    renderTasks();
-}
-
-function toggleTask(taskId) {
-    const category = appData.categories.find(c => c.id === currentCategoryId);
-    const task = category.tasks.find(t => t.id === taskId);
+    const task = category.tasks.find(t => t.id === id);
     task.done = !task.done;
     saveData();
     renderTasks();
 }
 
-function toggleExpand(taskId) {
+function deleteTask(id) {
     const category = appData.categories.find(c => c.id === currentCategoryId);
-    const task = category.tasks.find(t => t.id === taskId);
+    category.tasks = category.tasks.filter(t => t.id !== id);
+    saveData();
+    renderTasks();
+}
+
+function toggleExpand(id) {
+    const category = appData.categories.find(c => c.id === currentCategoryId);
+    const task = category.tasks.find(t => t.id === id);
     task.expanded = !task.expanded;
     saveData();
     renderTasks();
 }
 
-// --- ЛОГИКА ПОДЗАДАЧ (ШАГОВ) ---
-
-function addStep(inputElement, taskId) {
-    const text = inputElement.value.trim();
-    if (!text) return;
-
+function addStep(input, taskId) {
+    if (!input.value.trim()) return;
     const category = appData.categories.find(c => c.id === currentCategoryId);
     const task = category.tasks.find(t => t.id === taskId);
-    
-    task.steps.push({ text: text, done: false });
+    task.steps.push({ text: input.value, done: false });
     saveData();
     renderTasks();
 }
