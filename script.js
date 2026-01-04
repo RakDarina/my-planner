@@ -178,3 +178,14 @@ function editYearTitle() {
         updateYearDisplay(); // Обновляем текст на экране
     }
 }
+
+function deleteCurrentCategory() {
+    if (confirm("Вы уверены, что хотите удалить всю категорию и все задачи в ней?")) {
+        // Фильтруем массив, оставляя все категории, кроме текущей
+        window.appData.categories = window.appData.categories.filter(c => c.id !== currentCatId);
+        
+        saveData();           // Сохраняем изменения в localStorage
+        renderCategories();   // Перерисовываем главный список
+        goBackToGoals();      // Возвращаемся на главный экран
+    }
+}
