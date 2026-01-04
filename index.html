@@ -184,22 +184,25 @@
     </div>
 
     <div id="sleep-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:1200; align-items:center; justify-content:center;">
-        <div style="background:white; width:90%; max-width:400px; padding:20px; border-radius:20px; display:flex; flex-direction:column; gap:15px;">
-            <h3 id="sleep-modal-title" style="margin:0">Запись сна</h3>
-            <div>
-                <label style="font-size:14px; color:var(--text-sec);">Когда легла:</label>
-                <input type="datetime-local" id="sleep-start" style="width:100%; padding:12px; border:1px solid #ddd; border-radius:10px; margin-top:5px; outline:none;">
-            </div>
-            <div>
-                <label style="font-size:14px; color:var(--text-sec);">Когда встала:</label>
-                <input type="datetime-local" id="sleep-end" style="width:100%; padding:12px; border:1px solid #ddd; border-radius:10px; margin-top:5px; outline:none;">
-            </div>
-            <div style="display:flex; gap:10px;">
-                <button onclick="closeSleepModal()" style="flex:1; padding:15px; border:none; background:#eee; border-radius:12px;">Отмена</button>
-                <button onclick="saveSleepEntry()" style="flex:1; padding:15px; border:none; background:var(--primary); color:white; border-radius:12px;">Сохранить</button>
-            </div>
+    <div style="background:white; width:92%; max-width:350px; padding:20px; border-radius:24px; box-sizing:border-box;">
+        <h3 id="sleep-modal-title" style="margin:0 0 20px 0; font-size:20px;">Запись сна</h3>
+        
+        <div style="margin-bottom:15px;">
+            <label style="font-size:14px; color:var(--text-sec); display:block; margin-bottom:8px;">Когда легла:</label>
+            <input type="datetime-local" id="sleep-start" style="width:100%; padding:14px; border:1px solid #eee; border-radius:12px; font-size:16px; background:#f9f9f9; outline:none; box-sizing:border-box;">
+        </div>
+
+        <div style="margin-bottom:25px;">
+            <label style="font-size:14px; color:var(--text-sec); display:block; margin-bottom:8px;">Когда встала:</label>
+            <input type="datetime-local" id="sleep-end" style="width:100%; padding:14px; border:1px solid #eee; border-radius:12px; font-size:16px; background:#f9f9f9; outline:none; box-sizing:border-box;">
+        </div>
+
+        <div style="display:flex; gap:10px;">
+            <button onclick="closeSleepModal()" style="flex:1; padding:15px; border:none; background:#f0f0f0; border-radius:14px; font-weight:600; cursor:pointer;">Отмена</button>
+            <button onclick="saveSleepEntry()" style="flex:1; padding:15px; border:none; background:var(--primary); color:white; border-radius:14px; font-weight:600; cursor:pointer;">Сохранить</button>
         </div>
     </div>
+</div>
 
 </body>
 </html>
