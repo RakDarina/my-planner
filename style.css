@@ -244,3 +244,31 @@ input[type="datetime-local"] {
     max-width: 92% !important;
     margin: 0 auto;
 }
+
+/* Контейнер для прокрутки графика */
+.chart-scroll-container {
+    width: 100%;
+    overflow-x: auto; /* Включаем горизонтальную прокрутку */
+    -webkit-overflow-scrolling: touch;
+    margin-bottom: 20px;
+}
+
+.chart-wrapper {
+    min-width: 600px; /* Фиксированная ширина, чтобы столбики не сужались */
+    height: 200px;
+}
+
+/* Исправление вылетов за рамки */
+#sleep-modal .modal-content, 
+#water-modal .modal-content {
+    width: 92% !important;
+    max-width: 350px;
+    box-sizing: border-box; /* Чтобы padding не раздувал ширину */
+}
+
+/* Скрытый список истории */
+#sleep-history-container {
+    display: none; /* По умолчанию скрыт */
+    margin-top: 15px;
+    border-top: 1px solid #eee;
+}
