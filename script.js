@@ -68,10 +68,10 @@ function renderCategories() {
         div.innerHTML = `
             <div style="width: 100%;">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px">
-                    <span style="font-weight:600">${cat.title}</span>
-                    <span style="font-size:12px; color:#8e8e93">${percent}%</span>
+                    <span style="font-weight:600; font-size:18px">${cat.title}</span>
+                    <span style="font-size:14px; color:#8e8e93">${percent}%</span>
                 </div>
-                <div class="progress-container" style="height:6px">
+                <div class="progress-container" style="height:8px">
                     <div class="progress-fill" style="width: ${percent}%"></div>
                 </div>
             </div>`;
@@ -101,28 +101,59 @@ function renderTasks() {
         const item = document.createElement('div');
         item.className = 'task-item';
         item.innerHTML = `
-            <div class="task-header" style="display:flex; align-items:center; justify-content:space-between">
-                <div class="task-main" style="display:flex; align-items:center; flex:1" onclick="toggleSubtasks(${index})">
+            <div class="task-header">
+                <div class="task-main" onclick="toggleSubtasks(${index})">
                     <span class="material-icons-round" 
-                          style="margin-right:10px; cursor:pointer; color:${task.completed ? '#4caf50' : '#4A90E2'}" 
+                          style="cursor:pointer; color:${task.completed ? '#4caf50' : '#4A90E2'}" 
                           onclick="event.stopPropagation(); toggleTaskDone(${index});">
                         ${task.completed ? 'check_circle' : 'radio_button_unchecked'}
                     </span>
                     <span class="task-text ${task.completed ? 'done' : ''}">${task.text}</span>
                 </div>
                 <button class="icon-btn" onclick="event.stopPropagation(); deleteTask(${index});">
-                    <span class="material-icons-round" style="color:#FF3B30">delete_outline</span>
+                    <span class="material-icons-round" style="color:#FF3B30; font-size: 24px;">delete_outline</span>
                 </button>
             </div>
-            <div id="subs-${index}" class="sub-tasks" style="display:none; padding-left:35px; margin-top:10px">
+            <div id="subs-${index}" class="sub-tasks" style="display:none;">
                 <div id="subs-list-${index}"></div>
-                <div style="display:flex; margin-top:5px">
+                <div style="display:flex; margin-top:15px; gap:10px; align-items:center;">
                     <input type="text" id="sub-input-${index}" placeholder="Шаг..." class="sub-input" style="flex:1">
-                    <button onclick="addSubTask(${index})" class="material-icons-round">add</button>
+                    <button onclick="addSubTask(${index})" class="material-icons-round" 
+                            style="background:var(--primary); color:white; border:none; border-radius:50%; width:38px; height:38px; display:flex; align-items:center; justify-content:center;">
+                        add
+                    </button>
                 </div>
             </div>`;
         list.appendChild(item);
         renderSubTasks(index);
+    });
+}
+
+function renderSubTasks(tIdx) {
+    const subList = document.getElementById(`subs-list-${tIdx}`);
+    const cat = window.appData.categories.find(c => c.id === currentCatId);
+    const subs = cat.tasks[tIdx].subs;
+    subList.innerHTML = '';
+    
+    subs.forEach((sub, sIdx) => {
+        const div = document.createElement('div');
+        // Принудительно устанавливаем стили для столбика
+        div.style.display = "flex";
+        div.style.alignItems = "center";
+        div.style.width = "100%";
+        div.style.padding = "12px 0";
+        div.style.borderBottom = "1px solid #f2f2f7";
+        
+        div.innerHTML = `
+            <span class="material-icons-round" 
+                  style="font-size:26px; margin-right:12px; color:${sub.completed ? '#4caf50' : '#ccc'}; cursor:pointer" 
+                  onclick="toggleSubDone(${tIdx}, ${sIdx})">
+                ${sub.completed ? 'check_box' : 'check_box_outline_blank'}
+            </span>
+            <span style="font-size:17px; flex:1; ${sub.completed ? 'text-decoration:line-through; color:#8e8e93' : 'color:#3A3A3C'}">
+                ${sub.text}
+            </span>`;
+        subList.appendChild(div);
     });
 }
 
@@ -131,8 +162,8 @@ function toggleTaskDone(idx) {
     if (cat && cat.tasks[idx]) {
         cat.tasks[idx].completed = !cat.tasks[idx].completed;
         saveData();
-        renderTasks(); // Перерисовываем список задач
-        renderCategories(); // Обновляем проценты на главной (в фоновом режиме)
+        renderTasks(); 
+        renderCategories(); 
     }
 }
 
@@ -144,6 +175,32 @@ function addTask() {
     input.value = '';
     saveData();
     renderTasks();
+}
+
+function addSubTask(tIdx) {
+    const input = document.getElementById(`sub-input-${tIdx}`);
+    if (!input || !input.value.trim()) return;
+    const cat = window.appData.categories.find(c => c.id === currentCatId);
+    cat.tasks[tIdx].subs.push({ text: input.value.trim(), completed: false });
+    input.value = '';
+    saveData();
+    renderSubTasks(tIdx);
+}
+
+function toggleSubDone(tIdx, sIdx) {
+    const cat = window.appData.categories.find(c => c.id === currentCatId);
+    cat.tasks[tIdx].subs[sIdx].completed = !cat.tasks[tIdx].subs[sIdx].completed;
+    saveData();
+    renderSubTasks(tIdx);
+}
+
+function toggleSubtasks(idx) {
+    const el = document.getElementById(`subs-${idx}`);
+    if (el) {
+        const isHidden = el.style.display === 'none';
+        el.style.display = isHidden ? 'flex' : 'none';
+        el.style.flexDirection = 'column';
+    }
 }
 
 function goBackToGoals() {
@@ -159,46 +216,6 @@ function addCategory() {
         saveData();
         renderCategories();
     }
-}
-
-function addSubTask(tIdx) {
-    const input = document.getElementById(`sub-input-${tIdx}`);
-    if (!input || !input.value.trim()) return;
-    const cat = window.appData.categories.find(c => c.id === currentCatId);
-    cat.tasks[tIdx].subs.push({ text: input.value.trim(), completed: false });
-    input.value = '';
-    saveData();
-    renderSubTasks(tIdx);
-}
-
-function renderSubTasks(tIdx) {
-    const subList = document.getElementById(`subs-list-${tIdx}`);
-    const cat = window.appData.categories.find(c => c.id === currentCatId);
-    const subs = cat.tasks[tIdx].subs;
-    subList.innerHTML = '';
-    subs.forEach((sub, sIdx) => {
-        const div = document.createElement('div');
-        div.style = "display:flex; align-items:center; margin-bottom:5px; font-size:14px";
-        div.innerHTML = `
-            <span class="material-icons-round" style="font-size:18px; margin-right:8px; color:#ccc; cursor:pointer" 
-                  onclick="toggleSubDone(${tIdx}, ${sIdx})">
-                ${sub.completed ? 'check_box' : 'check_box_outline_blank'}
-            </span>
-            <span style="${sub.completed ? 'text-decoration:line-through; color:#8e8e93' : ''}">${sub.text}</span>`;
-        subList.appendChild(div);
-    });
-}
-
-function toggleSubDone(tIdx, sIdx) {
-    const cat = window.appData.categories.find(c => c.id === currentCatId);
-    cat.tasks[tIdx].subs[sIdx].completed = !cat.tasks[tIdx].subs[sIdx].completed;
-    saveData();
-    renderSubTasks(tIdx);
-}
-
-function toggleSubtasks(idx) {
-    const el = document.getElementById(`subs-${idx}`);
-    if (el) el.style.display = el.style.display === 'none' ? 'block' : 'none';
 }
 
 function deleteTask(idx) {
