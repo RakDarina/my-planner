@@ -133,10 +133,22 @@ function addTask() {
 }
 
 function toggleTaskDone(idx) {
+    // 1. Находим нужную категорию через глобальный объект window
     const cat = window.appData.categories.find(c => c.id === currentCatId);
-    cat.tasks[idx].completed = !cat.tasks[idx].completed;
-    saveData();
-    renderTasks();
+    
+    if (cat && cat.tasks[idx]) {
+        // 2. Меняем статус выполнения на противоположный
+        cat.tasks[idx].completed = !cat.tasks[idx].completed;
+        
+        // 3. Сохраняем обновленный window.appData в память
+        saveData(); 
+        
+        // 4. СРАЗУ перерисовываем список задач, чтобы увидеть галочку
+        renderTasks();
+        
+        // 5. Обновляем прогресс-бары на главной (на всякий случай)
+        updateTotalProgress();
+    }
 }
 
 function goBackToGoals() {
