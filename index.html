@@ -11,8 +11,10 @@
 
     <div id="view-goals" class="page active">
         <header class="app-header">
-            <h1 id="year-title" onclick="editYearTitle()">2026 <span class="material-icons-round" style="font-size: 16px; opacity: 0.5;">edit</span></h1>
-        </header>
+    <h1 id="year-title" onclick="editYearTitle()" style="cursor:pointer">
+        2026 <span class="material-icons-round" style="font-size: 20px; opacity: 0.5;">edit</span>
+    </h1>
+</header>
         
         <div class="total-progress-wrapper">
             <div class="total-progress-info">
@@ -33,15 +35,15 @@
     </div>
 
     <div id="view-goal-details" class="page">
-        <header class="app-header with-back">
-            <button class="icon-btn" onclick="goBackToGoals()">
-                <span class="material-icons-round">arrow_back_ios</span>
-            </button>
-            <h2 id="category-title">Название</h2>
-            <button class="icon-btn" onclick="deleteCurrentCategory()">
-                <span class="material-icons-round">delete_outline</span>
-            </button>
-        </header>
+        <header class="app-header with-back" style="display:flex; align-items:center; justify-content:space-between; width:100%; padding: 40px 20px 20px 20px;">
+    <button class="icon-btn" onclick="goBackToGoals()">
+        <span class="material-icons-round">arrow_back_ios</span>
+    </button>
+    <h2 id="category-title" style="flex:1; text-align:center; margin:0; font-size: 24px;">Название</h2>
+    <button class="icon-btn" onclick="deleteCurrentCategory()">
+        <span class="material-icons-round" style="color:var(--danger); font-size: 28px;">delete_outline</span>
+    </button>
+</header>
 
         <div class="content-container">
             <div id="tasks-list"></div>
