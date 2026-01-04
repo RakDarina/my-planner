@@ -57,24 +57,34 @@
     </div>
 
     <div id="view-mental" class="page">
-    <header class="app-header"><h2>Здоровье</h2></header>
-    <div class="content-container">
-        <div class="card water-card">
-            <div style="display:flex; justify-content:space-between; align-items:center">
-                <span>Вода: <b id="water-current">0</b> / <span id="water-goal">2000</span> мл</span>
-                <span class="material-icons-round" onclick="settingsWater()" style="cursor:pointer; opacity:0.5">settings</span>
-            </div>
-            <div id="glasses-list" style="margin-top:15px; display:flex; flex-wrap:wrap; gap:10px"></div>
-        </div>
+        <header class="app-header"><h2>Здоровье</h2></header>
+        <div class="content-container">
+            
+            <div class="water-tracker card" style="margin-top: 10px; padding: 20px; background: white; border-radius: 20px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                    <h3 style="margin: 0; font-size: 18px;">Трекер воды</h3>
+                    <span class="material-icons-round" style="cursor: pointer; opacity: 0.5;" onclick="openWaterSettings()">settings</span>
+                </div>
 
-        <div class="mental-grid" style="display:grid; grid-template-columns:1fr 1fr; gap:15px; margin-top:20px">
-            <button class="goal-card" onclick="openDiary('gratitude', 'Дневник благодарности')">Благодарность</button>
-            <button class="goal-card" onclick="openDiary('emotions', 'Дневник эмоций')">Эмоции</button>
-            <button class="goal-card" onclick="openDiary('achievements', 'Мои достижения')">Достижения</button>
-            <button class="goal-card" onclick="openDiary('good_day', 'Хорошее за день')">Хорошее за день</button>
+                <div style="text-align: center; margin-bottom: 15px;">
+                    <span id="water-current" style="font-size: 24px; font-weight: bold; color: var(--primary);">0</span>
+                    <span style="font-size: 18px; color: var(--text-sec);"> / </span>
+                    <span id="water-goal" style="font-size: 18px; color: var(--text-sec);">2000</span>
+                    <span style="font-size: 14px; color: var(--text-sec);"> мл</span>
+                </div>
+
+                <div id="glasses-container" style="display: flex; flex-wrap: wrap; gap: 10px; justify-content: center;">
+                    </div>
+            </div>
+
+            <div class="mental-grid" style="display:grid; grid-template-columns:1fr 1fr; gap:15px; margin-top:20px">
+                <button class="goal-card" onclick="openDiary('gratitude', 'Дневник благодарности')">Благодарность</button>
+                <button class="goal-card" onclick="openDiary('emotions', 'Дневник эмоций')">Эмоции</button>
+                <button class="goal-card" onclick="openDiary('achievements', 'Мои достижения')">Достижения</button>
+                <button class="goal-card" onclick="openDiary('good_day', 'Хорошее за день')">Хорошее за день</button>
+            </div>
         </div>
     </div>
-</div>
 
 <div id="view-diary-details" class="page">
     <header class="app-header with-back" style="display:flex; align-items:center; justify-content:space-between; width:100%; padding: 40px 20px 20px 20px;">
@@ -136,6 +146,30 @@
         </div>
     </div>
 </div>
+    <div id="water-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:1100; align-items:center; justify-content:center;">
+        <div style="background:white; width:90%; max-width:400px; padding:20px; border-radius:20px; display:flex; flex-direction:column; gap:15px;">
+            <h3 style="margin:0">Настройки воды</h3>
+            
+            <div>
+                <label style="font-size:14px; color:var(--text-sec);">Цель (мл):</label>
+                <input type="number" id="input-water-goal" style="width:100%; padding:12px; border:1px solid #ddd; border-radius:10px; margin-top:5px; outline:none;">
+            </div>
+            
+            <div>
+                <label style="font-size:14px; color:var(--text-sec);">Объем одного стакана (мл):</label>
+                <input type="number" id="input-glass-size" style="width:100%; padding:12px; border:1px solid #ddd; border-radius:10px; margin-top:5px; outline:none;">
+            </div>
+
+            <button onclick="calculateWaterGoal()" style="background:#f0f7ff; color:var(--primary); border:none; padding:12px; border-radius:10px; cursor:pointer; font-weight:bold;">
+                Рассчитать по весу (30мл на 1кг)
+            </button>
+
+            <div style="display:flex; gap:10px;">
+                <button onclick="closeWaterModal()" style="flex:1; padding:15px; border:none; background:#eee; border-radius:12px;">Отмена</button>
+                <button onclick="saveWaterSettings()" style="flex:1; padding:15px; border:none; background:var(--primary); color:white; border-radius:12px;">Сохранить</button>
+            </div>
+        </div>
+    </div>
 
 </body>
 </html>
