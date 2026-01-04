@@ -1,4 +1,3 @@
-/* CSS START */
 :root {
     --primary: #4A90E2;
     --bg-body: #F4F6F8;
@@ -14,143 +13,138 @@
     margin: 0;
     padding: 0;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    -webkit-tap-highlight-color: transparent;
 }
 
 body {
     background-color: var(--bg-body);
-    color: var(--text-main);
-    padding-bottom: calc(var(--nav-height) + 20px);
+    padding-bottom: 120px;
 }
 
-/* --- Навигация --- */
-.bottom-nav {
-    position: fixed;
-    bottom: 0;
-    width: 100%;
-    height: var(--nav-height);
-    background: rgba(255, 255, 255, 0.98);
-    backdrop-filter: blur(10px);
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    border-top: 1px solid #E5E5EA;
-    z-index: 100;
-    padding-bottom: 20px;
-}
-
-.nav-item {
-    background: none;
-    border: none;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    color: var(--text-sec);
-    flex: 1;
-}
-
-.nav-item.active { color: var(--primary); }
-.nav-item .material-icons-round { font-size: 26px; margin-bottom: 2px; }
-.nav-label { font-size: 11px; font-weight: 500; }
-
-/* --- Страницы --- */
+/* --- СТРАНИЦЫ --- */
 .page { display: none; flex-direction: column; min-height: 100vh; }
 .page.active { display: flex; }
 
-/* --- Прогресс (ИСПРАВЛЕНИЕ IMG_0436.jpeg) --- */
+/* --- ШАПКА И ПРОГРЕСС --- */
+.app-header { padding: 40px 20px 10px 20px; }
+.app-header h1 { font-size: 34px; font-weight: 800; display: flex; align-items: center; gap: 10px; }
+
 .total-progress-wrapper {
-    padding: 10px 20px 20px 20px;
-    margin-top: 5px;
+    padding: 20px; /* Отступ от заголовка */
+    margin-bottom: 10px;
 }
 
 .total-progress-info {
     display: flex;
     justify-content: space-between;
+    margin-bottom: 8px;
     font-size: 14px;
     color: var(--text-sec);
-    margin-bottom: 8px;
 }
 
-.progress-container { 
-    background: #E5E5EA; 
-    border-radius: 10px; 
-    height: 8px; 
-    overflow: hidden; 
+.progress-container {
+    background: #E5E5EA;
+    border-radius: 10px;
+    height: 8px;
+    overflow: hidden;
 }
 
-.progress-fill { 
-    background: var(--primary); 
-    height: 100%; 
-    transition: width 0.3s; 
+.progress-fill {
+    background: var(--primary);
+    height: 100%;
+    transition: width 0.3s;
 }
 
-/* --- Кнопка добавить (КАК В IMG_0433.png) --- */
-.add-category-btn {
-    width: 100%;
-    background: none;
-    border: 2px dashed #C7C7CC;
-    border-radius: 18px;
-    padding: 20px;
-    color: var(--text-sec);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    font-size: 16px;
-    font-weight: 500;
-    margin-top: 20px;
-    cursor: pointer;
-}
-
-/* --- Задачи и карточки --- */
-.app-header { padding: 40px 20px 10px 20px; display: flex; align-items: center; justify-content: space-between; }
-.app-header h1 { font-size: 32px; font-weight: 800; }
-
-.content-container { padding: 0 20px 100px 20px; }
+/* --- КАРТОЧКИ КАТЕГОРИЙ --- */
+.content-container { padding: 0 20px; }
 
 .goal-card {
     background: var(--bg-card);
-    padding: 20px;
-    border-radius: 18px;
-    margin-bottom: 12px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    padding: 22px;
+    border-radius: 20px;
+    margin-bottom: 15px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
 }
 
+/* ПУНКТИРНАЯ КНОПКА (ИСПРАВЛЕНИЕ) */
+.add-category-btn {
+    width: 100%;
+    background: none;
+    border: 2px dashed #D1D1D6;
+    border-radius: 20px;
+    padding: 25px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    color: var(--text-sec);
+    font-size: 16px;
+    margin-top: 10px;
+    cursor: pointer;
+}
+
+.add-category-btn .material-icons-round { font-size: 28px; }
+
+/* --- ЗАДАЧИ --- */
 .task-item {
     background: var(--bg-card);
-    border-radius: 18px;
+    border-radius: 20px;
     margin-bottom: 15px;
     padding: 20px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
 }
 
 .task-header { display: flex; align-items: center; justify-content: space-between; }
 .task-main { display: flex; align-items: center; gap: 12px; flex: 1; }
-.task-text { font-size: 19px; font-weight: 600; }
+.task-text { font-size: 18px; font-weight: 600; }
 .task-text.done { text-decoration: line-through; color: var(--text-sec); opacity: 0.6; }
 
-.sub-tasks {
-    margin-top: 15px;
-    display: flex;
-    flex-direction: column;
-}
-
-.sub-task-row {
-    display: flex;
-    align-items: center;
+/* ВВОД ЗАДАЧИ ВНИЗУ (ИСПРАВЛЕНИЕ) */
+.input-area {
+    position: fixed;
+    bottom: var(--nav-height);
+    left: 0;
     width: 100%;
-    padding: 12px 0;
-    border-bottom: 1px solid #f2f2f7;
+    background: var(--bg-body);
+    padding: 15px 20px;
+    display: flex;
+    gap: 10px;
+    z-index: 50;
 }
 
-.sub-input {
+.input-area input {
     flex: 1;
-    border: none;
-    background: #f2f2f7;
-    padding: 12px 15px;
-    border-radius: 12px;
+    background: white;
+    border: 1px solid #E5E5EA;
+    padding: 15px;
+    border-radius: 15px;
     font-size: 16px;
     outline: none;
 }
 
-.icon-btn { background: none; border: none; padding: 5px; cursor: pointer; }
+.input-area button {
+    background: var(--primary);
+    color: white;
+    border: none;
+    width: 50px;
+    height: 50px;
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* ШАГИ */
+.sub-tasks { margin-top: 15px; display: flex; flex-direction: column; }
+.sub-task-row { display: flex; align-items: center; padding: 12px 0; border-top: 1px solid #F2F2F7; }
+.sub-input-line { display: flex; gap: 10px; margin-top: 10px; }
+.sub-input { flex: 1; background: #F2F2F7; border: none; padding: 12px; border-radius: 10px; outline: none; }
+
+/* НАВИГАЦИЯ */
+.bottom-nav {
+    position: fixed; bottom: 0; width: 100%; height: var(--nav-height);
+    background: white; border-top: 1px solid #E5E5EA;
+    display: flex; justify-content: space-around; align-items: center; padding-bottom: 15px;
+}
+.nav-item { background: none; border: none; color: var(--text-sec); display: flex; flex-direction: column; align-items: center; flex: 1; }
+.nav-item.active { color: var(--primary); }
