@@ -310,4 +310,58 @@ button:active, .goal-card:active, .nav-item:active, .task-main:active {
     color: var(--text-sec);
     margin-bottom: 4px;
 }
+
+* Увеличиваем область клика для всей задачи */
+.task-item {
+    padding: 12px 4px; /* Больше пространства сверху и снизу */
+    margin-bottom: 8px;
+    border-bottom: 1px solid #f2f2f7;
+}
+
+/* Увеличиваем текст основной задачи */
+.task-text {
+    font-size: 18px; /* Было ~16px */
+    line-height: 1.4;
+    color: #1c1c1e;
+}
+
+/* Увеличиваем иконки кружочков/галочек */
+.task-main .material-icons-round {
+    font-size: 28px !important; /* Делаем иконку крупнее и заметнее */
+    margin-right: 14px !important;
+}
+
+/* Увеличиваем подзадачи (шаги) */
+.sub-tasks {
+    padding-left: 42px !important; /* Больше отступ, чтобы визуально отделить от главной */
+    margin-top: 12px;
+}
+
+.sub-tasks div {
+    font-size: 16px !important; /* Увеличиваем текст шага */
+    padding: 10px 0; /* Увеличиваем высоту строки шага для клика */
+    display: flex;
+    align-items: center;
+}
+
+/* Увеличиваем иконку чекбокса в подзадачах */
+.sub-tasks .material-icons-round {
+    font-size: 22px !important;
+    margin-right: 10px !important;
+}
+
+/* Делаем поле ввода шага удобнее */
+.sub-input {
+    font-size: 16px !important;
+    padding: 10px !important;
+    background: #f2f2f7;
+    border-radius: 8px;
+    border: none;
+}
+
+/* Увеличиваем кнопку корзины (удаления) */
+.task-controls .material-icons-round {
+    font-size: 24px !important;
+    padding: 8px; /* Увеличиваем зону клика вокруг корзины */
+}
 /* CSS END */
