@@ -168,3 +168,11 @@ body {
     font-size: 18px !important; /* Крупный текст в поле "Шаг..." */
     padding: 15px !important;
 }
+
+/* Найти существующий .goal-card и добавить туда эти три строки */
+.goal-card {
+    /* ... твои старые стили ... */
+    word-wrap: break-word;       /* Перенос длинных слов */
+    overflow-wrap: break-word;   /* Современный стандарт переноса */
+    word-break: break-word;      /* Для поддержки старых браузеров */
+}
