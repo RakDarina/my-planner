@@ -39,7 +39,8 @@ function renderDiaryEntries() {
     const entries = window.appData.mental[type] || [];
     
     if (entries.length === 0) {
-        list.innerHTML = <p style="text-align:center; color:var(--text-sec); margin-top:50px;">Записей пока нет...</p>;
+        // ИСПРАВЛЕНО: Добавлены кавычки ` `
+        list.innerHTML = `<p style="text-align:center; color:var(--text-sec); margin-top:50px;">Записей пока нет...</p>`;
         return;
     }
 
@@ -50,7 +51,7 @@ function renderDiaryEntries() {
         div.style.padding = '15px';
 
         if (item.isComplex) {
-            // Дизайн для дневника эмоций
+            // Дизайн для дневника эмоций (СМЭР)
             div.innerHTML = `
                 <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
                     <b style="color:var(--primary)">${item.date}</b>
@@ -68,7 +69,7 @@ function renderDiaryEntries() {
                 </div>
             `;
         } else {
-            // Обычный дизайн для благодарностей и прочего
+            // Обычный дизайн для остальных дневников
             const text = typeof item === 'object' ? item.text : item;
             const date = typeof item === 'object' ? item.date : "";
             div.innerHTML = `
@@ -91,28 +92,24 @@ function renderDiaryEntries() {
 function addDiaryEntry() {
     const type = window.currentDiaryType;
     
-    // Если это дневник эмоций - заполняем 5 пунктов
     if (type === 'emotions') {
         const situation = prompt("1. Ситуация (что произошло?):");
         if (!situation) return;
-        const emotion = prompt("2. Эмоции (что почувствовали и на сколько %?):");
-        const thoughts = prompt("3. Мысли (о чем подумали в тот момент?):");
+        const emotion = prompt("2. Эмоции (что почувствовали?):");
+        const thoughts = prompt("3. Мысли (о чем подумали?):");
         const behavior = prompt("4. Поведение (что сделали?):");
-        const alternative = prompt("5. Альтернатива (как можно посмотреть на это иначе?):");
+        const alternative = prompt("5. Альтернатива (другой взгляд):");
 
-        const newEntry = {
-            isComplex: true, // Пометка, что это сложная запись
+        window.appData.mental[type].push({
+            isComplex: true,
             situation,
             emotion,
             thoughts,
             behavior,
             alternative,
             date: new Date().toLocaleDateString('ru-RU')
-        };
-        
-        window.appData.mental[type].push(newEntry);
+        });
     } else {
-        // Для остальных дневников оставляем как было
         let question = "Введите запись:";
         if (type === 'gratitude') question = "За что вы благодарны сегодня?";
         if (type === 'achievements') question = "Какое достижение сегодня?";
