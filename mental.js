@@ -296,26 +296,67 @@ function renderSleepList() {
     // Показываем последние 5 записей
     const displayEntries = [...window.appData.sleep].reverse().slice(0, 5);
 
-    displayEntries.forEach((entry, actualIndex) => {
+    displayEntries.forEach((entry) => {
+        // Находим оригинальный индекс в основном массиве для корректного удаления/правки
         const index = window.appData.sleep.indexOf(entry);
         const color = entry.duration >= 8 ? '#4caf50' : (entry.duration >= 6 ? '#ffc107' : '#f44336');
         
         const div = document.createElement('div');
-        div.style.cssText = "display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-top:1px solid #eee;";
+        div.style.cssText = `
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            padding: 12px 0; 
+            border-top: 1px solid #f0f0f0;
+        `;
+        
         div.innerHTML = `
-            <div>
-                <b style="font-size:14px;">${entry.date}</b>
-                <div style="font-size:12px; color:var(--text-sec);">${entry.duration} ч.</div>
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <div style="width: 8px; height: 8px; border-radius: 50%; background: ${color};"></div>
+                <div>
+                    <div style="font-size: 14px; font-weight: 600;">${entry.date}</div>
+                    <div style="font-size: 12px; color: var(--text-sec);">${entry.duration} ч. сна</div>
+                </div>
             </div>
-            <div style="width:12px; height:12px; border-radius:50%; background:${color};"></div>
-            <div>
-                <span class="material-icons-round" style="font-size:20px; color:var(--text-sec); cursor:pointer;" onclick="openSleepModal(${index})">edit</span>
-                <span class="material-icons-round" style="font-size:20px; color:var(--danger); cursor:pointer; margin-left:10px;" onclick="deleteSleepEntry(${index})">delete_outline</span>
+            
+            <div style="position: relative;">
+                <button onclick="toggleSleepMenu(event, ${index})" style="background:none; border:none; color:var(--text-sec); cursor:pointer; padding: 5px;">
+                    <span class="material-icons-round">more_vert</span>
+                </button>
+                
+                <div id="sleep-menu-${index}" style="display:none; position:absolute; right:0; top:30px; background:white; box-shadow:0 4px 12px rgba(0,0,0,0.15); border-radius:10px; z-index:10; min-width:120px; overflow:hidden;">
+                    <button onclick="openSleepModal(${index})" style="width:100%; padding:10px; border:none; background:none; text-align:left; display:flex; align-items:center; gap:8px; font-size:13px; cursor:pointer;">
+                        <span class="material-icons-round" style="font-size:18px;">edit</span> Редактировать
+                    </button>
+                    <button onclick="deleteSleepEntry(${index})" style="width:100%; padding:10px; border:none; background:none; text-align:left; display:flex; align-items:center; gap:8px; font-size:13px; color:var(--danger); cursor:pointer;">
+                        <span class="material-icons-round" style="font-size:18px;">delete_outline</span> Удалить
+                    </button>
+                </div>
             </div>
         `;
         list.appendChild(div);
     });
 }
+
+// Функция для открытия/закрытия выпадающего меню
+function toggleSleepMenu(event, index) {
+    event.stopPropagation();
+    const allMenus = document.querySelectorAll('[id^="sleep-menu-"]');
+    const currentMenu = document.getElementById(`sleep-menu-${index}`);
+    
+    // Закрываем все открытые меню, кроме текущего
+    allMenus.forEach(menu => {
+        if (menu !== currentMenu) menu.style.display = 'none';
+    });
+    
+    // Переключаем текущее
+    currentMenu.style.display = currentMenu.style.display === 'none' ? 'block' : 'none';
+}
+
+// Закрытие меню при клике в любом месте экрана
+document.addEventListener('click', () => {
+    document.querySelectorAll('[id^="sleep-menu-"]').forEach(menu => menu.style.display = 'none');
+});
 
 function renderSleepChart() {
     const ctx = document.getElementById('sleepChart');
