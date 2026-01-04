@@ -212,12 +212,24 @@ function updateWaterUI() {
 
 function toggleGlass(index) {
     const w = window.appData.water;
+    const container = document.getElementById('glasses-container');
+    const glasses = container.querySelectorAll('.glass-icon');
+    
+    // Находим стакан, на который нажали
+    const targetGlass = glasses[index];
+
     if (index < w.consumedGlasses) {
-        // Если жмем на уже заполненный (отмена)
+        // Если отменяем (нажали на заполненный)
         w.consumedGlasses = index; 
     } else {
-        // Если жмем на пустой (заполнение)
+        // Если заполняем — добавляем класс анимации только этому стакану
+        targetGlass.classList.add('animating');
         w.consumedGlasses = index + 1;
+
+        // Удаляем класс через 1 секунду, когда анимация закончится
+        setTimeout(() => {
+            targetGlass.classList.remove('animating');
+        }, 1000);
     }
     
     w.current = w.consumedGlasses * w.glassSize;
