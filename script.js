@@ -1,4 +1,4 @@
-/ Используем window, чтобы переменная была видна во всех файлах (.js)
+// Используем window, чтобы переменная была видна во всех файлах (.js)
 window.appData = JSON.parse(localStorage.getItem('myPlannerData')) || {
     year: "2026",
     categories: [{ id: 1, title: "Обязательно", tasks: [] }],
