@@ -17,7 +17,10 @@ function saveData() {
 }
 
 function updateYearDisplay() {
-    document.getElementById('year-title').innerHTML = `${window.appData.year} <span class="material-icons-round" style="font-size:20px; opacity:0.3">edit</span>`;
+    const yearTitle = document.getElementById('year-title');
+    if (yearTitle) {
+        yearTitle.innerHTML = `${window.appData.year} <span class="material-icons-round" style="font-size:22px; opacity:0.3; cursor:pointer" onclick="editYearTitle()">edit</span>`;
+    }
 }
 
 function updateTotalProgress() {
@@ -26,14 +29,19 @@ function updateTotalProgress() {
     const total = allTasks.length;
     const completed = allTasks.filter(t => t.completed).length;
     const percent = total > 0 ? Math.round((completed / total) * 100) : 0;
-    document.getElementById('total-progress-fill').style.width = percent + '%';
-    document.getElementById('total-percent').innerText = percent + '%';
+    
+    const fill = document.getElementById('total-progress-fill');
+    const text = document.getElementById('total-percent');
+    if (fill && text) {
+        fill.style.width = percent + '%';
+        text.innerText = percent + '%';
+    }
 }
 
 function renderCategories() {
     const list = document.getElementById('goals-list');
     if (!list) return;
-    list.innerHTML = ''; // Очищаем только список карточек
+    list.innerHTML = '';
     
     window.appData.categories.forEach(cat => {
         const total = cat.tasks.length;
@@ -44,17 +52,14 @@ function renderCategories() {
         div.className = 'goal-card';
         div.onclick = () => openCategory(cat.id);
         div.innerHTML = `
-            <div style="display:flex; justify-content:space-between; margin-bottom:10px">
-                <span style="font-weight:700; font-size:20px">${cat.title}</span>
-                <span style="color:var(--text-sec)">${percent}%</span>
+            <div class="goal-card-header">
+                <span class="goal-card-title">${cat.title}</span>
+                <span style="color:var(--text-sec); font-size:16px">${percent}%</span>
             </div>
-            <div class="progress-container">
-                <div class="progress-fill" style="width:${percent}%"></div>
-            </div>
+            <div class="progress-container"><div class="progress-fill" style="width:${percent}%"></div></div>
         `;
         list.appendChild(div);
     });
-
     updateTotalProgress();
 }
 
@@ -78,18 +83,21 @@ function renderTasks() {
         item.innerHTML = `
             <div class="task-header">
                 <div class="task-main" onclick="toggleSubtasks(${index})">
-                    <span class="material-icons-round" style="color:${task.completed ? '#4caf50' : '#4A90E2'}" onclick="event.stopPropagation(); toggleTaskDone(${index})">
+                    <span class="material-icons-round" style="font-size:28px; color:${task.completed ? '#4caf50' : '#4A90E2'}" 
+                          onclick="event.stopPropagation(); toggleTaskDone(${index})">
                         ${task.completed ? 'check_circle' : 'radio_button_unchecked'}
                     </span>
                     <span class="task-text ${task.completed ? 'done' : ''}">${task.text}</span>
                 </div>
-                <button class="icon-btn" onclick="event.stopPropagation(); deleteTask(${index})"><span class="material-icons-round" style="color:var(--danger)">delete_outline</span></button>
+                <button class="icon-btn" onclick="event.stopPropagation(); deleteTask(${index})">
+                    <span class="material-icons-round" style="color:var(--danger); font-size:26px">delete_outline</span>
+                </button>
             </div>
             <div id="subs-${index}" class="sub-tasks" style="display:none">
                 <div id="subs-list-${index}"></div>
-                <div class="sub-input-line">
+                <div class="sub-input-group">
                     <input type="text" id="sub-input-${index}" placeholder="Шаг..." class="sub-input">
-                    <button onclick="addSubTask(${index})" class="material-icons-round" style="color:var(--primary); background:none; border:none; font-size:30px">add_circle</button>
+                    <button onclick="addSubTask(${index})" class="material-icons-round" style="color:var(--primary); font-size:36px; background:none; border:none;">add_circle</button>
                 </div>
             </div>
         `;
@@ -103,10 +111,10 @@ function renderSubTasks(tIdx) {
     const cat = window.appData.categories.find(c => c.id === currentCatId);
     subList.innerHTML = cat.tasks[tIdx].subs.map((sub, sIdx) => `
         <div class="sub-task-row">
-            <span class="material-icons-round" style="margin-right:10px; color:${sub.completed ? '#4caf50' : '#D1D1D6'}" onclick="toggleSubDone(${tIdx}, ${sIdx})">
+            <span class="material-icons-round" style="font-size:26px; margin-right:15px; color:${sub.completed ? '#4caf50' : '#D1D1D6'}" onclick="toggleSubDone(${tIdx}, ${sIdx})">
                 ${sub.completed ? 'check_box' : 'check_box_outline_blank'}
             </span>
-            <span style="flex:1; ${sub.completed ? 'text-decoration:line-through; color:var(--text-sec)' : ''}">${sub.text}</span>
+            <span class="sub-task-text" style="${sub.completed ? 'text-decoration:line-through; color:var(--text-sec)' : ''}">${sub.text}</span>
         </div>
     `).join('');
 }
@@ -116,6 +124,13 @@ function addCategory() {
     if (name) {
         window.appData.categories.push({ id: Date.now(), title: name, tasks: [] });
         saveData(); renderCategories();
+    }
+}
+
+function deleteCurrentCategory() {
+    if (confirm("Удалить всю категорию?")) {
+        window.appData.categories = window.appData.categories.filter(c => c.id !== currentCatId);
+        saveData(); goBackToGoals();
     }
 }
 
@@ -155,6 +170,7 @@ function toggleSubtasks(idx) {
 function goBackToGoals() {
     document.getElementById('view-goal-details').classList.remove('active');
     document.getElementById('view-goals').classList.add('active');
+    renderCategories();
 }
 
 function switchTab(id, btn) {
@@ -168,4 +184,9 @@ function deleteTask(idx) {
     const cat = window.appData.categories.find(c => c.id === currentCatId);
     cat.tasks.splice(idx, 1);
     saveData(); renderTasks();
+}
+
+function editYearTitle() {
+    const n = prompt("Изменить заголовок:", window.appData.year);
+    if (n) { window.appData.year = n; updateYearDisplay(); saveData(); }
 }
