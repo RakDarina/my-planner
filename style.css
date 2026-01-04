@@ -1,65 +1,62 @@
 /* CSS START */
 :root {
-    --primary: #4A90E2;       /* Основной синий цвет */
-    --bg-body: #F4F6F8;       /* Светло-серый фон */
-    --bg-card: #FFFFFF;       /* Белый цвет карточек */
-    --text-main: #1C1C1E;     /* Темный текст */
-    --text-sec: #8E8E93;      /* Серый текст */
-    --danger: #FF3B30;        /* Красный для удаления */
-    --nav-height: 60px;
+    --primary: #4A90E2;
+    --bg-body: #F4F6F8;
+    --bg-card: #FFFFFF;
+    --text-main: #1C1C1E;
+    --text-sec: #8E8E93;
+    --danger: #FF3B30;
+    --nav-height: 70px; /* Немного увеличил для удобства */
 }
 
 * {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    -webkit-tap-highlight-color: transparent; /* Убираем синюю рамку при клике на айфоне */
 }
 
 body {
     background-color: var(--bg-body);
     color: var(--text-main);
-    padding-bottom: calc(var(--nav-height) + 20px); /* Отступ под навигацию */
+    padding-bottom: calc(var(--nav-height) + 20px);
     height: 100vh;
-    overflow: hidden; /* Чтобы скроллились только контейнеры */
+    overflow: hidden;
 }
 
-/* --- Страницы и Навигация --- */
+/* --- Страницы --- */
 .page {
-    display: none; /* Скрываем все страницы */
+    display: none;
     height: 100%;
     overflow-y: auto;
     flex-direction: column;
 }
 
 .page.active {
-    display: flex; /* Показываем активную */
-    animation: fadeIn 0.3s ease;
-}
-
-.page.center-content {
-    justify-content: center;
-    align-items: center;
-    text-align: center;
+    display: flex;
+    animation: fadeIn 0.2s ease;
 }
 
 @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
+    from { opacity: 0; }
+    to { opacity: 1; }
 }
 
+/* --- Навигация --- */
 .bottom-nav {
     position: fixed;
     bottom: 0;
     width: 100%;
     height: var(--nav-height);
-    background: var(--bg-card);
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
     display: flex;
     justify-content: space-around;
     align-items: center;
     border-top: 1px solid #E5E5EA;
-    box-shadow: 0 -5px 15px rgba(0,0,0,0.03);
     z-index: 100;
+    padding-bottom: 15px; /* Отступ для "челки" снизу на новых iPhone */
 }
 
 .nav-item {
@@ -69,299 +66,155 @@ body {
     flex-direction: column;
     align-items: center;
     color: var(--text-sec);
-    font-size: 10px;
-    cursor: pointer;
-    transition: color 0.2s;
+    flex: 1;
 }
 
-.nav-item .material-icons {
-    font-size: 24px;
-    margin-bottom: 4px;
-}
-
-.nav-item.active {
-    color: var(--primary);
-}
+.nav-item.active { color: var(--primary); }
+.nav-item .material-icons-round { font-size: 26px; margin-bottom: 2px; }
+.nav-label { font-size: 10px; font-weight: 500; }
 
 /* --- Заголовки --- */
 .app-header {
     padding: 20px;
-    background: var(--bg-body);
     display: flex;
     align-items: center;
     justify-content: space-between;
-    position: sticky;
-    top: 0;
-    z-index: 10;
+    background: var(--bg-body);
 }
 
-.app-header h1 { font-size: 28px; font-weight: 800; }
-.app-header h2 { font-size: 20px; font-weight: 700; }
-.app-header.with-back { justify-content: space-between; }
+.app-header h1 { font-size: 32px; font-weight: 800; }
+.app-header h2 { font-size: 22px; font-weight: 700; }
 
 .icon-btn {
     background: none;
     border: none;
     color: var(--primary);
-    cursor: pointer;
+    padding: 10px;
 }
 
-/* --- Вкладка ЦЕЛИ (Список категорий) --- */
-.content-container {
-    padding: 0 20px 80px 20px;
-}
-
-.goals-grid {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-}
+/* --- Карточки категорий и целей --- */
+.content-container { padding: 0 20px 100px 20px; }
 
 .goal-card {
     background: var(--bg-card);
     padding: 20px;
-    border-radius: 16px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.04);
-    font-size: 18px;
-    font-weight: 600;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    cursor: pointer;
-    transition: transform 0.1s;
-}
-
-.goal-card:active { transform: scale(0.98); }
-
-.add-category-btn {
-    margin-top: 20px;
-    width: 100%;
-    padding: 15px;
-    background: transparent;
-    border: 2px dashed #C7C7CC;
-    border-radius: 16px;
-    color: var(--text-sec);
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
+    border-radius: 18px;
+    margin-bottom: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
     cursor: pointer;
 }
 
-/* --- Вкладка ЦЕЛИ (Ту-ду лист) --- */
+/* --- ЗАДАЧИ И ПОДЗАДАЧИ (Тут исправления) --- */
 .task-item {
     background: var(--bg-card);
-    border-radius: 12px;
-    margin-bottom: 10px;
-    padding: 12px 16px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+    border-radius: 16px;
+    margin-bottom: 12px;
+    padding: 16px;
 }
 
-.task-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-
-.task-main {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    flex-grow: 1;
-}
-
-/* Кастомный чекбокс */
-.custom-checkbox {
-    width: 22px;
-    height: 22px;
-    border: 2px solid #C7C7CC;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    flex-shrink: 0;
-}
-
-.custom-checkbox.checked {
-    background-color: var(--primary);
-    border-color: var(--primary);
-}
-
-.custom-checkbox .material-icons {
-    font-size: 16px;
-    color: white;
-    display: none;
-}
-
-.custom-checkbox.checked .material-icons { display: block; }
+.task-main { display: flex; align-items: center; flex: 1; }
 
 .task-text {
-    font-size: 16px;
-    transition: color 0.2s;
+    font-size: 18px !important; /* Крупнее */
+    font-weight: 500;
+    color: #1C1C1E;
 }
 
-.task-text.done {
-    text-decoration: line-through;
-    color: var(--text-sec);
+.task-text.done { text-decoration: line-through; opacity: 0.5; }
+
+/* Иконки кружков */
+.task-main .material-icons-round {
+    font-size: 30px !important; 
+    margin-right: 14px;
 }
 
-.task-controls button {
-    background: none;
-    border: none;
-    color: var(--text-sec);
-    padding: 4px;
-}
-
-/* Подзадачи (Шаги) */
+/* Шаги (подзадачи) */
 .sub-tasks {
-    margin-top: 10px;
-    padding-left: 34px;
-    border-left: 2px solid #F2F2F7;
-    display: none; /* Скрыто по умолчанию */
+    margin-top: 15px;
+    padding-left: 44px !important;
 }
 
-.sub-tasks.open { display: block; }
-
-.sub-task-item {
+.sub-tasks div {
     display: flex;
     align-items: center;
-    gap: 10px;
-    padding: 6px 0;
-    font-size: 14px;
+    padding: 12px 0 !important; /* Огромная зона клика */
+    font-size: 17px !important;
+    color: #3A3A3C !important;
+}
+
+.sub-tasks .material-icons-round {
+    font-size: 24px !important;
+    margin-right: 12px;
+    color: var(--primary);
 }
 
 .sub-input {
     width: 100%;
-    border: none;
-    border-bottom: 1px solid #E5E5EA;
-    padding: 4px;
-    outline: none;
-    background: transparent;
+    padding: 12px;
+    font-size: 16px;
+    border: 1px solid #E5E5EA;
+    border-radius: 10px;
+    margin-top: 8px;
 }
 
-/* Поле ввода внизу */
+/* --- МЕНТАЛКА И ВОДА --- */
+.water-card {
+    background: #E1F5FE;
+    padding: 20px;
+    border-radius: 20px;
+    margin-bottom: 20px;
+}
+
+.glass {
+    font-size: 35px !important;
+    color: #B3E5FC;
+    cursor: pointer;
+}
+
+.glass.filled { color: #0288D1; }
+
+.diary-item {
+    background: white;
+    padding: 15px;
+    border-radius: 15px;
+    margin-bottom: 10px;
+    border-left: 5px solid var(--primary);
+}
+
+/* --- ПОЛЕ ВВОДА ВНИЗУ --- */
 .input-area {
     position: fixed;
     bottom: var(--nav-height);
     left: 0;
     width: 100%;
-    background: var(--bg-card);
-    padding: 10px 20px;
+    background: white;
+    padding: 15px 20px;
     display: flex;
-    gap: 10px;
+    gap: 12px;
     border-top: 1px solid #E5E5EA;
+    z-index: 90;
 }
 
 .input-area input {
-    flex-grow: 1;
+    flex: 1;
+    background: #F2F2F7;
     border: none;
-    background: var(--bg-body);
-    padding: 12px 16px;
-    border-radius: 20px;
-    outline: none;
+    padding: 14px 18px;
+    border-radius: 25px;
+    font-size: 16px;
 }
 
 .input-area button {
-    width: 44px;
-    height: 44px;
+    width: 48px;
+    height: 48px;
+    background: var(--primary);
     border-radius: 50%;
     border: none;
-    background: var(--primary);
     color: white;
-    display: flex;
-    align-items: center;
-    justify-content: center;
 }
 
-/* Анимация для всех кнопок при нажатии */
-button:active, .goal-card:active, .nav-item:active, .task-main:active {
-    transform: scale(0.95);
-    transition: transform 0.1s ease;
-}
+/* Прогресс-бары */
+.progress-container { background: #E5E5EA; border-radius: 10px; height: 8px; overflow: hidden; }
+.progress-fill { background: var(--primary); height: 100%; transition: width 0.3s; }
 
-/* Стили полосок прогресса */
-.progress-container {
-    background: #e0e0e0;
-    border-radius: 10px;
-    height: 8px;
-    width: 100%;
-    margin-top: 8px;
-    overflow: hidden;
-}
-
-.progress-fill {
-    background: var(--primary);
-    height: 100%;
-    width: 0%;
-    transition: width 0.4s ease-out;
-}
-
-/* Общий прогресс под годом */
-.total-progress-wrapper {
-    padding: 0 20px 15px 20px;
-}
-
-.total-progress-info {
-    display: flex;
-    justify-content: space-between;
-    font-size: 12px;
-    color: var(--text-sec);
-    margin-bottom: 4px;
-}
-
-/* Увеличиваем область клика для всей задачи */
-.task-item {
-    padding: 12px 4px; /* Больше пространства сверху и снизу */
-    margin-bottom: 8px;
-    border-bottom: 1px solid #f2f2f7;
-}
-
-/* Увеличиваем текст основной задачи */
-.task-text {
-    font-size: 18px; /* Было ~16px */
-    line-height: 1.4;
-    color: #1c1c1e;
-}
-
-/* Увеличиваем иконки кружочков/галочек */
-.task-main .material-icons-round {
-    font-size: 28px !important; /* Делаем иконку крупнее и заметнее */
-    margin-right: 14px !important;
-}
-
-/* Увеличиваем подзадачи (шаги) */
-.sub-tasks {
-    padding-left: 42px !important; /* Больше отступ, чтобы визуально отделить от главной */
-    margin-top: 12px;
-}
-
-.sub-tasks div {
-    font-size: 16px !important; /* Увеличиваем текст шага */
-    padding: 10px 0; /* Увеличиваем высоту строки шага для клика */
-    display: flex;
-    align-items: center;
-}
-
-/* Увеличиваем иконку чекбокса в подзадачах */
-.sub-tasks .material-icons-round {
-    font-size: 22px !important;
-    margin-right: 10px !important;
-}
-
-/* Делаем поле ввода шага удобнее */
-.sub-input {
-    font-size: 16px !important;
-    padding: 10px !important;
-    background: #f2f2f7;
-    border-radius: 8px;
-    border: none;
-}
-
-/* Увеличиваем кнопку корзины (удаления) */
-.task-controls .material-icons-round {
-    font-size: 24px !important;
-    padding: 8px; /* Увеличиваем зону клика вокруг корзины */
-}
-/* CSS END */
+button:active { transform: scale(0.92); }
