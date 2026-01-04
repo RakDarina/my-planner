@@ -13,13 +13,18 @@ let currentDiaryType = ''; // Тип текущего дневника (напр
 // Функция открытия дневника
 function openDiary(type, title) {
     currentDiaryType = type;
-    document.getElementById('diary-title').innerText = title;
+    const titleElement = document.getElementById('diary-title');
+    if (titleElement) titleElement.innerText = title;
     
-    // Переключаем экран
+    // Прячем все страницы и показываем детали дневника
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-    document.getElementById('view-diary-details').classList.add('active');
-    
-    renderDiaryEntries();
+    const diaryPage = document.getElementById('view-diary-details');
+    if (diaryPage) {
+        diaryPage.classList.add('active');
+        renderDiaryEntries();
+    } else {
+        console.error("Не найден блок view-diary-details");
+    }
 }
 
 // Отрисовка списка записей
