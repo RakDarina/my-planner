@@ -1,9 +1,7 @@
-// 1. Инициализация данных
 window.appData = JSON.parse(localStorage.getItem('myPlannerData')) || {
     year: "2026",
     categories: [{ id: 1, title: "Обязательно", tasks: [] }],
-    water: { goal: 2000, current: 0, glassSize: 250, lastDate: "" },
-    diaries: { gratitude: [], emotions: [], achievements: [], "good-things": [] }
+    water: { goal: 2000, current: 0, glassSize: 250, lastDate: "" }
 };
 
 let currentCatId = null;
@@ -19,8 +17,7 @@ function saveData() {
 }
 
 function updateYearDisplay() {
-    const yearEl = document.getElementById('year-title');
-    if (yearEl) yearEl.innerHTML = `${window.appData.year} <span class="material-icons-round" style="font-size:18px; vertical-align:middle; opacity:0.5">edit</span>`;
+    document.getElementById('year-title').innerHTML = `${window.appData.year} <span class="material-icons-round" style="font-size:20px; opacity:0.3">edit</span>`;
 }
 
 function updateTotalProgress() {
@@ -29,14 +26,12 @@ function updateTotalProgress() {
     const total = allTasks.length;
     const completed = allTasks.filter(t => t.completed).length;
     const percent = total > 0 ? Math.round((completed / total) * 100) : 0;
-    
-    document.getElementById('total-progress-fill').style.width = percent + '%'; 
-    document.getElementById('total-percent').innerText = percent + '%'; 
+    document.getElementById('total-progress-fill').style.width = percent + '%';
+    document.getElementById('total-percent').innerText = percent + '%';
 }
 
 function renderCategories() {
     const list = document.getElementById('goals-list');
-    if (!list) return;
     list.innerHTML = '';
     
     window.appData.categories.forEach(cat => {
@@ -46,18 +41,24 @@ function renderCategories() {
         
         const div = document.createElement('div');
         div.className = 'goal-card';
+        div.onclick = () => openCategory(cat.id);
         div.innerHTML = `
-            <div style="width: 100%;" onclick="openCategory(${cat.id})">
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px">
-                    <span style="font-weight:700; font-size:18px">${cat.title}</span>
-                    <span style="font-size:14px; color:#8e8e93">${percent}%</span>
-                </div>
-                <div class="progress-container">
-                    <div class="progress-fill" style="width: ${percent}%"></div>
-                </div>
-            </div>`;
+            <div style="display:flex; justify-content:space-between; margin-bottom:10px">
+                <span style="font-weight:700; font-size:20px">${cat.title}</span>
+                <span style="color:var(--text-sec)">${percent}%</span>
+            </div>
+            <div class="progress-container"><div class="progress-fill" style="width:${percent}%"></div></div>
+        `;
         list.appendChild(div);
     });
+
+    // Добавляем ПУНКТИРНУЮ КНОПКУ в конец списка
+    const addBtn = document.createElement('button');
+    addBtn.className = 'add-category-btn';
+    addBtn.onclick = addCategory;
+    addBtn.innerHTML = `<span class="material-icons-round">add</span> Добавить категорию`;
+    list.appendChild(addBtn);
+
     updateTotalProgress();
 }
 
@@ -81,24 +82,21 @@ function renderTasks() {
         item.innerHTML = `
             <div class="task-header">
                 <div class="task-main" onclick="toggleSubtasks(${index})">
-                    <span class="material-icons-round" style="color:${task.completed ? '#4caf50' : '#4A90E2'}" 
-                          onclick="event.stopPropagation(); toggleTaskDone(${index});">
+                    <span class="material-icons-round" style="color:${task.completed ? '#4caf50' : '#4A90E2'}" onclick="event.stopPropagation(); toggleTaskDone(${index})">
                         ${task.completed ? 'check_circle' : 'radio_button_unchecked'}
                     </span>
                     <span class="task-text ${task.completed ? 'done' : ''}">${task.text}</span>
                 </div>
-                <button class="icon-btn" onclick="event.stopPropagation(); deleteTask(${index});">
-                    <span class="material-icons-round" style="color:#FF3B30">delete_outline</span>
-                </button>
+                <button class="icon-btn" onclick="event.stopPropagation(); deleteTask(${index})"><span class="material-icons-round" style="color:var(--danger)">delete_outline</span></button>
             </div>
-            <div id="subs-${index}" class="sub-tasks" style="display:none;">
+            <div id="subs-${index}" class="sub-tasks" style="display:none">
                 <div id="subs-list-${index}"></div>
-                <div style="display:flex; margin-top:15px; gap:10px;">
+                <div class="sub-input-line">
                     <input type="text" id="sub-input-${index}" placeholder="Шаг..." class="sub-input">
-                    <button onclick="addSubTask(${index})" class="material-icons-round" 
-                            style="background:var(--primary); color:white; border:none; border-radius:50%; width:40px; height:40px;">add</button>
+                    <button onclick="addSubTask(${index})" class="material-icons-round" style="color:var(--primary); background:none; border:none; font-size:30px">add_circle</button>
                 </div>
-            </div>`;
+            </div>
+        `;
         list.appendChild(item);
         renderSubTasks(index);
     });
@@ -107,30 +105,21 @@ function renderTasks() {
 function renderSubTasks(tIdx) {
     const subList = document.getElementById(`subs-list-${tIdx}`);
     const cat = window.appData.categories.find(c => c.id === currentCatId);
-    const subs = cat.tasks[tIdx].subs;
-    subList.innerHTML = '';
-    
-    subs.forEach((sub, sIdx) => {
-        const div = document.createElement('div');
-        div.className = 'sub-task-row';
-        div.innerHTML = `
-            <span class="material-icons-round" style="font-size:24px; margin-right:12px; color:${sub.completed ? '#4caf50' : '#ccc'};" 
-                  onclick="toggleSubDone(${tIdx}, ${sIdx})">
+    subList.innerHTML = cat.tasks[tIdx].subs.map((sub, sIdx) => `
+        <div class="sub-task-row">
+            <span class="material-icons-round" style="margin-right:10px; color:${sub.completed ? '#4caf50' : '#D1D1D6'}" onclick="toggleSubDone(${tIdx}, ${sIdx})">
                 ${sub.completed ? 'check_box' : 'check_box_outline_blank'}
             </span>
-            <span style="font-size:17px; flex:1; ${sub.completed ? 'text-decoration:line-through; color:#8e8e93' : ''}">
-                ${sub.text}
-            </span>`;
-        subList.appendChild(div);
-    });
+            <span style="flex:1; ${sub.completed ? 'text-decoration:line-through; color:var(--text-sec)' : ''}">${sub.text}</span>
+        </div>
+    `).join('');
 }
 
 function addCategory() {
-    const name = prompt("Название новой категории:");
+    const name = prompt("Название категории:");
     if (name) {
         window.appData.categories.push({ id: Date.now(), title: name, tasks: [] });
-        saveData();
-        renderCategories();
+        saveData(); renderCategories();
     }
 }
 
@@ -139,17 +128,13 @@ function addTask() {
     if (!input.value.trim()) return;
     const cat = window.appData.categories.find(c => c.id === currentCatId);
     cat.tasks.push({ text: input.value.trim(), completed: false, subs: [] });
-    input.value = '';
-    saveData();
-    renderTasks();
+    input.value = ''; saveData(); renderTasks();
 }
 
 function toggleTaskDone(idx) {
     const cat = window.appData.categories.find(c => c.id === currentCatId);
     cat.tasks[idx].completed = !cat.tasks[idx].completed;
-    saveData();
-    renderTasks();
-    renderCategories();
+    saveData(); renderTasks(); renderCategories();
 }
 
 function addSubTask(tIdx) {
@@ -157,21 +142,23 @@ function addSubTask(tIdx) {
     if (!input.value.trim()) return;
     const cat = window.appData.categories.find(c => c.id === currentCatId);
     cat.tasks[tIdx].subs.push({ text: input.value.trim(), completed: false });
-    input.value = '';
-    saveData();
-    renderSubTasks(tIdx);
+    input.value = ''; saveData(); renderSubTasks(tIdx);
 }
 
 function toggleSubDone(tIdx, sIdx) {
     const cat = window.appData.categories.find(c => c.id === currentCatId);
     cat.tasks[tIdx].subs[sIdx].completed = !cat.tasks[tIdx].subs[sIdx].completed;
-    saveData();
-    renderSubTasks(tIdx);
+    saveData(); renderSubTasks(tIdx);
 }
 
 function toggleSubtasks(idx) {
     const el = document.getElementById(`subs-${idx}`);
-    el.style.display = el.style.display === 'none' ? 'flex' : 'none';
+    el.style.display = el.style.display === 'none' ? 'block' : 'none';
+}
+
+function goBackToGoals() {
+    document.getElementById('view-goal-details').classList.remove('active');
+    document.getElementById('view-goals').classList.add('active');
 }
 
 function switchTab(id, btn) {
@@ -181,25 +168,8 @@ function switchTab(id, btn) {
     btn.classList.add('active');
 }
 
-function goBackToGoals() {
-    document.getElementById('view-goal-details').classList.remove('active');
-    document.getElementById('view-goals').classList.add('active');
-}
-
 function deleteTask(idx) {
     const cat = window.appData.categories.find(c => c.id === currentCatId);
     cat.tasks.splice(idx, 1);
-    saveData();
-    renderTasks();
-}
-
-function deleteCurrentCategory() {
-    window.appData.categories = window.appData.categories.filter(c => c.id !== currentCatId);
-    saveData();
-    goBackToGoals();
-}
-
-function editYearTitle() {
-    const n = prompt("Изменить заголовок:", window.appData.year);
-    if (n) { window.appData.year = n; updateYearDisplay(); saveData(); }
+    saveData(); renderTasks();
 }
