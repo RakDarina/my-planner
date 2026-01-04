@@ -313,7 +313,11 @@ input[type="datetime-local"] {
 /* Цвета периодов */
 .day-period { background-color: #ffb7c5 !important; color: white; } /* Месячные */
 .day-prediction { border: 2px dashed #ffb7c5; } /* Прогноз */
-.day-fertile { background-color: #e0c3fc !important; color: white; } /* Фертильность */
+.day-fertile { 
+    background-color: #e0f2fe !important; 
+    color: #0284c7 !important; 
+    border-radius: 50%;
+} /* Фертильность */
 .day-today { border: 2px solid var(--primary); font-weight: bold; }
 
 /* Блок подсказок */
