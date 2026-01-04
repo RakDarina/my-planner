@@ -54,10 +54,42 @@
         </div>
     </div>
 
-    <div id="view-mental" class="page center-content"><h2>Менталка</h2><p>Раздел наполняется...</p></div>
-    <div id="view-lists" class="page center-content"><h2>Списки</h2><p>Раздел наполняется...</p></div>
-    <div id="view-diary" class="page center-content"><h2>Дневник</h2><p>Раздел наполняется...</p></div>
-    <div id="view-checklist" class="page center-content"><h2>Чек-лист</h2><p>Раздел наполняется...</p></div>
+    <div id="view-mental" class="page">
+        <header class="app-header"><h2>Здоровье</h2></header>
+        <div class="content-container">
+            <div class="card water-card">
+                <div style="display:flex; justify-content:space-between; align-items:center">
+                    <span>Вода: <b id="water-current">0</b> / <span id="water-goal">2000</span> мл</span>
+                    <span class="material-icons-round" onclick="settingsWater()" style="cursor:pointer; opacity:0.5">settings</span>
+                </div>
+                <div id="glasses-list" style="margin-top:15px; display:flex; flex-wrap:wrap; gap:10px"></div>
+            </div>
+
+            <div class="mental-grid" style="display:grid; grid-template-columns:1fr 1fr; gap:15px; margin-top:20px">
+                <button id="btn-gratitude" class="goal-card" onclick="openDiary('gratitude', 'Дневник благодарности')">Благодарность</button>
+                <button class="goal-card" onclick="openDiary('emotions', 'Дневник эмоций')">Эмоции</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="view-diary-details" class="page">
+        <header class="app-header with-back">
+            <button class="icon-btn" onclick="switchTab('view-mental', document.querySelector('.nav-item:nth-child(2)'))">
+                <span class="material-icons-round">arrow_back_ios</span>
+            </button>
+            <h2 id="diary-title">Записи</h2>
+        </header>
+        <div class="content-container">
+            <div id="diary-content-list"></div>
+            <button class="add-category-btn" id="add-diary-btn">
+                <span class="material-icons-round">add</span> Добавить запись
+            </button>
+        </div>
+    </div>
+
+    <div id="view-lists" class="page center-content"><h2>Списки</h2></div>
+    <div id="view-diary" class="page center-content"><h2>Дневник</h2></div>
+    <div id="view-checklist" class="page center-content"><h2>Чек-лист</h2></div>
 
     <nav class="bottom-nav">
         <button class="nav-item active" onclick="switchTab('view-goals', this)">
