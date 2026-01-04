@@ -1,7 +1,13 @@
 window.appData = JSON.parse(localStorage.getItem('myPlannerData')) || {
     year: "2026",
     categories: [{ id: 1, title: "Обязательно", tasks: [] }],
-    water: { goal: 2000, current: 0, glassSize: 250, lastDate: "" }
+    water: { goal: 2000, current: 0, glassSize: 250, lastDate: "" },
+    mental: {
+        gratitude: [],
+        emotions: [],
+        achievements: [],
+        good_day: []
+    }
 };
 
 let currentCatId = null;
