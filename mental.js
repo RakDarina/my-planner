@@ -79,10 +79,11 @@ function renderDiaryEntries() {
     entries.forEach((item, index) => {
         const div = document.createElement('div');
         div.className = 'goal-card';
-        div.style.marginBottom = '15px';
-        div.style.padding = '15px';
+        // ИСПРАВЛЕНИЕ: Добавлен принудительный перенос слов, чтобы текст не выходил за блок
+        div.style.cssText = "margin-bottom: 15px; padding: 15px; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;";
 
         if (item.isComplex) {
+            // ИСПРАВЛЕНО: Добавлена поддержка абзацев (white-space: pre-wrap)
             div.innerHTML = `
                 <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
                     <b style="color:var(--primary)">${item.date}</b>
@@ -91,12 +92,12 @@ function renderDiaryEntries() {
                         <span class="material-icons-round" style="font-size:20px; color:var(--danger); cursor:pointer;" onclick="deleteDiaryEntry(${index})">delete_outline</span>
                     </div>
                 </div>
-                <div style="font-size:14px; display:flex; flex-direction:column; gap:8px;">
-                    <div><b>Ситуация:</b> ${item.situation}</div>
-                    <div><b>Эмоции:</b> ${item.emotion}</div>
-                    <div><b>Мысли:</b> ${item.thoughts}</div>
-                    <div><b>Поведение:</b> ${item.behavior}</div>
-                    <div style="color: #27ae60;"><b>Альтернатива:</b> ${item.alternative}</div>
+                <div style="font-size:14px; display:flex; flex-direction:column; gap:8px; white-space: pre-wrap;">
+                    <div><b>Ситуация:</b>\n${item.situation}</div>
+                    <div><b>Эмоции:</b>\n${item.emotion}</div>
+                    <div><b>Мысли:</b>\n${item.thoughts}</div>
+                    <div><b>Поведение:</b>\n${item.behavior}</div>
+                    <div style="color: #27ae60;"><b>Альтернатива:</b>\n${item.alternative}</div>
                 </div>`;
         } else {
             const text = typeof item === 'object' ? item.text : item;
@@ -121,7 +122,6 @@ function addDiaryEntry() {
     const type = window.currentDiaryType;
 
     if (type === 'emotions') {
-        // Оставляем prompt для эмоций, так как там 5 быстрых вопросов
         const s = prompt("1. Ситуация:"); if (!s) return;
         const e = prompt("2. Эмоции:");
         const t = prompt("3. Мысли:");
