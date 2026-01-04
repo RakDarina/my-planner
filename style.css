@@ -176,32 +176,67 @@ body {
     overflow-wrap: break-word;   /* Современный стандарт переноса */
     word-break: break-word;      /* Для поддержки старых браузеров */
 }
+/* Контейнер стакана */
 .glass-icon {
-    width: 40px;
-    height: 50px;
-    border: 3px solid #ccc;
-    border-top: none;
-    border-radius: 0 0 10px 10px;
+    width: 45px;
+    height: 55px;
+    border: 3px solid #e1f5fe;
+    border-top: 2px solid rgba(225, 245, 254, 0.5); /* Верхний край едва заметен */
+    border-radius: 4px 4px 12px 12px;
     position: relative;
     cursor: pointer;
     transition: all 0.3s ease;
-    display: flex;
-    align-items: flex-end;
-    overflow: hidden;
+    background: rgba(255, 255, 255, 0.5);
+    overflow: hidden; /* Чтобы вода не выливалась за края в коде */
+    box-shadow: inset 0 0 5px rgba(0,0,0,0.05);
 }
 
-.glass-icon.active {
-    border-color: #2196F3;
-}
-
+/* Сама вода */
 .glass-icon .water {
+    position: absolute;
+    bottom: 0;
+    left: 0;
     width: 100%;
-    height: 0%;
-    background-color: #bbdefb; /* Светло-голубой до нажатия */
-    transition: height 0.3s ease, background-color 0.3s ease;
+    height: 0%; /* Изначально пусто */
+    background: linear-gradient(180deg, #4fc3f7 0%, #2196f3 100%);
+    transition: height 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Эффект волны сверху воды */
+.glass-icon .water::before {
+    content: "";
+    position: absolute;
+    top: -10px;
+    left: 0;
+    width: 200%;
+    height: 20px;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 40%;
+    animation: wave 3s infinite linear;
+    display: none;
+}
+
+/* Когда стакан активен */
+.glass-icon.active {
+    border-color: #2196f3;
+    transform: scale(1.05);
 }
 
 .glass-icon.active .water {
-    height: 90%;
-    background-color: #2196F3; /* Насыщенный голубой при наполнении */
+    height: 85%; /* Уровень наполнения */
+}
+
+.glass-icon.active .water::before {
+    display: block; /* Показываем волну только в полном стакане */
+}
+
+/* Анимация движения волны */
+@keyframes wave {
+    from { transform: translateX(0) rotate(0deg); }
+    to { transform: translateX(-50%) rotate(360deg); }
+}
+
+/* Эффект при нажатии */
+.glass-icon:active {
+    transform: scale(0.9);
 }
