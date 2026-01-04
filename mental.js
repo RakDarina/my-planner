@@ -442,3 +442,85 @@ function renderSleepChart() {
         scrollContainer.scrollLeft = scrollContainer.scrollWidth;
     }, 100);
 }
+
+let currentCalDate = new Date();
+if (!window.appData.cycle) {
+    window.appData.cycle = {
+        periodDays: [], // Список дат, когда были месячные (формат YYYY-MM-DD)
+        cycleLength: 28,
+        periodLength: 5
+    };
+}
+
+function renderCalendar() {
+    const grid = document.getElementById('calendar-days');
+    const monthYearLabel = document.getElementById('calendar-month-year');
+    if (!grid) return;
+
+    grid.innerHTML = '';
+    const year = currentCalDate.getFullYear();
+    const month = currentCalDate.getMonth();
+    
+    monthYearLabel.innerText = new Intl.DateTimeFormat('ru-RU', { month: 'long', year: 'numeric' }).format(currentCalDate);
+
+    // Дни недели
+    ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'].forEach(day => {
+        grid.innerHTML += `<div class="day-name">${day}</div>`;
+    });
+
+    const firstDay = new Date(year, month, 1).getDay();
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    const offset = firstDay === 0 ? 6 : firstDay - 1;
+
+    // Пустые ячейки для начала месяца
+    for (let i = 0; i < offset; i++) grid.innerHTML += '<div></div>';
+
+    // Заполнение числами
+    for (let day = 1; day <= daysInMonth; day++) {
+        const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+        const isPeriod = window.appData.cycle.periodDays.includes(dateStr);
+        const isToday = new Date().toDateString() === new Date(year, month, day).toDateString();
+        
+        // Логика фертильности (упрощенно: середина цикла, если была отметка)
+        // В будущем сюда можно добавить полноценный расчет прогноза
+        
+        let classes = 'calendar-day';
+        if (isPeriod) classes += ' day-period';
+        if (isToday) classes += ' day-today';
+
+        grid.innerHTML += `<div class="${classes}" onclick="togglePeriodDate('${dateStr}')">${day}</div>`;
+    }
+    
+    updateCycleTips();
+}
+
+function togglePeriodDate(dateStr) {
+    const index = window.appData.cycle.periodDays.indexOf(dateStr);
+    if (index > -1) {
+        window.appData.cycle.periodDays.splice(index, 1);
+    } else {
+        window.appData.cycle.periodDays.push(dateStr);
+    }
+    saveData();
+    renderCalendar();
+}
+
+function changeMonth(dir) {
+    currentCalDate.setMonth(currentCalDate.getMonth() + dir);
+    renderCalendar();
+}
+
+function updateCycleTips() {
+    const tipsEl = document.getElementById('cycle-tips');
+    // Здесь можно добавить логику: если день = период, показывать одни советы, если нет - другие
+    const isPeriodToday = window.appData.cycle.periodDays.includes(new Date().toISOString().split('T')[0]);
+    
+    if (isPeriodToday) {
+        tipsEl.innerHTML = `<b>Период:</b> Возможна слабость и боли. Рекомендуется йога, тепло и покой. Избегай сильных нагрузок.`;
+    } else {
+        tipsEl.innerHTML = `<b>Фаза фолликулярная:</b> Время прилива энергии! Отличное время для обучения, новых дел и активного спорта.`;
+    }
+}
+
+// Инициализация при загрузке
+window.addEventListener('DOMContentLoaded', renderCalendar);
