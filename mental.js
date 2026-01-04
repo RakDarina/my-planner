@@ -1,14 +1,27 @@
 window.addEventListener('DOMContentLoaded', () => {
+    // 1. Проверяем наличие данных
     if (!window.appData) {
         window.appData = JSON.parse(localStorage.getItem('myPlannerData')) || {};
     }
+    
+    // 2. Инициализируем структуру, если её нет
     if (!window.appData.mental) {
         window.appData.mental = { gratitude: [], emotions: [], achievements: [], good_day: [] };
     }
     if (!window.appData.water) {
         window.appData.water = { current: 0, goal: 2000, glassSize: 250, consumedGlasses: 0 };
     }
+    if (!window.appData.cycle) {
+        window.appData.cycle = { periodDays: [], cycleLength: 28, periodLength: 5 };
+    }
+    if (!window.appData.sleep) {
+        window.appData.sleep = [];
+    }
+
+    // 3. ЗАПУСКАЕМ отрисовку всех блоков
     updateWaterUI();
+    updateSleepUI();
+    renderCalendar(); // Вот эта строчка «оживит» твой календарь!
 });
 
 // --- ТРЕКЕР ВОДЫ ---
@@ -555,4 +568,23 @@ function handleDayClick(dateStr) {
     
     saveData();
     renderCalendar();
+}
+
+function changeMonth(dir) {
+    currentCalDate.setMonth(currentCalDate.getMonth() + dir);
+    renderCalendar();
+}
+
+function updateCycleTips() {
+    const tipsEl = document.getElementById('cycle-tips');
+    if (!tipsEl) return;
+    
+    const todayStr = new Date().toISOString().split('T')[0];
+    const isPeriodToday = window.appData.cycle.periodDays.some(d => d.date === todayStr);
+    
+    if (isPeriodToday) {
+        tipsEl.innerHTML = <b>Период:</b> Возможна слабость. Пей больше теплой воды и старайся не переутомляться.;
+    } else {
+        tipsEl.innerHTML = <b>Совет:</b> Нажми на дату начала месячных, чтобы отметить цикл на 5 дней.;
+    }
 }
