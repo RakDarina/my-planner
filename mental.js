@@ -1,4 +1,4 @@
-// Ждем полной загрузки страницы
+// Ждем полной загрузки страницы, чтобы данные были доступны
 window.addEventListener('DOMContentLoaded', () => {
     if (!window.appData) {
         window.appData = JSON.parse(localStorage.getItem('myPlannerData')) || {};
@@ -13,7 +13,7 @@ window.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-// --- ФУНКЦИИ МОДАЛЬНОГО ОКНА ---
+// --- ФУНКЦИИ МОДАЛЬНОГО ОКНА (БОЛЬШОЕ ПОЛЕ ВВОДА) ---
 
 function openMentalModal(question, defaultValue, onSave) {
     const modal = document.getElementById('mental-modal');
@@ -24,12 +24,12 @@ function openMentalModal(question, defaultValue, onSave) {
     textarea.value = defaultValue || "";
     modal.style.display = 'flex';
     
-    // Автофокус и сброс высоты
+    // Автофокус и настройка высоты под текст
     textarea.focus();
     textarea.style.height = 'auto';
     textarea.style.height = (textarea.scrollHeight) + 'px';
 
-    // Слушатель для расширения поля при вводе
+    // Чтобы поле расширялось при печати
     textarea.oninput = function() {
         this.style.height = 'auto';
         this.style.height = (this.scrollHeight) + 'px';
@@ -48,7 +48,7 @@ function closeMentalModal() {
     document.getElementById('mental-modal').style.display = 'none';
 }
 
-// --- ОСНОВНАЯ ЛОГИКА ---
+// --- ОСНОВНАЯ ЛОГИКА ОТОБРАЖЕНИЯ ---
 
 function openDiary(type, title) {
     window.currentDiaryType = type;
@@ -79,102 +79,89 @@ function renderDiaryEntries() {
     entries.forEach((item, index) => {
         const div = document.createElement('div');
         div.className = 'goal-card';
-        // ИСПРАВЛЕНИЕ: Добавлен принудительный перенос слов, чтобы текст не выходил за блок
-        div.style.cssText = "margin-bottom: 15px; padding: 15px; word-wrap: break-word; overflow-wrap: break-word; word-break: break-all;";
+        
+        // Стили для карточки: предотвращаем вылет текста за границы
+        div.style.cssText = "margin-bottom: 15px; padding: 15px; word-wrap: break-word; overflow-wrap: break-word; word-break: break-word;";
+
+        // Получаем текст (поддерживаем и старый формат СМЭР, и новый текстовый)
+        let displayHtml = "";
+        const date = item.date || "";
 
         if (item.isComplex) {
-            // ИСПРАВЛЕНО: Добавлена поддержка абзацев (white-space: pre-wrap)
-            div.innerHTML = `
-                <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
-                    <b style="color:var(--primary)">${item.date}</b>
-                    <div style="display:flex; gap:10px;">
-                        <span class="material-icons-round" style="font-size:20px; color:var(--text-sec); cursor:pointer;" onclick="editDiaryEntry(${index})">edit</span>
-                        <span class="material-icons-round" style="font-size:20px; color:var(--danger); cursor:pointer;" onclick="deleteDiaryEntry(${index})">delete_outline</span>
-                    </div>
-                </div>
+            // Для старых записей СМЭР (если они остались в памяти)
+            displayHtml = `
                 <div style="font-size:14px; display:flex; flex-direction:column; gap:8px; white-space: pre-wrap;">
-                    <div><b>Ситуация:</b>\n${item.situation}</div>
-                    <div><b>Эмоции:</b>\n${item.emotion}</div>
-                    <div><b>Мысли:</b>\n${item.thoughts}</div>
-                    <div><b>Поведение:</b>\n${item.behavior}</div>
-                    <div style="color: #27ae60;"><b>Альтернатива:</b>\n${item.alternative}</div>
+                    <div><b>Ситуация:</b> ${item.situation}</div>
+                    <div><b>Эмоции:</b> ${item.emotion}</div>
+                    <div><b>Мысли:</b> ${item.thoughts}</div>
+                    <div><b>Поведение:</b> ${item.behavior}</div>
+                    <div style="color: #27ae60;"><b>Альтернатива:</b> ${item.alternative}</div>
                 </div>`;
         } else {
-            const text = typeof item === 'object' ? item.text : item;
-            const date = typeof item === 'object' ? item.date : "";
-            div.innerHTML = `
-                <div style="display:flex; flex-direction:column; gap:5px;">
-                    <div style="display:flex; justify-content:space-between; align-items:flex-start;">
-                        <span style="font-size:16px; flex:1; white-space: pre-wrap;">${index + 1}. ${text}</span>
-                        <div style="display:flex; gap:10px;">
-                            <span class="material-icons-round" style="font-size:20px; color:var(--text-sec); cursor:pointer;" onclick="editDiaryEntry(${index})">edit</span>
-                            <span class="material-icons-round" style="font-size:20px; color:var(--danger); cursor:pointer;" onclick="deleteDiaryEntry(${index})">delete_outline</span>
-                        </div>
-                    </div>
-                    <span style="font-size:12px; color:var(--text-sec);">${date}</span>
-                </div>`;
+            // Для всех новых записей (с поддержкой абзацев)
+            displayHtml = `<span style="font-size:16px; white-space: pre-wrap;">${item.text}</span>`;
         }
+
+        div.innerHTML = `
+            <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:8px;">
+                <b style="color:var(--primary); font-size:14px;">${date}</b>
+                <div style="display:flex; gap:12px;">
+                    <span class="material-icons-round" style="font-size:20px; color:var(--text-sec); cursor:pointer;" onclick="editDiaryEntry(${index})">edit</span>
+                    <span class="material-icons-round" style="font-size:20px; color:var(--danger); cursor:pointer;" onclick="deleteDiaryEntry(${index})">delete_outline</span>
+                </div>
+            </div>
+            ${displayHtml}
+        `;
         list.appendChild(div);
     });
 }
 
+// --- ДОБАВЛЕНИЕ И РЕДАКТИРОВАНИЕ ---
+
 function addDiaryEntry() {
     const type = window.currentDiaryType;
+    let question = "За что вы благодарны сегодня?";
+    let defaultValue = "";
 
     if (type === 'emotions') {
-        const s = prompt("1. Ситуация:"); if (!s) return;
-        const e = prompt("2. Эмоции:");
-        const t = prompt("3. Мысли:");
-        const b = prompt("4. Поведение:");
-        const a = prompt("5. Альтернатива:");
+        question = "Дневник эмоций (СМЭР):";
+        defaultValue = "1. Ситуация:\n\n2. Эмоции:\n\n3. Мысли:\n\n4. Поведение:\n\n5. Альтернатива:";
+    } else if (type === 'achievements') {
+        question = "Какое достижение сегодня?";
+    } else if (type === 'good_day') {
+        question = "Что хорошего случилось?";
+    }
 
+    openMentalModal(question, defaultValue, (text) => {
         window.appData.mental[type].push({
-            isComplex: true, situation: s, emotion: e, thoughts: t, behavior: b, alternative: a,
-            date: new Date().toLocaleDateString('ru-RU')
+            text: text,
+            date: new Date().toLocaleDateString('ru-RU'),
+            isComplex: false // Теперь сохраняем всё как единый текст с абзацами
         });
         if (typeof saveData === 'function') saveData();
         renderDiaryEntries();
-    } else {
-        let question = "За что вы благодарны сегодня?";
-        if (type === 'achievements') question = "Какое достижение сегодня?";
-        if (type === 'good_day') question = "Что хорошего случилось?";
-
-        openMentalModal(question, "", (text) => {
-            window.appData.mental[type].push({
-                text: text,
-                date: new Date().toLocaleDateString('ru-RU')
-            });
-            if (typeof saveData === 'function') saveData();
-            renderDiaryEntries();
-        });
-    }
+    });
 }
 
 function editDiaryEntry(index) {
     const type = window.currentDiaryType;
     const item = window.appData.mental[type][index];
-
+    
+    // Подготовка текста для редактирования
+    let currentText = item.text;
     if (item.isComplex) {
-        const s = prompt("Ситуация:", item.situation);
-        const e = prompt("Эмоции:", item.emotion);
-        const t = prompt("Мысли:", item.thoughts);
-        const b = prompt("Поведение:", item.behavior);
-        const a = prompt("Альтернатива:", item.alternative);
-        window.appData.mental[type][index] = { ...item, situation: s, emotion: e, thoughts: t, behavior: b, alternative: a };
+        currentText = `1. Ситуация: ${item.situation}\n2. Эмоции: ${item.emotion}\n3. Мысли: ${item.thoughts}\n4. Поведение: ${item.behavior}\n5. Альтернатива: ${item.alternative}`;
+    }
+
+    openMentalModal("Редактировать запись:", currentText, (newText) => {
+        window.appData.mental[type][index] = {
+            text: newText,
+            date: item.date || new Date().toLocaleDateString('ru-RU'),
+            isComplex: false
+        };
         if (typeof saveData === 'function') saveData();
         renderDiaryEntries();
-    } else {
-        const oldText = typeof item === 'object' ? item.text : item;
-        openMentalModal("Редактировать запись:", oldText, (newText) => {
-            if (typeof item === 'object') {
-                window.appData.mental[type][index].text = newText;
-            } else {
-                window.appData.mental[type][index] = { text: newText, date: new Date().toLocaleDateString('ru-RU') };
-            }
-            if (typeof saveData === 'function') saveData();
-            renderDiaryEntries();
-        });
-    }
+    });
 }
 
 function deleteDiaryEntry(index) {
