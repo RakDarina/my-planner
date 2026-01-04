@@ -232,3 +232,15 @@ body {
 .glass-icon.active .water::before {
     display: block; 
 }
+
+/* Фикс для полей даты, чтобы они не раздували окно на iOS */
+input[type="datetime-local"] {
+    -webkit-appearance: none;
+    min-height: 1.2em;
+}
+
+/* Принудительный сброс ширины для всех модалок */
+#sleep-modal > div, #water-modal > div {
+    max-width: 92% !important;
+    margin: 0 auto;
+}
