@@ -169,3 +169,84 @@ function deleteDiaryEntry(index) {
         saveData(); renderDiaryEntries();
     }
 }
+
+// Инициализация данных воды
+if (!window.appData.water) {
+    window.appData.water = {
+        current: 0,
+        goal: 2000,
+        glassSize: 250,
+        consumedGlasses: 0
+    };
+}
+
+// Запуск при загрузке
+window.addEventListener('DOMContentLoaded', () => {
+    updateWaterUI();
+});
+
+function updateWaterUI() {
+    document.getElementById('water-current').innerText = window.appData.water.current;
+    document.getElementById('water-goal').innerText = window.appData.water.goal;
+    
+    const container = document.getElementById('glasses-container');
+    container.innerHTML = '';
+    
+    // Считаем сколько всего стаканов нужно отобразить
+    const totalGlasses = Math.ceil(window.appData.water.goal / window.appData.water.glassSize);
+    
+    for (let i = 0; i < totalGlasses; i++) {
+        const glass = document.createElement('div');
+        glass.className = 'glass-icon' + (i < window.appData.water.consumedGlasses ? ' active' : '');
+        glass.innerHTML = '<div class="water"></div>';
+        
+        glass.onclick = () => toggleGlass(i);
+        container.appendChild(glass);
+    }
+}
+
+function toggleGlass(index) {
+    const w = window.appData.water;
+    if (index < w.consumedGlasses) {
+        // Если жмем на уже заполненный (отмена)
+        w.consumedGlasses = index; 
+    } else {
+        // Если жмем на пустой (заполнение)
+        w.consumedGlasses = index + 1;
+    }
+    
+    w.current = w.consumedGlasses * w.glassSize;
+    saveData();
+    updateWaterUI();
+}
+
+// Настройки
+function openWaterSettings() {
+    document.getElementById('water-modal').style.display = 'flex';
+    document.getElementById('input-water-goal').value = window.appData.water.goal;
+    document.getElementById('input-glass-size').value = window.appData.water.glassSize;
+}
+
+function closeWaterModal() {
+    document.getElementById('water-modal').style.display = 'none';
+}
+
+function saveWaterSettings() {
+    window.appData.water.goal = parseInt(document.getElementById('input-water-goal').value) || 2000;
+    window.appData.water.glassSize = parseInt(document.getElementById('input-glass-size').value) || 250;
+    
+    // Пересчитываем текущее количество на основе новых настроек стакана
+    window.appData.water.current = window.appData.water.consumedGlasses * window.appData.water.glassSize;
+    
+    saveData();
+    updateWaterUI();
+    closeWaterModal();
+}
+
+function calculateWaterGoal() {
+    const weight = prompt("Введите ваш вес в кг для расчета:");
+    if (weight) {
+        const calculated = weight * 30; // 30мл на 1 кг
+        document.getElementById('input-water-goal').value = calculated;
+    }
+}
