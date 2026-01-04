@@ -14,6 +14,16 @@
             <h1 id="year-title" onclick="editYearTitle()">2026 <span class="material-icons-round" style="font-size: 16px; opacity: 0.5;">edit</span></h1>
         </header>
         
+        <div class="total-progress-wrapper">
+            <div class="total-progress-info">
+                <span>Общий прогресс</span>
+                <span id="total-percent">0%</span>
+            </div>
+            <div class="progress-container">
+                <div id="total-progress-fill" class="progress-fill"></div>
+            </div>
+        </div>
+        
         <div class="content-container">
             <div id="goals-list" class="goals-grid"></div>
             <button class="add-category-btn" onclick="addCategory()">
