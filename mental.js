@@ -14,17 +14,13 @@ window.addEventListener('DOMContentLoaded', () => {
 });
 
 function openDiary(type, title) {
-    console.log("Открываем дневник:", type); // Это для проверки в консоли
-    
     window.currentDiaryType = type;
     
     const titleEl = document.getElementById('diary-title');
     if (titleEl) titleEl.innerText = title;
 
-    // Скрываем все страницы
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
     
-    // Показываем страницу записей
     const diaryPage = document.getElementById('view-diary-details');
     if (diaryPage) {
         diaryPage.classList.add('active');
@@ -43,12 +39,12 @@ function renderDiaryEntries() {
     const entries = window.appData.mental[type] || [];
     
     if (entries.length === 0) {
-        list.innerHTML = <p style="text-align:center; color:var(--text-sec); margin-top:50px;">Записей пока нет...</p>;
+        // ИСПРАВЛЕНО: Добавлены кавычки ` `
+        list.innerHTML = `<p style="text-align:center; color:var(--text-sec); margin-top:50px;">Записей пока нет...</p>`;
         return;
     }
 
     entries.forEach((item, index) => {
-        // Проверка: если запись старая (просто текст), делаем заглушку даты
         const text = typeof item === 'object' ? item.text : item;
         const date = typeof item === 'object' ? item.date : "";
 
@@ -64,7 +60,7 @@ function renderDiaryEntries() {
                         <span class="material-icons-round" style="font-size:20px; color:var(--danger); cursor:pointer;" onclick="deleteDiaryEntry(${index})">delete_outline</span>
                     </div>
                 </div>
-                ${date ? <span style="font-size:12px; color:var(--text-sec); margin-left:22px;">${date}</span> : ''}
+                ${date ? `<span style="font-size:12px; color:var(--text-sec); margin-left:22px;">${date}</span>` : ''}
             </div>
         `;
         list.appendChild(div);
@@ -81,11 +77,9 @@ function addDiaryEntry() {
 
     const text = prompt(question);
     if (text && text.trim() !== "") {
-        // Создаем текущую дату в формате "04.01.2026"
         const now = new Date();
         const dateStr = now.toLocaleDateString('ru-RU'); 
 
-        // Сохраняем как объект
         const newEntry = {
             text: text.trim(),
             date: dateStr
@@ -109,8 +103,6 @@ function deleteDiaryEntry(index) {
 function editDiaryEntry(index) {
     const type = window.currentDiaryType;
     const entry = window.appData.mental[type][index];
-    
-    // Получаем старый текст в зависимости от формата (объект или строка)
     const oldText = typeof entry === 'object' ? entry.text : entry;
     
     const newText = prompt("Редактировать запись:", oldText);
@@ -118,8 +110,10 @@ function editDiaryEntry(index) {
         if (typeof entry === 'object') {
             window.appData.mental[type][index].text = newText.trim();
         } else {
-            // Если была старая строка, превращаем её в объект с текущей датой
-            window.appData.mental[type][index] = { text: newText.trim(), date: new Date().toLocaleDateString('ru-RU') };
+            window.appData.mental[type][index] = { 
+                text: newText.trim(), 
+                date: new Date().toLocaleDateString('ru-RU') 
+            };
         }
         if (typeof saveData === 'function') saveData();
         renderDiaryEntries();
