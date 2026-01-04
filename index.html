@@ -11,9 +11,7 @@
 
     <div id="view-goals" class="page active">
         <header class="app-header">
-            <h1 id="year-title" onclick="editYearTitle()">2026 
-                <span class="material-icons-round">edit</span>
-            </h1>
+            <h1 id="year-title" onclick="editYearTitle()">2026 <span class="material-icons-round" style="font-size: 16px; opacity: 0.5;">edit</span></h1>
         </header>
         
         <div class="total-progress-wrapper">
@@ -28,7 +26,6 @@
         
         <div class="content-container">
             <div id="goals-list"></div> 
-            
             <button class="add-category-btn" onclick="addCategory()">
                 <span class="material-icons-round">add</span>
                 Добавить категорию
@@ -37,19 +34,18 @@
     </div>
 
     <div id="view-goal-details" class="page">
-        <header class="category-header">
+        <header class="app-header with-back">
             <button class="icon-btn" onclick="goBackToGoals()">
                 <span class="material-icons-round">arrow_back_ios</span>
             </button>
             <h2 id="category-title">Название</h2>
             <button class="icon-btn" onclick="deleteCurrentCategory()">
-                <span class="material-icons-round" style="color: var(--danger)">delete_outline</span>
+                <span class="material-icons-round">delete_outline</span>
             </button>
         </header>
 
         <div class="content-container">
             <div id="tasks-list"></div>
-            
             <div class="input-area">
                 <input type="text" id="new-task-input" placeholder="Новая задача...">
                 <button onclick="addTask()">
@@ -60,28 +56,40 @@
     </div>
 
     <div id="view-mental" class="page">
-        <header class="app-header">
-            <h1>Здоровье</h1>
-        </header>
+        <header class="app-header"><h2>Здоровье</h2></header>
         <div class="content-container">
-            <div class="goal-card water-card">
-                <div style="display:flex; justify-content:space-between; align-items:center">
-                    <span style="font-size: 18px; font-weight: 600;">Вода: <b id="water-current">0</b> / <span id="water-goal">2000</span> мл</span>
+            <div class="card water-card"> <div style="display:flex; justify-content:space-between; align-items:center">
+                    <span>Вода: <b id="water-current">0</b> / <span id="water-goal">2000</span> мл</span>
                     <span class="material-icons-round" onclick="settingsWater()" style="cursor:pointer; opacity:0.5">settings</span>
                 </div>
                 <div id="glasses-list" style="margin-top:15px; display:flex; flex-wrap:wrap; gap:10px"></div>
             </div>
 
             <div class="mental-grid" style="display:grid; grid-template-columns:1fr 1fr; gap:15px; margin-top:20px">
-                <button class="goal-card" onclick="openDiary('gratitude', 'Благодарность')" style="font-size: 16px; font-weight: 600;">Благодарность</button>
-                <button class="goal-card" onclick="openDiary('emotions', 'Эмоции')" style="font-size: 16px; font-weight: 600;">Эмоции</button>
+                <button id="btn-gratitude" class="goal-card" onclick="openDiary('gratitude', 'Дневник благодарности')">Благодарность</button>
+                <button class="goal-card" onclick="openDiary('emotions', 'Дневник эмоций')">Эмоции</button>
             </div>
         </div>
     </div>
 
-    <div id="view-lists" class="page center-content"><header class="app-header"><h1>Списки</h1></header></div>
-    <div id="view-diary" class="page center-content"><header class="app-header"><h1>Дневник</h1></header></div>
-    <div id="view-checklist" class="page center-content"><header class="app-header"><h1>Чек-лист</h1></header></div>
+    <div id="view-diary-details" class="page">
+        <header class="app-header with-back">
+            <button class="icon-btn" onclick="switchTab('view-mental', document.querySelector('.nav-item:nth-child(2)'))">
+                <span class="material-icons-round">arrow_back_ios</span>
+            </button>
+            <h2 id="diary-title">Записи</h2>
+        </header>
+        <div class="content-container">
+            <div id="diary-content-list"></div>
+            <button class="add-category-btn" id="add-diary-btn">
+                <span class="material-icons-round">add</span> Добавить запись
+            </button>
+        </div>
+    </div>
+
+    <div id="view-lists" class="page center-content"><h2>Списки</h2></div>
+    <div id="view-diary" class="page center-content"><h2>Дневник</h2></div>
+    <div id="view-checklist" class="page center-content"><h2>Чек-лист</h2></div>
 
     <nav class="bottom-nav">
         <button class="nav-item active" onclick="switchTab('view-goals', this)">
@@ -106,10 +114,10 @@
         </button>
     </nav>
     
-    <script src="script.js"></script>
+    <script src="script.js"></script> 
     <script src="mental.js"></script>
     <script src="lists.js"></script>
-    <script src="diary_tab.js"></script>
+    <script src="diary_tab.js"></script> 
     <script src="checklist.js"></script>
 
 </body>
