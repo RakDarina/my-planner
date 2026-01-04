@@ -169,3 +169,12 @@ function deleteTask(idx) {
     cat.tasks.splice(idx, 1);
     saveData(); renderTasks();
 }
+
+function editYearTitle() {
+    const newYear = prompt("Введите заголовок (например, 2026):", window.appData.year);
+    if (newYear !== null && newYear.trim() !== "") {
+        window.appData.year = newYear.trim();
+        saveData(); // Сохраняем в localStorage
+        updateYearDisplay(); // Обновляем текст на экране
+    }
+}
