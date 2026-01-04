@@ -1,37 +1,57 @@
-let appData = JSON.parse(localStorage.getItem('myPlannerData')) || {
+// Проверка загрузки данных
+let appData = {
     year: "2026",
-    categories: [
-        { id: 1, title: "Обязательно", tasks: [] }
-    ]
+    categories: [{ id: 1, title: "Обязательно", tasks: [] }]
 };
 
-let currentCatId = null;
-
-window.onload = () => {
-    const yearEl = document.getElementById('year-title');
-    if(yearEl) {
-        yearEl.innerHTML = `${appData.year} <span class="material-icons-round" style="font-size: 16px; opacity: 0.5;">edit</span>`;
-    }
-    renderCategories();
-};
+try {
+    const saved = localStorage.getItem('myPlannerData');
+    if (saved) appData = JSON.parse(saved);
+} catch (e) {
+    console.log("Ошибка загрузки данных");
+}
 
 function saveData() {
     localStorage.setItem('myPlannerData', JSON.stringify(appData));
 }
 
+// Главная функция запуска
+window.onload = function() {
+    renderCategories();
+    const yearEl = document.getElementById('year-title');
+    if (yearEl) {
+        yearEl.innerHTML = `${appData.year} <span class="material-icons-round" style="font-size: 16px; opacity: 0.5;">edit</span>`;
+    }
+    
+    // Настройка клика по заголовку категории
+    const catTitle = document.getElementById('category-title');
+    if (catTitle) {
+        catTitle.onclick = function() {
+            const cat = appData.categories.find(c => c.id === currentCatId);
+            if (!cat) return;
+            const newName = prompt("Новое название категории:", cat.title);
+            if (newName) {
+                cat.title = newName;
+                catTitle.innerText = newName;
+                saveData();
+                renderCategories();
+            }
+        };
+    }
+};
+
+let currentCatId = null;
+
 function renderCategories() {
     const list = document.getElementById('goals-list');
-    if(!list) return;
+    if (!list) return;
     list.innerHTML = '';
     
     appData.categories.forEach(cat => {
         const div = document.createElement('div');
         div.className = 'goal-card';
-        div.innerHTML = `
-            <span>${cat.title}</span>
-            <span class="material-icons-round" style="color:#ccc">chevron_right</span>
-        `;
-        div.onclick = () => openCategory(cat.id);
+        div.innerHTML = `<span>${cat.title}</span><span class="material-icons-round" style="color:#ccc">chevron_right</span>`;
+        div.onclick = function() { openCategory(cat.id); };
         list.appendChild(div);
     });
 }
@@ -39,6 +59,7 @@ function renderCategories() {
 function openCategory(id) {
     currentCatId = id;
     const cat = appData.categories.find(c => c.id === id);
+    if (!cat) return;
     document.getElementById('category-title').innerText = cat.title;
     document.getElementById('view-goals').classList.remove('active');
     document.getElementById('view-goal-details').classList.add('active');
@@ -47,7 +68,7 @@ function openCategory(id) {
 
 function renderTasks() {
     const list = document.getElementById('tasks-list');
-    if(!list) return;
+    if (!list) return;
     list.innerHTML = '';
     const cat = appData.categories.find(c => c.id === currentCatId);
     
@@ -63,15 +84,14 @@ function renderTasks() {
                 <button class="icon-btn" onclick="deleteTask(${index}); event.stopPropagation();">
                     <span class="material-icons-round" style="color:#FF3B30">delete_outline</span>
                 </button>
-            </div>
-        `;
+            </div>`;
         list.appendChild(item);
     });
 }
 
 function addTask() {
     const input = document.getElementById('new-task-input');
-    if(!input || !input.value.trim()) return;
+    if (!input || !input.value.trim()) return;
     const cat = appData.categories.find(c => c.id === currentCatId);
     cat.tasks.push(input.value.trim());
     input.value = '';
@@ -88,7 +108,7 @@ function deleteTask(idx) {
 
 function addCategory() {
     const name = prompt("Название новой категории:");
-    if(name) {
+    if (name) {
         appData.categories.push({ id: Date.now(), title: name, tasks: [] });
         saveData();
         renderCategories();
@@ -96,7 +116,7 @@ function addCategory() {
 }
 
 function deleteCurrentCategory() {
-    if(confirm("Удалить эту категорию полностью?")) {
+    if (confirm("Удалить категорию?")) {
         appData.categories = appData.categories.filter(c => c.id !== currentCatId);
         saveData();
         renderCategories();
@@ -118,21 +138,9 @@ function switchTab(id, btn) {
 
 function editYearTitle() {
     const newYear = prompt("Изменить заголовок:", appData.year);
-    if(newYear) {
+    if (newYear) {
         appData.year = newYear;
         document.getElementById('year-title').innerHTML = `${newYear} <span class="material-icons-round" style="font-size: 16px; opacity: 0.5;">edit</span>`;
         saveData();
     }
 }
-
-// Редактирование названия категории по клику на заголовок
-document.getElementById('category-title').onclick = () => {
-    const cat = appData.categories.find(c => c.id === currentCatId);
-    const newName = prompt("Новое название категории:", cat.title);
-    if(newName) {
-        cat.title = newName;
-        document.getElementById('category-title').innerText = newName;
-        saveData();
-        renderCategories();
-    }
-};
