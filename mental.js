@@ -444,11 +444,12 @@ function renderSleepChart() {
 }
 
 let currentCalDate = new Date();
+// Настройки цикла по умолчанию
 if (!window.appData.cycle) {
     window.appData.cycle = {
-        periodDays: [], // Список дат, когда были месячные (формат YYYY-MM-DD)
-        cycleLength: 28,
-        periodLength: 5
+        periodDays: [], 
+        cycleLength: 28, // Средний цикл
+        periodLength: 5  // Длительность месячных
     };
 }
 
@@ -463,7 +464,6 @@ function renderCalendar() {
     
     monthYearLabel.innerText = new Intl.DateTimeFormat('ru-RU', { month: 'long', year: 'numeric' }).format(currentCalDate);
 
-    // Дни недели
     ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'].forEach(day => {
         grid.innerHTML += `<div class="day-name">${day}</div>`;
     });
@@ -472,55 +472,87 @@ function renderCalendar() {
     const daysInMonth = new Date(year, month + 1, 0).getDate();
     const offset = firstDay === 0 ? 6 : firstDay - 1;
 
-    // Пустые ячейки для начала месяца
     for (let i = 0; i < offset; i++) grid.innerHTML += '<div></div>';
 
-    // Заполнение числами
+    // РАСЧЕТ ПРОГНОЗА И ФЕРТИЛЬНОСТИ
+    // Берем самую последнюю дату начала месячных
+    const sortedStarts = [...window.appData.cycle.periodDays]
+        .filter(d => d.isStart)
+        .sort((a, b) => new Date(a.date) - new Date(b.date));
+    
+    const lastStart = sortedStarts.length > 0 ? new Date(sortedStarts[sortedStarts.length - 1].date) : null;
+
     for (let day = 1; day <= daysInMonth; day++) {
-        const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-        const isPeriod = window.appData.cycle.periodDays.includes(dateStr);
-        const isToday = new Date().toDateString() === new Date(year, month, day).toDateString();
-        
-        // Логика фертильности (упрощенно: середина цикла, если была отметка)
-        // В будущем сюда можно добавить полноценный расчет прогноза
+        const currentIterDate = new Date(year, month, day);
+        const dateStr = currentIterDate.toISOString().split('T')[0];
         
         let classes = 'calendar-day';
+        
+        // 1. Проверка: Отмеченные месячные (красные)
+        const isPeriod = window.appData.cycle.periodDays.some(d => d.date === dateStr);
         if (isPeriod) classes += ' day-period';
-        if (isToday) classes += ' day-today';
 
-        grid.innerHTML += `<div class="${classes}" onclick="togglePeriodDate('${dateStr}')">${day}</div>`;
+        // 2. Проверка: Сегодняшний день
+        if (new Date().toDateString() === currentIterDate.toDateString()) classes += ' day-today';
+
+        // 3. Логика ПРОГНОЗА и ФЕРТИЛЬНОСТИ (если есть хоть одна точка отсчета)
+        if (lastStart && !isPeriod) {
+            const diffTime = currentIterDate - lastStart;
+            const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+            
+            // Прогноз следующего цикла (через cycleLength дней)
+            if (diffDays > 0 && diffDays % window.appData.cycle.cycleLength < window.appData.cycle.periodLength) {
+                classes += ' day-prediction';
+            }
+
+            // Фертильность (синий): обычно 11-16 дни цикла
+            const cycleDay = diffDays % window.appData.cycle.cycleLength;
+            if (cycleDay >= 10 && cycleDay <= 15) {
+                classes += ' day-fertile';
+            }
+        }
+
+        grid.innerHTML += `<div class="${classes}" onclick="handleDayClick('${dateStr}')">${day}</div>`;
     }
-    
     updateCycleTips();
 }
 
-function togglePeriodDate(dateStr) {
-    const index = window.appData.cycle.periodDays.indexOf(dateStr);
-    if (index > -1) {
-        window.appData.cycle.periodDays.splice(index, 1);
+function handleDayClick(dateStr) {
+    const startDate = new Date(dateStr);
+    
+    // Проверяем, есть ли уже запись на эту дату
+    const existingIndex = window.appData.cycle.periodDays.findIndex(d => d.date === dateStr);
+
+    if (existingIndex > -1) {
+        // Если нажали на уже отмеченный день — удаляем всю цепочку из 5 дней
+        const wasStart = window.appData.cycle.periodDays[existingIndex].isStart;
+        if (wasStart) {
+            window.appData.cycle.periodDays = window.appData.cycle.periodDays.filter(d => {
+                const dDate = new Date(d.date);
+                const diff = (dDate - startDate) / (1000 * 60 * 60 * 24);
+                return !(diff >= 0 && diff < 5);
+            });
+        } else {
+            // Если нажали на "середину" периода, просто удаляем этот один день
+            window.appData.cycle.periodDays.splice(existingIndex, 1);
+        }
     } else {
-        window.appData.cycle.periodDays.push(dateStr);
+        // Добавляем 5 дней начиная с выбранного
+        for (let i = 0; i < 5; i++) {
+            const nextDay = new Date(startDate);
+            nextDay.setDate(startDate.getDate() + i);
+            const nextDayStr = nextDay.toISOString().split('T')[0];
+            
+            // Чтобы не дублировать, если день уже был отмечен
+            if (!window.appData.cycle.periodDays.some(d => d.date === nextDayStr)) {
+                window.appData.cycle.periodDays.push({
+                    date: nextDayStr,
+                    isStart: i === 0 // Помечаем первый день как начало для корректного удаления
+                });
+            }
+        }
     }
+    
     saveData();
     renderCalendar();
 }
-
-function changeMonth(dir) {
-    currentCalDate.setMonth(currentCalDate.getMonth() + dir);
-    renderCalendar();
-}
-
-function updateCycleTips() {
-    const tipsEl = document.getElementById('cycle-tips');
-    // Здесь можно добавить логику: если день = период, показывать одни советы, если нет - другие
-    const isPeriodToday = window.appData.cycle.periodDays.includes(new Date().toISOString().split('T')[0]);
-    
-    if (isPeriodToday) {
-        tipsEl.innerHTML = `<b>Период:</b> Возможна слабость и боли. Рекомендуется йога, тепло и покой. Избегай сильных нагрузок.`;
-    } else {
-        tipsEl.innerHTML = `<b>Фаза фолликулярная:</b> Время прилива энергии! Отличное время для обучения, новых дел и активного спорта.`;
-    }
-}
-
-// Инициализация при загрузке
-window.addEventListener('DOMContentLoaded', renderCalendar);
