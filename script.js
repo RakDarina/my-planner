@@ -8,10 +8,13 @@ let currentCatId = null;
 window.onload = () => {
     renderCategories();
     updateYearDisplay();
+    updateTotalProgress(); // Показываем прогресс при запуске
 };
 
+// --- СОХРАНЕНИЕ ---
 function saveData() {
     localStorage.setItem('myPlannerData', JSON.stringify(appData));
+    updateTotalProgress(); // Считаем прогресс каждый раз при сохранении
 }
 
 function updateYearDisplay() {
@@ -19,19 +22,56 @@ function updateYearDisplay() {
     if (yearEl) yearEl.innerHTML = `${appData.year} <span class="material-icons-round" style="font-size:16px; opacity:0.5">edit</span>`;
 }
 
-// --- РАБОТА С КАТЕГОРИЯМИ ---
+// --- ПРОГРЕСС-БАРЫ ---
+function updateTotalProgress() {
+    let allTasks = [];
+    appData.categories.forEach(c => {
+        allTasks = allTasks.concat(c.tasks);
+    });
 
+    const total = allTasks.length;
+    const completed = allTasks.filter(t => t.completed).length;
+    const percent = total > 0 ? Math.round((completed / total) * 100) : 0;
+
+    const fill = document.getElementById('total-progress-fill');
+    const text = document.getElementById('total-percent');
+    
+    if (fill && text) {
+        fill.style.width = percent + '%';
+        text.innerText = percent + '%';
+    }
+}
+
+// --- РАБОТА С КАТЕГОРИЯМИ ---
 function renderCategories() {
     const list = document.getElementById('goals-list');
     if (!list) return;
     list.innerHTML = '';
+    
     appData.categories.forEach(cat => {
+        // Считаем % для конкретной категории
+        const total = cat.tasks.length;
+        const done = cat.tasks.filter(t => t.completed).length;
+        const percent = total > 0 ? Math.round((done / total) * 100) : 0;
+
         const div = document.createElement('div');
         div.className = 'goal-card';
-        div.innerHTML = `<span>${cat.title}</span><span class="material-icons-round" style="color:#ccc">chevron_right</span>`;
+        // Добавляем верстку с полоской внутри карточки
+        div.innerHTML = `
+            <div style="width: 100%;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px">
+                    <span style="font-weight:600">${cat.title}</span>
+                    <span style="font-size:12px; color:#8e8e93">${percent}%</span>
+                </div>
+                <div class="progress-container" style="height:6px">
+                    <div class="progress-fill" style="width: ${percent}%"></div>
+                </div>
+            </div>
+        `;
         div.onclick = () => openCategory(cat.id);
         list.appendChild(div);
     });
+    updateTotalProgress();
 }
 
 function openCategory(id) {
@@ -40,7 +80,6 @@ function openCategory(id) {
     const titleEl = document.getElementById('category-title');
     titleEl.innerText = cat.title;
     
-    // Добавляем возможность редактировать заголовок категории по клику
     titleEl.onclick = () => {
         const newName = prompt("Новое название категории:", cat.title);
         if (newName) {
@@ -57,7 +96,6 @@ function openCategory(id) {
 }
 
 // --- РАБОТА С ЗАДАЧАМИ ---
-
 function renderTasks() {
     const list = document.getElementById('tasks-list');
     if (!list) return;
@@ -65,7 +103,6 @@ function renderTasks() {
     const cat = appData.categories.find(c => c.id === currentCatId);
     
     cat.tasks.forEach((taskObj, index) => {
-        // Если задача была просто строкой, превращаем её в объект для подзадач
         if (typeof taskObj === 'string') {
             cat.tasks[index] = { text: taskObj, completed: false, subs: [] };
             taskObj = cat.tasks[index];
@@ -79,7 +116,7 @@ function renderTasks() {
                     <span class="material-icons-round" style="margin-right:10px; color:${taskObj.completed ? '#4caf50' : '#4A90E2'}" onclick="toggleTaskDone(${index}); event.stopPropagation();">
                         ${taskObj.completed ? 'check_circle' : 'radio_button_unchecked'}
                     </span>
-                    <span class="task-text ${taskObj.completed ? 'done' : ''}" id="task-val-${index}">${taskObj.text}</span>
+                    <span class="task-text ${taskObj.completed ? 'done' : ''}">${taskObj.text}</span>
                 </div>
                 <div class="task-controls">
                     <button class="icon-btn" onclick="editTask(${index}); event.stopPropagation();">
@@ -130,8 +167,6 @@ function toggleTaskDone(idx) {
     renderTasks();
 }
 
-// --- ПОДЗАДАЧИ (ШАГИ) ---
-
 function toggleSubtasks(idx) {
     const el = document.getElementById(`subs-${idx}`);
     el.style.display = el.style.display === 'none' ? 'block' : 'none';
@@ -173,8 +208,6 @@ function toggleSubDone(tIdx, sIdx) {
     renderSubTasks(tIdx);
 }
 
-// --- ВСПОМОГАТЕЛЬНЫЕ ---
-
 function deleteTask(idx) {
     if (confirm("Удалить задачу?")) {
         const cat = appData.categories.find(c => c.id === currentCatId);
@@ -194,6 +227,7 @@ function deleteCurrentCategory() {
 }
 
 function goBackToGoals() {
+    renderCategories(); // Обновляем прогресс на главном при возврате
     document.getElementById('view-goal-details').classList.remove('active');
     document.getElementById('view-goals').classList.add('active');
 }
