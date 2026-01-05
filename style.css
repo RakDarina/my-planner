@@ -18,7 +18,7 @@
 body {
     background-color: var(--bg-body);
     padding-bottom: 120px;
-    overflow-x: hidden; /* Фикс вылетов */
+    overflow-x: hidden;
     width: 100%;
 }
 
@@ -74,7 +74,6 @@ body {
     word-break: break-word;      
 }
 
-/* ПУНКТИРНАЯ КНОПКА */
 .add-category-btn {
     width: 100%;
     background: none;
@@ -161,7 +160,7 @@ body {
 .nav-item { background: none; border: none; color: var(--text-sec); display: flex; flex-direction: column; align-items: center; flex: 1; }
 .nav-item.active { color: var(--primary); }
 
-/* ВОДА */
+/* --- ТРЕКЕР ВОДЫ (ОБНОВЛЕННЫЙ) --- */
 .glass-icon {
     width: 45px; height: 55px;
     border: 3px solid #e1f5fe;
@@ -169,21 +168,30 @@ body {
     border-radius: 4px 4px 12px 12px;
     position: relative; cursor: pointer;
     transition: all 0.3s ease;
-    background: rgba(255, 255, 255, 0.5);
+    background: rgba(255, 255, 255, 0.8);
     overflow: hidden;
-    box-shadow: inset 0 0 5px rgba(0,0,0,0.05);
+    box-shadow: inset 0 2px 5px rgba(0,0,0,0.05);
 }
 
 .glass-icon .water {
-    position: absolute; bottom: 0; left: 0; width: 100%; height: 0%; 
+    position: absolute; bottom: 0; left: 0; width: 100%; height: 0; 
     background: linear-gradient(180deg, #4fc3f7 0%, #2196f3 100%);
 }
 
-.glass-icon.animating .water { transition: height 1s cubic-bezier(0.4, 0, 0.2, 1); }
+/* Анимация наполнения стакана */
+.glass-icon.animating .water {
+    animation: fillWater 0.8s ease-out forwards;
+}
+
+@keyframes fillWater {
+    from { height: 0; }
+    to { height: 85%; }
+}
+
 .glass-icon.active { border-color: #2196f3; }
 .glass-icon.active .water { height: 85%; }
 
-/* --- ИСПРАВЛЕНИЯ ПОЛЕЙ ВВОДА И ВЫЛЕТОВ ДАТЫ --- */
+/* --- ИСПРАВЛЕНИЯ ПОЛЕЙ ВВОДА --- */
 input[type="text"], 
 input[type="number"], 
 input[type="date"], 
@@ -193,7 +201,7 @@ select {
     font-size: 16px !important; 
     width: 100% !important;
     max-width: 100% !important;
-    box-sizing: border-box !important; /* ГЛАВНЫЙ ФИКС ДАТЫ */
+    box-sizing: border-box !important;
     padding: 12px !important;
     -webkit-appearance: none;
 }
@@ -218,9 +226,7 @@ select {
     overflow: hidden;
 }
 
-/* --- КНОПКИ УПРАВЛЕНИЯ (ДНЕВНИК И СПИСКИ) --- */
-
-/* Списки оставляем с центровкой (center) */
+/* --- КАРТОЧКИ И СПИСКИ --- */
 .item-card {
     background: #fff;
     padding: 15px;
@@ -233,7 +239,6 @@ select {
     box-shadow: 0 2px 8px rgba(0,0,0,0.05);
 }
 
-/* Дневник делаем с выравниванием по верху (flex-start) */
 .diary-card {
     background: #fff;
     padding: 15px;
@@ -241,19 +246,18 @@ select {
     border-radius: 15px;
     display: flex;
     flex-direction: row;
-    align-items: flex-start; /* ДАТА ТЕПЕРЬ БУДЕТ ВВЕРХУ */
+    align-items: flex-start; 
     justify-content: space-between;
     box-shadow: 0 2px 8px rgba(0,0,0,0.05);
 }
 
-/* Настройка самой цифры даты */
 .diary-day-number {
     font-size: 18px;
     font-weight: 800;
     color: var(--primary);
     min-width: 28px;
-    line-height: 1.4; /* Выравнивание по высоте первой строки текста */
-    margin-top: 2px;  /* Микро-корректировка, чтобы цифра была ровно по тексту */
+    line-height: 1.4;
+    margin-top: 2px;
 }
 
 .item-controls, .diary-controls {
@@ -261,7 +265,7 @@ select {
     flex-direction: row;
     gap: 10px;
     flex-shrink: 0;
-    align-self: flex-start; /* Чтобы кнопки тоже не улетали вниз в длинных записях */
+    align-self: flex-start;
 }
 
 .btn-control {
@@ -277,10 +281,7 @@ select {
     color: #333;
 }
 
-.btn-control span {
-    font-size: 20px !important;
-}
-
+.btn-control span { font-size: 20px !important; }
 .delete-btn { color: #ff4d4d !important; background: #fff0f0 !important; }
 .edit-btn { color: #4a90e2 !important; background: #eef5ff !important; }
 
@@ -294,12 +295,8 @@ select {
 }
 .mood-pixel:active { transform: scale(0.9); }
 
-/* Цвета настроения */
 .mood-pixel.good { background-color: #4CD964 !important; }
 .mood-pixel.neutral { background-color: #007AFF !important; }
 .mood-pixel.bad { background-color: #FF3B30 !important; }
 
-/* Плавная диаграмма */
-#mood-pie-chart {
-    transition: background 0.5s ease;
-}
+#mood-pie-chart { transition: background 0.5s ease; }
