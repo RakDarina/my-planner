@@ -303,3 +303,58 @@ select {
 #mood-pie-chart {
     transition: background 0.5s ease;
 }
+
+/* Пункты чек-листа */
+.checklist-item {
+    display: flex;
+    align-items: center;
+    background: white;
+    padding: 15px;
+    border-radius: 12px;
+    margin-bottom: 8px;
+    gap: 12px;
+    transition: all 0.3s ease;
+}
+
+.checklist-checkbox {
+    width: 24px;
+    height: 24px;
+    border: 2px solid var(--primary);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.checklist-checkbox span {
+    font-size: 18px;
+    color: white;
+    display: none; /* Скрыта по умолчанию */
+}
+
+.checklist-text {
+    font-size: 16px;
+    color: #333;
+    transition: all 0.3s ease;
+}
+
+/* Состояние "Выполнено" */
+.checklist-item.completed {
+    background: #f9f9f9;
+}
+
+.checklist-item.completed .checklist-checkbox {
+    background: var(--primary);
+    border-color: var(--primary);
+}
+
+.checklist-item.completed .checklist-checkbox span {
+    display: block;
+}
+
+.checklist-item.completed .checklist-text {
+    color: #aaa;
+    text-decoration: line-through;
+}
