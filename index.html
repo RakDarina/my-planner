@@ -177,7 +177,29 @@
         </div>
     </div>
 
-    <div id="view-diary" class="page center-content"><h2>Дневник</h2></div>
+    <div id="view-diary" class="page">
+        <header class="app-header">
+            <h2 style="text-align: center; width: 100%; padding-top: 20px;">Воспоминания</h2>
+        </header>
+
+        <div class="month-navigator" style="display: flex; justify-content: space-between; align-items: center; background: white; padding: 15px 20px; border-radius: 16px; margin: 10px 20px 20px 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.03);">
+            <button onclick="changeDiaryMonth(-1)" style="background: none; border: none; color: #aaa; cursor: pointer;">
+                <span class="material-icons-round">chevron_left</span>
+            </button>
+            <span id="diary-month-title" style="font-size: 18px; font-weight: bold; color: var(--primary);">Январь 2026</span>
+            <button onclick="changeDiaryMonth(1)" style="background: none; border: none; color: #aaa; cursor: pointer;">
+                <span class="material-icons-round">chevron_right</span>
+            </button>
+        </div>
+
+        <div class="content-container">
+            <div id="diary-list-container"></div>
+            
+            <button class="add-category-btn" onclick="openDiaryModal()" style="margin-top: 20px;">
+                <span class="material-icons-round">edit_note</span> Добавить воспоминание
+            </button>
+        </div>
+    </div>
     <div id="view-checklist" class="page center-content"><h2>Чек-лист</h2></div>
 
     <nav class="bottom-nav">
@@ -291,6 +313,23 @@
             <div style="display:flex; gap:10px;">
                 <button onclick="closeSleepModal()" style="flex:1; padding:15px; border:none; background:#f0f0f0; border-radius:14px; font-weight:600;">Отмена</button>
                 <button onclick="saveSleepEntry()" style="flex:1; padding:15px; border:none; background:var(--primary); color:white; border-radius:14px; font-weight:600;">Сохранить</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-diary" class="modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:2200; align-items:center; justify-content:center;">
+        <div style="background:white; width:92%; max-width:400px; padding:25px; border-radius:24px; box-sizing:border-box;">
+            <h3 id="diary-modal-title" style="margin-top:0">Новая запись</h3>
+            
+            <label style="font-size:14px; color:#666;">Дата:</label>
+            <input type="date" id="diary-date-input" style="width:100%; padding:14px; border:1px solid #eee; border-radius:12px; margin-bottom:15px; box-sizing:border-box; background:#f9f9f9; font-family:inherit;">
+            
+            <label style="font-size:14px; color:#666;">Воспоминание:</label>
+            <textarea id="diary-text-input" rows="5" placeholder="Дорогой дневник..." style="width:100%; padding:14px; border:1px solid #eee; border-radius:12px; margin-bottom:20px; box-sizing:border-box; resize:none; font-family:inherit;"></textarea>
+
+            <div style="display:flex; gap:10px;">
+                <button onclick="closeDiaryModal()" style="flex:1; padding:15px; border:none; background:#f0f0f0; border-radius:14px; font-weight:600;">Отмена</button>
+                <button onclick="saveDiaryEntry()" style="flex:1; padding:15px; border:none; background:var(--primary); color:white; border-radius:14px; font-weight:600;">Сохранить</button>
             </div>
         </div>
     </div>
