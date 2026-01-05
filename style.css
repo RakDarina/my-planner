@@ -1,24 +1,332 @@
-:root { --primary: #4A90E2; --bg-body: #F4F6F8; --bg-card: #FFFFFF; --text-main: #1C1C1E; --text-sec: #8E8E93; --danger: #FF3B30; --nav-height: 75px; }
-* { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, sans-serif; }
-body { background: var(--bg-body); padding-bottom: 100px; }
-.page { display: none; flex-direction: column; width: 100%; }
+:root {
+    --primary: #4A90E2;
+    --bg-body: #F4F6F8;
+    --bg-card: #FFFFFF;
+    --text-main: #1C1C1E;
+    --text-sec: #8E8E93;
+    --danger: #FF3B30;
+    --nav-height: 75px; 
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+body {
+    background-color: var(--bg-body);
+    padding-bottom: 120px;
+}
+
+/* --- СТРАНИЦЫ --- */
+.page { display: none; flex-direction: column; min-height: 100vh; }
 .page.active { display: flex; }
-.app-header { padding: 40px 20px 10px; }
-.content-container { padding: 0 15px; }
-.goal-card, .card { background: white; padding: 20px; border-radius: 20px; margin-bottom: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
-.add-category-btn { width: 100%; padding: 20px; border: 2px dashed #ccc; border-radius: 20px; background: none; color: #888; cursor: pointer; margin: 10px 0; }
-.bottom-nav { position: fixed; bottom: 0; width: 100%; height: var(--nav-height); background: white; border-top: 1px solid #eee; display: flex; z-index: 1000; }
-.nav-item { flex: 1; border: none; background: none; color: #ccc; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 10px; }
+
+/* --- ШАПКА И ПРОГРЕСС --- */
+.app-header { padding: 40px 20px 10px 20px; }
+.app-header h1 { font-size: 34px; font-weight: 800; display: flex; align-items: center; gap: 10px; }
+
+.total-progress-wrapper {
+    padding: 20px; /* Отступ от заголовка */
+    margin-bottom: 10px;
+}
+
+.total-progress-info {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    font-size: 14px;
+    color: var(--text-sec);
+}
+
+.progress-container {
+    background: #E5E5EA;
+    border-radius: 10px;
+    height: 8px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    background: var(--primary);
+    height: 100%;
+    transition: width 0.3s;
+}
+
+/* --- КАРТОЧКИ КАТЕГОРИЙ --- */
+.content-container { padding: 0 20px; }
+
+.goal-card {
+    background: var(--bg-card);
+    padding: 22px;
+    border-radius: 20px;
+    margin-bottom: 15px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+}
+
+/* ПУНКТИРНАЯ КНОПКА (ИСПРАВЛЕНИЕ) */
+.add-category-btn {
+    width: 100%;
+    background: none;
+    border: 2px dashed #D1D1D6;
+    border-radius: 20px;
+    padding: 25px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    color: var(--text-sec);
+    font-size: 16px;
+    margin-top: 10px;
+    cursor: pointer;
+}
+
+.add-category-btn .material-icons-round { font-size: 28px; }
+
+/* --- ЗАДАЧИ --- */
+.task-item {
+    background: var(--bg-card);
+    border-radius: 20px;
+    margin-bottom: 15px;
+    padding: 20px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+}
+
+.task-header { display: flex; align-items: center; justify-content: space-between; }
+.task-main { display: flex; align-items: center; gap: 12px; flex: 1; }
+.task-text { font-size: 18px; font-weight: 600; }
+.task-text.done { text-decoration: line-through; color: var(--text-sec); opacity: 0.6; }
+
+/* ВВОД ЗАДАЧИ ВНИЗУ (ИСПРАВЛЕНИЕ) */
+.input-area {
+    position: fixed;
+    bottom: var(--nav-height);
+    left: 0;
+    width: 100%;
+    background: var(--bg-body);
+    padding: 15px 20px;
+    display: flex;
+    gap: 10px;
+    z-index: 50;
+}
+
+.input-area input {
+    flex: 1;
+    background: white;
+    border: 1px solid #E5E5EA;
+    padding: 15px;
+    border-radius: 15px;
+    font-size: 16px;
+    outline: none;
+}
+
+.input-area button {
+    background: var(--primary);
+    color: white;
+    border: none;
+    width: 50px;
+    height: 50px;
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* ШАГИ */
+.sub-tasks { margin-top: 15px; display: flex; flex-direction: column; }
+.sub-task-row { display: flex; align-items: center; padding: 12px 0; border-top: 1px solid #F2F2F7; }
+.sub-input-line { display: flex; gap: 10px; margin-top: 10px; }
+.sub-input { flex: 1; background: #F2F2F7; border: none; padding: 12px; border-radius: 10px; outline: none; }
+
+/* НАВИГАЦИЯ */
+.bottom-nav {
+    position: fixed; bottom: 0; width: 100%; height: var(--nav-height);
+    background: white; border-top: 1px solid #E5E5EA;
+    display: flex; justify-content: space-around; align-items: center; padding-bottom: 15px;
+}
+.nav-item { background: none; border: none; color: var(--text-sec); display: flex; flex-direction: column; align-items: center; flex: 1; }
 .nav-item.active { color: var(--primary); }
-.modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 2000; align-items: center; justify-content: center; backdrop-filter: blur(5px); }
-.modal-content { background: white; width: 90%; max-width: 350px; padding: 25px; border-radius: 24px; }
-input, textarea { width: 100%; padding: 12px; border: 1px solid #eee; border-radius: 12px; margin: 10px 0; font-size: 16px; }
-.btn-save { background: var(--primary); color: white; border: none; padding: 12px; border-radius: 12px; font-weight: bold; flex: 1; }
-.btn-cancel { background: #eee; border: none; padding: 12px; border-radius: 12px; flex: 1; }
-.mood-pixel { aspect-ratio: 1; background: #eee; border-radius: 4px; }
-.mood-pixel.good { background: #4CD964; }
-.mood-pixel.neutral { background: #007AFF; }
-.mood-pixel.bad { background: #FF3B30; }
-.diary-card { background: white; padding: 15px; border-radius: 15px; margin-bottom: 10px; display: flex; align-items: center; gap: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-.diary-day-number { font-weight: 800; color: var(--primary); font-size: 20px; }
-.icon-btn { background: none; border: none; cursor: pointer; color: var(--primary); }
+
+/* Новое */
+/* Укрупняем шаги и чекбоксы в списке задач */
+.sub-task-row {
+    padding: 15px 0 !important;
+}
+
+.sub-task-row .material-icons-round {
+    font-size: 30px !important; /* Крупный квадрат чекбокса */
+    margin-right: 15px !important;
+}
+
+.sub-task-row span {
+    font-size: 19px !important; /* Крупный текст шага */
+}
+
+.sub-input {
+    font-size: 18px !important; /* Крупный текст в поле "Шаг..." */
+    padding: 15px !important;
+}
+
+/* Найти существующий .goal-card и добавить туда эти три строки */
+.goal-card {
+    /* ... твои старые стили ... */
+    word-wrap: break-word;       /* Перенос длинных слов */
+    overflow-wrap: break-word;   /* Современный стандарт переноса */
+    word-break: break-word;      /* Для поддержки старых браузеров */
+}
+/* Контейнер стакана */
+.glass-icon {
+    width: 45px;
+    height: 55px;
+    border: 3px solid #e1f5fe;
+    border-top: 2px solid rgba(225, 245, 254, 0.5); /* Верхний край едва заметен */
+    border-radius: 4px 4px 12px 12px;
+    position: relative;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: rgba(255, 255, 255, 0.5);
+    overflow: hidden; /* Чтобы вода не выливалась за края в коде */
+    box-shadow: inset 0 0 5px rgba(0,0,0,0.05);
+}
+
+/* Сама вода */
+.glass-icon .water {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 0%; 
+    background: linear-gradient(180deg, #4fc3f7 0%, #2196f3 100%);
+    /* Убираем постоянный transition отсюда */
+}
+
+/* Анимация только при добавлении класса .animating */
+.glass-icon.animating .water {
+    transition: height 1s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Эффект волны (оставляем как был) */
+.glass-icon .water::before {
+    content: "";
+    position: absolute;
+    top: -10px;
+    left: 0;
+    width: 200%;
+    height: 20px;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 40%;
+    animation: wave 3s infinite linear;
+    display: none;
+}
+
+.glass-icon.active {
+    border-color: #2196f3;
+}
+
+.glass-icon.active .water {
+    height: 85%; 
+}
+
+.glass-icon.active .water::before {
+    display: block; 
+}
+
+/* Фикс для полей даты, чтобы они не раздували окно на iOS */
+input[type="datetime-local"] {
+    -webkit-appearance: none;
+    min-height: 1.2em;
+}
+
+/* Принудительный сброс ширины для всех модалок */
+#sleep-modal > div, #water-modal > div {
+    max-width: 92% !important;
+    margin: 0 auto;
+}
+
+/* Контейнер для прокрутки графика */
+.chart-scroll-container {
+    width: 100%;
+    overflow-x: auto; /* Включаем горизонтальную прокрутку */
+    -webkit-overflow-scrolling: touch;
+    margin-bottom: 20px;
+}
+
+.chart-wrapper {
+    min-width: 600px; /* Фиксированная ширина, чтобы столбики не сужались */
+    height: 200px;
+}
+
+/* Исправление вылетов за рамки */
+#sleep-modal .modal-content, 
+#water-modal .modal-content {
+    width: 92% !important;
+    max-width: 350px;
+    box-sizing: border-box; /* Чтобы padding не раздувал ширину */
+}
+
+/* Скрытый список истории */
+#sleep-history-container {
+    display: none; /* По умолчанию скрыт */
+    margin-top: 15px;
+    border-top: 1px solid #eee;
+}
+
+/* Стили женского календаря */
+.cycle-tracker {
+    margin-top: 20px;
+    padding: 20px;
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+}
+
+.calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 5px;
+    text-align: center;
+}
+
+.day-name { font-size: 12px; color: var(--text-sec); font-weight: bold; padding-bottom: 5px; }
+
+.calendar-day {
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: 0.2s;
+    position: relative;
+}
+
+/* Цвета периодов */
+.day-period { background-color: #ffb7c5 !important; color: white; } /* Месячные */
+.day-prediction { border: 2px dashed #ffb7c5; } /* Прогноз */
+.day-fertile { 
+    background-color: #e0f2fe !important; 
+    color: #0284c7 !important; 
+    border-radius: 50%;
+} /* Фертильность */
+.day-today { border: 2px solid var(--primary); font-weight: bold; }
+
+/* Блок подсказок */
+.cycle-info-card {
+    background: #fff5f7;
+    border-radius: 15px;
+    padding: 15px;
+    margin-top: 15px;
+    font-size: 13px;
+    line-height: 1.4;
+    border-left: 4px solid #ffb7c5;
+}
