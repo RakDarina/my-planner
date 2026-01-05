@@ -283,3 +283,23 @@ select {
 
 .delete-btn { color: #ff4d4d !important; background: #fff0f0 !important; }
 .edit-btn { color: #4a90e2 !important; background: #eef5ff !important; }
+
+/* Квадратики настроения */
+.mood-pixel {
+    aspect-ratio: 1;
+    background: #f0f0f2;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+.mood-pixel:active { transform: scale(0.9); }
+
+/* Цвета настроения */
+.mood-pixel.good { background-color: #4CD964 !important; }
+.mood-pixel.neutral { background-color: #007AFF !important; }
+.mood-pixel.bad { background-color: #FF3B30 !important; }
+
+/* Плавная диаграмма */
+#mood-pie-chart {
+    transition: background 0.5s ease;
+}
