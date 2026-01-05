@@ -17,12 +17,30 @@
 
 body {
     background-color: var(--bg-body);
-    padding-bottom: 120px;
+    /* Запрещаем скролл всему экрану, чтобы не дергалась шапка */
+    overflow: hidden; 
+    height: 100vh;
+    width: 100vw;
+    position: fixed;
 }
 
 /* --- СТРАНИЦЫ --- */
-.page { display: none; flex-direction: column; min-height: 100vh; }
-.page.active { display: flex; }
+.page { 
+    display: none; 
+    flex-direction: column; 
+    /* Страница занимает весь экран за вычетом навигации */
+    height: 100vh; 
+    width: 100%;
+    /* Включаем умный скролл: только если контента много */
+    overflow-y: auto; 
+    /* Плавный скролл для iPhone */
+    -webkit-overflow-scrolling: touch; 
+    padding-bottom: 100px; /* Отступ, чтобы контент не перекрывался меню */
+}
+
+.page.active { 
+    display: flex; 
+}
 
 /* --- ШАПКА И ПРОГРЕСС --- */
 .app-header { padding: 40px 20px 10px 20px; }
