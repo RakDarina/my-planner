@@ -445,3 +445,64 @@ input[type="datetime-local"] {
 .rating-stars {
     letter-spacing: 2px;
 }
+
+/* --- СТИЛИ ДЛЯ ДНЕВНИКА --- */
+
+.month-navigator {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: white;
+    padding: 15px 20px;
+    border-radius: 16px;
+    margin: 10px 20px 20px 20px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+}
+
+.month-navigator span {
+    font-size: 18px;
+    font-weight: bold;
+    color: var(--primary);
+}
+
+.nav-arrow {
+    background: none;
+    border: none;
+    color: #aaa;
+    cursor: pointer;
+    padding: 5px;
+}
+
+/* Карточка записи */
+.diary-card {
+    background: white;
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: flex-start; /* Выравнивание по верху */
+    gap: 15px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+}
+
+/* Число слева (1., 6. и т.д.) */
+.diary-day-number {
+    font-size: 24px;
+    font-weight: 800;
+    color: var(--primary); /* Цвет акцента */
+    min-width: 35px; /* Чтобы цифры стояли ровно */
+    text-align: right;
+    line-height: 1.2;
+}
+
+.diary-content {
+    flex: 1; /* Занимает все место */
+}
+
+.diary-text {
+    font-size: 16px;
+    line-height: 1.5;
+    color: #333;
+    white-space: pre-wrap; /* Сохраняет абзацы */
+    margin-bottom: 10px;
+}
