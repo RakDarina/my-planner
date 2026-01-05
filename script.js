@@ -70,7 +70,13 @@ function renderCategories() {
 function openCategory(id) {
     currentCatId = id;
     const cat = window.appData.categories.find(c => c.id === id);
-    document.getElementById('category-title').innerText = cat.title;
+    
+    // Делаем заголовок кликабельным для редактирования
+    const titleEl = document.getElementById('category-title');
+    titleEl.innerText = cat.title;
+    titleEl.onclick = () => script_editCategoryTitle();
+    titleEl.style.cursor = "pointer";
+
     document.getElementById('view-goals').classList.remove('active');
     document.getElementById('view-goal-details').classList.add('active');
     renderTasks();
@@ -244,6 +250,30 @@ function script_deleteSubTask(tIdx, sIdx) {
     if (confirm("Удалить этот шаг?")) {
         const cat = window.appData.categories.find(c => c.id === currentCatId);
         cat.tasks[tIdx].subs.splice(sIdx, 1);
+        saveData();
+        renderSubTasks(tIdx);
+    }
+}
+
+// Редактирование названия самой категории
+function script_editCategoryTitle() {
+    const cat = window.appData.categories.find(c => c.id === currentCatId);
+    const newTitle = prompt("Изменить название категории:", cat.title);
+    if (newTitle !== null && newTitle.trim() !== "") {
+        cat.title = newTitle.trim();
+        document.getElementById('category-title').innerText = cat.title; // Обновляем в шапке
+        saveData();
+        renderCategories(); // Обновляем на главном экране
+    }
+}
+
+// Редактирование подшага (убедись, что эта версия заменяет старую)
+function script_editSubTask(tIdx, sIdx) {
+    const cat = window.appData.categories.find(c => c.id === currentCatId);
+    const sub = cat.tasks[tIdx].subs[sIdx];
+    const newText = prompt("Редактировать шаг:", sub.text);
+    if (newText !== null && newText.trim() !== "") {
+        sub.text = newText.trim();
         saveData();
         renderSubTasks(tIdx);
     }
