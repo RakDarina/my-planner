@@ -2,6 +2,7 @@ let diaryViewDate = new Date(); // Текущий просматриваемый
 let editingDiaryId = null;
 
 window.addEventListener('DOMContentLoaded', () => {
+    // 1. Инициализация данных
     if (!window.appData) {
         window.appData = JSON.parse(localStorage.getItem('myPlannerData')) || {};
     }
@@ -9,15 +10,17 @@ window.addEventListener('DOMContentLoaded', () => {
         window.appData.diaryEntries = []; 
     }
     
-    // При загрузке сразу показываем текущий месяц
+    // 2. Запуск дневника
     updateDiaryHeader();
     renderDiary();
+    
+    // 3. Запуск настроения (Mood)
+    renderMood();
 });
 
-// --- НАВИГАЦИЯ ПО МЕСЯЦАМ ---
+// --- НАВИГАЦИЯ ДНЕВНИКА ---
 
 function changeDiaryMonth(offset) {
-    // Меняем месяц на +1 или -1
     diaryViewDate.setMonth(diaryViewDate.getMonth() + offset);
     updateDiaryHeader();
     renderDiary();
@@ -26,10 +29,8 @@ function changeDiaryMonth(offset) {
 function updateDiaryHeader() {
     const title = document.getElementById('diary-month-title');
     if (title) {
-        // Форматируем: "Январь 2026"
         const monthName = diaryViewDate.toLocaleDateString('ru-RU', { month: 'long' });
         const year = diaryViewDate.getFullYear();
-        // Делаем первую букву заглавной
         title.innerText = monthName.charAt(0).toUpperCase() + monthName.slice(1) + ' ' + year;
     }
 }
@@ -42,20 +43,17 @@ function renderDiary() {
     
     container.innerHTML = '';
 
-    // 1. Фильтруем записи (только для выбранного месяца и года)
     const currentMonth = diaryViewDate.getMonth();
     const currentYear = diaryViewDate.getFullYear();
 
-    const filteredEntries = window.appData.diaryEntries.filter(entry => {
-        const entryDate = new Date(entry.date); // Превращаем строку даты в объект
+    const filteredEntries = (window.appData.diaryEntries || []).filter(entry => {
+        const entryDate = new Date(entry.date);
         return entryDate.getMonth() === currentMonth && 
                entryDate.getFullYear() === currentYear;
     });
 
-    // 2. Сортируем по дням (от 1 к 31)
     filteredEntries.sort((a, b) => new Date(a.date) - new Date(b.date));
 
-    // 3. Если записей нет
     if (filteredEntries.length === 0) {
         container.innerHTML = `
             <div style="text-align:center; color:#aaa; padding: 40px;">
@@ -66,19 +64,17 @@ function renderDiary() {
         return;
     }
 
-    // 4. Рисуем
     filteredEntries.forEach(entry => {
-        const dayNumber = new Date(entry.date).getDate(); // Получаем число (1, 6, 25)
+        const dayNumber = new Date(entry.date).getDate();
         
         const div = document.createElement('div');
-        div.className = 'diary-card';
+        div.className = 'diary-card'; // Используем ваш CSS
         div.innerHTML = `
             <div class="diary-day-number">${dayNumber}.</div>
-            <div class="diary-content">
-                <div class="diary-text">${entry.text}</div>
+            <div style="flex:1; margin: 0 15px;">
+                <div style="font-size:16px; line-height:1.5;">${entry.text}</div>
             </div>
-            
-            <div class="item-controls" style="border-left:none; margin-left:0; padding-left:0;">
+            <div class="diary-controls">
                 <button onclick="editDiaryEntry(${entry.id})" class="btn-control edit-btn">
                     <span class="material-icons-round">edit</span>
                 </button>
@@ -91,31 +87,27 @@ function renderDiary() {
     });
 }
 
-// --- ДОБАВЛЕНИЕ / РЕДАКТИРОВАНИЕ ---
+// --- УПРАВЛЕНИЕ ЗАПИСЯМИ ---
 
 function openDiaryModal() {
     editingDiaryId = null;
     const modal = document.getElementById('modal-diary');
+    if(!modal) return;
+
     document.getElementById('diary-modal-title').innerText = "Новая запись";
     document.getElementById('diary-text-input').value = '';
     
-    // Устанавливаем дату в инпуте
-    // Если мы смотрим текущий месяц -> ставим "сегодня"
-    // Если листаем прошлый/будущий месяц -> ставим 1-е число того месяца (для удобства)
     const today = new Date();
     let defaultDate = new Date(diaryViewDate);
     
     if (today.getMonth() === diaryViewDate.getMonth() && today.getFullYear() === diaryViewDate.getFullYear()) {
-        defaultDate = today; // Если смотрим текущий месяц, ставим сегодняшнюю дату
+        defaultDate = today;
     } else {
-        defaultDate.setDate(1); // Иначе 1-е число
+        defaultDate.setDate(1);
     }
     
-    // Формат для инпута type="date" (YYYY-MM-DD)
-    // Учитываем часовой пояс, чтобы день не съехал
     const offset = defaultDate.getTimezoneOffset() * 60000;
     const localISOTime = (new Date(defaultDate - offset)).toISOString().slice(0, 10);
-    
     document.getElementById('diary-date-input').value = localISOTime;
     
     modal.style.display = 'flex';
@@ -128,62 +120,69 @@ function editDiaryEntry(id) {
 
     document.getElementById('diary-modal-title').innerText = "Редактировать";
     document.getElementById('diary-text-input').value = entry.text;
-    document.getElementById('diary-date-input').value = entry.date; // Там уже хранится YYYY-MM-DD
+    document.getElementById('diary-date-input').value = entry.date;
 
     document.getElementById('modal-diary').style.display = 'flex';
 }
 
 function saveDiaryEntry() {
     const text = document.getElementById('diary-text-input').value.trim();
-    const dateStr = document.getElementById('diary-date-input').value; // YYYY-MM-DD
+    const dateStr = document.getElementById('diary-date-input').value;
 
-    if (!text || !dateStr) return alert("Заполните дату и текст!");
+    if (!text || !dateStr) {
+        alert("Заполните дату и текст!");
+        return;
+    }
 
     if (editingDiaryId) {
-        // Редактируем
         const index = window.appData.diaryEntries.findIndex(e => e.id === editingDiaryId);
         if (index > -1) {
             window.appData.diaryEntries[index].text = text;
             window.appData.diaryEntries[index].date = dateStr;
         }
     } else {
-        // Создаем
-        const newEntry = {
+        window.appData.diaryEntries.push({
             id: Date.now(),
             text: text,
-            date: dateStr // Сохраняем дату как строку "2026-01-06"
-        };
-        window.appData.diaryEntries.push(newEntry);
+            date: dateStr
+        });
     }
 
-    saveData();
+    // Вызываем глобальное сохранение из script.js
+    if (typeof window.saveData === 'function') {
+        window.saveData();
+    } else {
+        localStorage.setItem('myPlannerData', JSON.stringify(window.appData));
+    }
     
-    // Если мы добавили запись в другой месяц (не тот, на который смотрим), переключимся туда?
-    // Или останемся? Логичнее обновить viewDate на дату записи, чтобы пользователь увидел, что добавил.
     const newDate = new Date(dateStr);
     diaryViewDate.setMonth(newDate.getMonth());
     diaryViewDate.setFullYear(newDate.getFullYear());
+    
     updateDiaryHeader();
-
     renderDiary();
     closeDiaryModal();
 }
 
 function deleteDiaryEntry(id) {
     if (!confirm("Удалить это воспоминание?")) return;
-    
     window.appData.diaryEntries = window.appData.diaryEntries.filter(e => e.id !== id);
-    saveData();
+    
+    if (typeof window.saveData === 'function') {
+        window.saveData();
+    } else {
+        localStorage.setItem('myPlannerData', JSON.stringify(window.appData));
+    }
     renderDiary();
 }
 
 function closeDiaryModal() {
-    document.getElementById('modal-diary').style.display = 'none';
+    const modal = document.getElementById('modal-diary');
+    if(modal) modal.style.display = 'none';
 }
 
-function saveData() {
-    localStorage.setItem('myPlannerData', JSON.stringify(window.appData));
-}
+// --- НАСТРОЕНИЕ (MOOD PIXELS) ---
+
 let moodDate = new Date();
 let moodKey = null;
 
@@ -198,7 +197,11 @@ function renderMood() {
     title.innerText = new Intl.DateTimeFormat('ru-RU', { month: 'long', year: 'numeric' }).format(moodDate);
 
     const days = new Date(year, month + 1, 0).getDate();
-    const data = JSON.parse(localStorage.getItem('moodStorage') || '{}');
+    
+    // Храним настроение внутри общего объекта appData для синхронизации
+    if (!window.appData.moods) window.appData.moods = {};
+    const data = window.appData.moods;
+
     let counts = { good: 0, neutral: 0, bad: 0 };
 
     for (let d = 1; d <= days; d++) {
@@ -223,6 +226,7 @@ function updateMoodPie(counts) {
     const total = counts.good + counts.neutral + counts.bad;
     const chart = document.getElementById('mood-pie-chart');
     if (!chart) return;
+
     if (total === 0) {
         chart.style.background = '#eee';
         document.getElementById('mood-legend').innerHTML = 'Нет данных';
@@ -239,15 +243,25 @@ function updateMoodPie(counts) {
 }
 
 function setMood(type) {
-    const data = JSON.parse(localStorage.getItem('moodStorage') || '{}');
-    data[moodKey] = type;
-    localStorage.setItem('moodStorage', JSON.stringify(data));
+    if (!window.appData.moods) window.appData.moods = {};
+    window.appData.moods[moodKey] = type;
+    
+    if (typeof window.saveData === 'function') {
+        window.saveData();
+    } else {
+        localStorage.setItem('myPlannerData', JSON.stringify(window.appData));
+    }
+    
     renderMood();
     closeMoodModal();
 }
 
-function closeMoodModal() { document.getElementById('modal-mood').style.display = 'none'; }
-function changeMoodMonth(v) { moodDate.setMonth(moodDate.getMonth() + v); renderMood(); }
+function closeMoodModal() { 
+    const modal = document.getElementById('modal-mood');
+    if(modal) modal.style.display = 'none'; 
+}
 
-// Запуск
-document.addEventListener('DOMContentLoaded', renderMood);
+function changeMoodMonth(v) { 
+    moodDate.setMonth(moodDate.getMonth() + v); 
+    renderMood(); 
+}
