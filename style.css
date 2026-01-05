@@ -113,7 +113,7 @@ body {
 }
 
 .task-header { display: flex; align-items: center; justify-content: space-between; }
-.task-main { display: flex; align-items: center; gap: 12px; flex: 1; }
+.task-main { display: flex; align-items: center; gap: 12px; flex: 1; min-width: 0; }
 /* .task-text { font-size: 18px; font-weight: 600; } */
 .task-text.done { text-decoration: line-through; color: var(--text-sec); opacity: 0.6; }
 
@@ -380,7 +380,7 @@ input[type="datetime-local"] {
     min-width: 0; /* КРИТИЧЕСКИ ВАЖНО: заставляет flex-контейнер сжимать текст, а не растягивать карточку */
     word-break: break-word; /* Разбивает длинные наборы букв */
     overflow-wrap: break-word; /* Дополнительная защита для современных браузеров */
-    white-space: normal; /* Разрешает перенос на новые строки */
+    white-space: pre-wrap; /* Разрешает перенос на новые строки */
     line-height: 1.3;
 }
 
