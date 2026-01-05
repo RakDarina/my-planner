@@ -213,35 +213,7 @@
         </div>
     </div>
 
-    <div id="view-checklist" class="page">
-    <header class="app-header"><h2>Чек-лист</h2></header>
-    
-    <div class="content-container">
-        <div id="checklist-menu">
-            <button class="goal-card" onclick="openChecklistCategory('cleaning')">🧹 Уборка</button>
-            <button class="goal-card" onclick="openChecklistCategory('beauty')">✨ Красота</button>
-            <button class="goal-card" onclick="openChecklistCategory('misc')">📝 Разное</button>
-        </div>
-
-        <div id="checklist-category-view" style="display: none;">
-            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 20px;">
-                <button onclick="closeChecklistCategory()" class="icon-btn" style="background: #eee; border-radius: 50%; padding: 5px;">
-                    <span class="material-icons-round">arrow_back</span>
-                </button>
-                <h2 id="checklist-category-title" style="margin: 0; font-size: 22px;">Разное</h2>
-            </div>
-
-            <div id="misc-input-area" class="input-area" style="margin-bottom: 20px;">
-                <input type="text" id="new-misc-item" placeholder="Добавить вещь...">
-                <button onclick="addMiscItem()">
-                    <span class="material-icons-round">add</span>
-                </button>
-            </div>
-
-            <div id="checklist-items-list"></div>
-        </div>
-    </div>
-</div>
+    <div id="view-checklist" class="page center-content"><h2>Чек-лист</h2></div>
 
     <nav class="bottom-nav">
         <button class="nav-item active" onclick="switchTab('view-goals', this)">
