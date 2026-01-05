@@ -279,3 +279,72 @@ function script_editSubTask(tIdx, sIdx) {
         renderSubTasks(tIdx);
     }
 }
+
+// --- БЛОК УПРАВЛЕНИЯ ДАННЫМИ (НАСТРОЙКИ) ---
+
+// Функция экспорта: собирает всё из window.appData и шифрует в строку
+function settings_export() {
+    try {
+        if (!window.appData) {
+            alert("Ошибка: Данные не найдены!");
+            return;
+        }
+
+        // Превращаем весь объект приложения в строку
+        const dataStr = JSON.stringify(window.appData);
+        // Кодируем в Base64 (безопасный формат для передачи текста)
+        const encodedData = btoa(unescape(encodeURIComponent(dataStr)));
+        
+        const area = document.getElementById('settings-backup-area');
+        area.value = encodedData;
+        area.select(); // Выделяем текст, чтобы пользователю было легко копировать
+        
+        // Автоматическое копирование в буфер обмена
+        try {
+            document.execCommand('copy');
+            alert("Код резервной копии скопирован! Сохраните его в заметках. Это ваши цели, дневники и списки.");
+        } catch (err) {
+            alert("Код создан! Пожалуйста, скопируйте его вручную из текстового поля.");
+        }
+    } catch (e) {
+        alert("Ошибка экспорта: " + e.message);
+        console.error(e);
+    }
+}
+
+// Функция импорта: берет строку, расшифровывает и заменяет window.appData
+function settings_import() {
+    const area = document.getElementById('settings-backup-area');
+    const code = area.value.trim();
+    
+    if (!code) {
+        alert("Вставьте код в поле для восстановления!");
+        return;
+    }
+    
+    if (confirm("ВНИМАНИЕ: Текущие данные будут полностью заменены данными из кода. Вы уверены?")) {
+        try {
+            // Декодируем обратно в JSON
+            const decodedData = decodeURIComponent(escape(atob(code)));
+            const parsedData = JSON.parse(decodedData);
+            
+            if (parsedData && typeof parsedData === 'object') {
+                // Заменяем глобальные данные
+                window.appData = parsedData;
+                
+                // Сохраняем в память телефона через твою основную функцию
+                if (typeof saveData === 'function') {
+                    saveData();
+                } else {
+                    localStorage.setItem('plannerData', JSON.stringify(window.appData));
+                }
+                
+                alert("Данные успешно восстановлены! Приложение обновится.");
+                location.reload(); // Перезагружаем, чтобы все вкладки увидели новые данные
+            }
+        } catch (e) {
+            alert("Ошибка! Код недействителен. Убедитесь, что скопировали его полностью.");
+            console.error(e);
+        }
+    }
+}
