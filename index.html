@@ -79,25 +79,25 @@
             </div>
 
             <div class="sleep-tracker card" style="margin-top: 20px; padding: 20px; background: white; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-        <h3 style="margin: 0; font-size: 18px;">Трекер сна</h3>
-        <button onclick="toggleSleepHistory()" style="background:none; border:none; color:var(--primary); font-size: 13px; font-weight: 600;">История</button>
-    </div>
-    
-    <div class="chart-scroll-container">
-        <div class="chart-wrapper">
-            <canvas id="sleepChart"></canvas>
-        </div>
-    </div>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                    <h3 style="margin: 0; font-size: 18px;">Трекер сна</h3>
+                    <button onclick="toggleSleepHistory()" style="background:none; border:none; color:var(--primary); font-size: 13px; font-weight: 600;">История</button>
+                </div>
+                
+                <div class="chart-scroll-container">
+                    <div class="chart-wrapper">
+                        <canvas id="sleepChart"></canvas>
+                    </div>
+                </div>
 
-    <button class="add-category-btn" onclick="openSleepModal()" style="padding: 15px; border-style: solid; border-width: 1px;">
-        <span class="material-icons-round">bedtime</span> Записать сон
-    </button>
+                <button class="add-category-btn" onclick="openSleepModal()" style="padding: 15px; border-style: solid; border-width: 1px;">
+                    <span class="material-icons-round">bedtime</span> Записать сон
+                </button>
 
-    <div id="sleep-history-container">
-        <div id="sleep-list"></div>
-    </div>
-</div>
+                <div id="sleep-history-container">
+                    <div id="sleep-list"></div>
+                </div>
+            </div>
 
             <div class="mental-grid" style="display:grid; grid-template-columns:1fr 1fr; gap:15px; margin-top:20px">
                 <button class="goal-card" onclick="openDiary('gratitude', 'Дневник благодарности')">Благодарность</button>
@@ -108,21 +108,20 @@
         </div>
 
         <div class="cycle-tracker">
-    <div class="calendar-header">
-        <h3 id="calendar-month-year" style="font-size: 18px; margin: 0;">Январь 2026</h3>
-        <div>
-            <button onclick="changeMonth(-1)" style="background:none; border:none; color:var(--primary);"><span class="material-icons-round">chevron_left</span></button>
-            <button onclick="changeMonth(1)" style="background:none; border:none; color:var(--primary);"><span class="material-icons-round">chevron_right</span></button>
-        </div>
-    </div>
+            <div class="calendar-header">
+                <h3 id="calendar-month-year" style="font-size: 18px; margin: 0;">Январь 2026</h3>
+                <div>
+                    <button onclick="changeMonth(-1)" style="background:none; border:none; color:var(--primary);"><span class="material-icons-round">chevron_left</span></button>
+                    <button onclick="changeMonth(1)" style="background:none; border:none; color:var(--primary);"><span class="material-icons-round">chevron_right</span></button>
+                </div>
+            </div>
 
-    <div class="calendar-grid" id="calendar-days">
-        </div>
+            <div class="calendar-grid" id="calendar-days"></div>
 
-    <div id="cycle-tips" class="cycle-info-card">
-        <b>Совет дня:</b> Нажмите на дату, чтобы отметить начало или конец цикла.
-    </div>
-</div>
+            <div id="cycle-tips" class="cycle-info-card">
+                <b>Совет дня:</b> Нажмите на дату, чтобы отметить начало или конец цикла.
+            </div>
+        </div>
     </div>
 
     <div id="view-diary-details" class="page">
@@ -142,7 +141,42 @@
         </div>
     </div>
 
-    <div id="view-lists" class="page center-content"><h2>Списки</h2></div>
+    <div id="view-lists" class="page">
+        <header class="app-header"><h2>Списки</h2></header>
+        <div class="content-container">
+            <div id="lists-view-main">
+                <button class="add-category-btn" onclick="openListModal()" style="margin-bottom: 20px;">
+                    <span class="material-icons-round">add_circle_outline</span> Создать новый список
+                </button>
+                <div id="lists-categories-container" class="lists-grid"></div>
+            </div>
+
+            <div id="lists-view-details" style="display: none;">
+                <div class="list-header" style="display: flex; flex-direction: column; gap: 15px; margin-bottom: 20px;">
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <button onclick="backToCategories()" class="icon-btn" style="background: #eee; border-radius: 50%; padding: 5px;">
+                            <span class="material-icons-round">arrow_back</span>
+                        </button>
+                        <h2 id="current-list-title" style="margin: 0; font-size: 22px;">Название</h2>
+                    </div>
+                    
+                    <div style="display: flex; gap: 10px; align-items: center;">
+                        <select id="sort-select" onchange="renderItems()" style="flex: 1; padding: 10px; border-radius: 10px; border: 1px solid #ddd;">
+                            <option value="date">По дате</option>
+                            <option value="year">По году</option>
+                            <option value="alpha">По алфавиту</option>
+                            <option value="rating">По рейтингу</option>
+                        </select>
+                        <button onclick="openItemModal()" class="add-category-btn" style="margin: 0; width: auto; padding: 10px 20px;">
+                            <span class="material-icons-round">add</span>
+                        </button>
+                    </div>
+                </div>
+                <div id="list-items-container"></div>
+            </div>
+        </div>
+    </div>
+
     <div id="view-diary" class="page center-content"><h2>Дневник</h2></div>
     <div id="view-checklist" class="page center-content"><h2>Чек-лист</h2></div>
 
@@ -175,6 +209,44 @@
     <script src="diary_tab.js"></script> 
     <script src="checklist.js"></script>
 
+    <div id="modal-category" class="modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:2000; align-items:center; justify-content:center;">
+        <div style="background:white; width:90%; max-width:400px; padding:25px; border-radius:24px; box-sizing:border-box;">
+            <h3 style="margin-top:0">Новый список</h3>
+            <input type="text" id="cat-name-input" placeholder="Название (например: Фильмы)" style="width:100%; padding:15px; border:1px solid #eee; border-radius:12px; margin-bottom:20px; box-sizing:border-box; font-size:16px;">
+            <div style="display:flex; gap:10px;">
+                <button onclick="closeModals()" style="flex:1; padding:15px; border:none; background:#f0f0f0; border-radius:14px; font-weight:600;">Отмена</button>
+                <button onclick="saveCategory()" style="flex:1; padding:15px; border:none; background:var(--primary); color:white; border-radius:14px; font-weight:600;">Создать</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-item" class="modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:2100; align-items:center; justify-content:center;">
+        <div style="background:white; width:92%; max-width:400px; padding:25px; border-radius:24px; box-sizing:border-box;">
+            <h3 id="item-modal-title" style="margin-top:0">Добавить запись</h3>
+            
+            <input type="text" id="item-name" placeholder="Название" style="width:100%; padding:14px; border:1px solid #eee; border-radius:12px; margin-bottom:15px; box-sizing:border-box;">
+            
+            <div style="display:flex; gap:10px; margin-bottom:15px;">
+                <input type="number" id="item-year" placeholder="Год" style="flex:1; padding:14px; border:1px solid #eee; border-radius:12px; box-sizing:border-box;">
+                <select id="item-rating" style="flex:1; padding:14px; border:1px solid #eee; border-radius:12px; background:white;">
+                    <option value="0">Оценка</option>
+                    <option value="5">⭐⭐⭐⭐⭐</option>
+                    <option value="4">⭐⭐⭐⭐</option>
+                    <option value="3">⭐⭐⭐</option>
+                    <option value="2">⭐⭐</option>
+                    <option value="1">⭐</option>
+                </select>
+            </div>
+
+            <textarea id="item-note" placeholder="Короткая заметка..." rows="3" style="width:100%; padding:14px; border:1px solid #eee; border-radius:12px; margin-bottom:20px; box-sizing:border-box; font-family:inherit; resize:none;"></textarea>
+
+            <div style="display:flex; gap:10px;">
+                <button onclick="closeModals()" style="flex:1; padding:15px; border:none; background:#f0f0f0; border-radius:14px; font-weight:600;">Отмена</button>
+                <button onclick="saveItem()" style="flex:1; padding:15px; border:none; background:var(--primary); color:white; border-radius:14px; font-weight:600;">Сохранить</button>
+            </div>
+        </div>
+    </div>
+
     <div id="mental-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:1000; align-items:flex-end;">
         <div style="background:white; width:100%; padding:20px; border-radius:20px 20px 0 0; display:flex; flex-direction:column; gap:15px;">
             <h3 id="modal-question" style="font-size:18px;">Вопрос</h3>
@@ -197,9 +269,7 @@
                 <label style="font-size:14px; color:var(--text-sec);">Объем одного стакана (мл):</label>
                 <input type="number" id="input-glass-size" style="width:100%; padding:12px; border:1px solid #ddd; border-radius:10px; margin-top:5px; outline:none;">
             </div>
-            <button onclick="calculateWaterGoal()" style="background:#f0f7ff; color:var(--primary); border:none; padding:12px; border-radius:10px; cursor:pointer; font-weight:bold;">
-                Рассчитать по весу (30мл на 1кг)
-            </button>
+            <button onclick="calculateWaterGoal()" style="background:#f0f7ff; color:var(--primary); border:none; padding:12px; border-radius:10px; cursor:pointer; font-weight:bold;">Рассчитать по весу</button>
             <div style="display:flex; gap:10px;">
                 <button onclick="closeWaterModal()" style="flex:1; padding:15px; border:none; background:#eee; border-radius:12px;">Отмена</button>
                 <button onclick="saveWaterSettings()" style="flex:1; padding:15px; border:none; background:var(--primary); color:white; border-radius:12px;">Сохранить</button>
@@ -208,25 +278,22 @@
     </div>
 
     <div id="sleep-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:1200; align-items:center; justify-content:center;">
-    <div style="background:white; width:92%; max-width:350px; padding:20px; border-radius:24px; box-sizing:border-box;">
-        <h3 id="sleep-modal-title" style="margin:0 0 20px 0; font-size:20px;">Запись сна</h3>
-        
-        <div style="margin-bottom:15px;">
-            <label style="font-size:14px; color:var(--text-sec); display:block; margin-bottom:8px;">Когда легла:</label>
-            <input type="datetime-local" id="sleep-start" style="width:100%; padding:14px; border:1px solid #eee; border-radius:12px; font-size:16px; background:#f9f9f9; outline:none; box-sizing:border-box;">
-        </div>
-
-        <div style="margin-bottom:25px;">
-            <label style="font-size:14px; color:var(--text-sec); display:block; margin-bottom:8px;">Когда встала:</label>
-            <input type="datetime-local" id="sleep-end" style="width:100%; padding:14px; border:1px solid #eee; border-radius:12px; font-size:16px; background:#f9f9f9; outline:none; box-sizing:border-box;">
-        </div>
-
-        <div style="display:flex; gap:10px;">
-            <button onclick="closeSleepModal()" style="flex:1; padding:15px; border:none; background:#f0f0f0; border-radius:14px; font-weight:600; cursor:pointer;">Отмена</button>
-            <button onclick="saveSleepEntry()" style="flex:1; padding:15px; border:none; background:var(--primary); color:white; border-radius:14px; font-weight:600; cursor:pointer;">Сохранить</button>
+        <div style="background:white; width:92%; max-width:350px; padding:20px; border-radius:24px; box-sizing:border-box;">
+            <h3 id="sleep-modal-title" style="margin:0 0 20px 0; font-size:20px;">Запись сна</h3>
+            <div style="margin-bottom:15px;">
+                <label style="font-size:14px; color:var(--text-sec); display:block; margin-bottom:8px;">Когда легла:</label>
+                <input type="datetime-local" id="sleep-start" style="width:100%; padding:14px; border:1px solid #eee; border-radius:12px; font-size:16px; background:#f9f9f9; outline:none; box-sizing:border-box;">
+            </div>
+            <div style="margin-bottom:25px;">
+                <label style="font-size:14px; color:var(--text-sec); display:block; margin-bottom:8px;">Когда встала:</label>
+                <input type="datetime-local" id="sleep-end" style="width:100%; padding:14px; border:1px solid #eee; border-radius:12px; font-size:16px; background:#f9f9f9; outline:none; box-sizing:border-box;">
+            </div>
+            <div style="display:flex; gap:10px;">
+                <button onclick="closeSleepModal()" style="flex:1; padding:15px; border:none; background:#f0f0f0; border-radius:14px; font-weight:600;">Отмена</button>
+                <button onclick="saveSleepEntry()" style="flex:1; padding:15px; border:none; background:var(--primary); color:white; border-radius:14px; font-weight:600;">Сохранить</button>
+            </div>
         </div>
     </div>
-</div>
 
 </body>
 </html>
