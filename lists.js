@@ -16,7 +16,7 @@ function lists_scrollTop() {
 }
 
 function lists_renderMain() {
-    lists_scrollTop(); // Скролл при входе в списки
+    lists_scrollTop(); 
     const container = document.getElementById('lists-container');
     if (!container) return;
     container.innerHTML = '';
@@ -24,12 +24,21 @@ function lists_renderMain() {
     window.appData.myLists.forEach(list => {
         const card = document.createElement('div');
         card.className = 'goal-card';
+        card.style.cursor = 'pointer';
+        // Устанавливаем флекс для карточки
+        card.style.display = 'flex';
+        card.style.justifyContent = 'space-between';
+        card.style.alignItems = 'center';
+        
         card.onclick = () => lists_openDetails(list.id);
+
         card.innerHTML = `
-            <span style="font-weight:700; font-size:18px;">${list.title}</span>
-            <div style="display:flex; gap:12px;">
-                <span class="material-icons-round" style="color:var(--text-sec); font-size:20px;" onclick="event.stopPropagation(); lists_editListName(${list.id})">edit</span>
-                <span class="material-icons-round" style="color:var(--danger); font-size:20px;" onclick="event.stopPropagation(); lists_deleteList(${list.id})">delete_outline</span>
+            <span style="font-weight:700; font-size:18px; flex: 1; padding-right: 10px;">${list.title}</span>
+            <div style="display:flex; gap:12px; align-items:center; flex-shrink: 0;">
+                <span class="material-icons-round" style="color:var(--text-sec); font-size:20px;" 
+                    onclick="event.stopPropagation(); lists_editListName(${list.id})">edit</span>
+                <span class="material-icons-round" style="color:var(--danger); font-size:20px;" 
+                    onclick="event.stopPropagation(); lists_deleteList(${list.id})">delete_outline</span>
             </div>
         `;
         container.appendChild(card);
