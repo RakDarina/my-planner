@@ -18,10 +18,12 @@
 body {
     background-color: var(--bg-body);
     padding-bottom: 120px;
+    overflow-x: hidden; /* Фикс вылетов */
+    width: 100%;
 }
 
 /* --- СТРАНИЦЫ --- */
-.page { display: none; flex-direction: column; min-height: 100vh; }
+.page { display: none; flex-direction: column; min-height: 100vh; width: 100%; }
 .page.active { display: flex; }
 
 /* --- ШАПКА И ПРОГРЕСС --- */
@@ -29,7 +31,7 @@ body {
 .app-header h1 { font-size: 34px; font-weight: 800; display: flex; align-items: center; gap: 10px; }
 
 .total-progress-wrapper {
-    padding: 20px; /* Отступ от заголовка */
+    padding: 20px; 
     margin-bottom: 10px;
 }
 
@@ -55,7 +57,11 @@ body {
 }
 
 /* --- КАРТОЧКИ КАТЕГОРИЙ --- */
-.content-container { padding: 0 20px; }
+.content-container { 
+    padding: 0 15px; 
+    width: 100%;
+    max-width: 100vw;
+}
 
 .goal-card {
     background: var(--bg-card);
@@ -63,9 +69,12 @@ body {
     border-radius: 20px;
     margin-bottom: 15px;
     box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    word-wrap: break-word;      
+    overflow-wrap: break-word;   
+    word-break: break-word;      
 }
 
-/* ПУНКТИРНАЯ КНОПКА (ИСПРАВЛЕНИЕ) */
+/* ПУНКТИРНАЯ КНОПКА */
 .add-category-btn {
     width: 100%;
     background: none;
@@ -99,7 +108,7 @@ body {
 .task-text { font-size: 18px; font-weight: 600; }
 .task-text.done { text-decoration: line-through; color: var(--text-sec); opacity: 0.6; }
 
-/* ВВОД ЗАДАЧИ ВНИЗУ (ИСПРАВЛЕНИЕ) */
+/* ВВОД ЗАДАЧИ ВНИЗУ */
 .input-area {
     position: fixed;
     bottom: var(--nav-height);
@@ -136,9 +145,12 @@ body {
 
 /* ШАГИ */
 .sub-tasks { margin-top: 15px; display: flex; flex-direction: column; }
-.sub-task-row { display: flex; align-items: center; padding: 12px 0; border-top: 1px solid #F2F2F7; }
+.sub-task-row { display: flex; align-items: center; padding: 15px 0 !important; border-top: 1px solid #F2F2F7; }
+.sub-task-row .material-icons-round { font-size: 30px !important; margin-right: 15px !important; }
+.sub-task-row span { font-size: 19px !important; }
+
 .sub-input-line { display: flex; gap: 10px; margin-top: 10px; }
-.sub-input { flex: 1; background: #F2F2F7; border: none; padding: 12px; border-radius: 10px; outline: none; }
+.sub-input { flex: 1; background: #F2F2F7; border: none; padding: 15px !important; border-radius: 10px; outline: none; font-size: 18px !important; }
 
 /* НАВИГАЦИЯ */
 .bottom-nav {
@@ -149,449 +161,111 @@ body {
 .nav-item { background: none; border: none; color: var(--text-sec); display: flex; flex-direction: column; align-items: center; flex: 1; }
 .nav-item.active { color: var(--primary); }
 
-/* Новое */
-/* Укрупняем шаги и чекбоксы в списке задач */
-.sub-task-row {
-    padding: 15px 0 !important;
-}
-
-.sub-task-row .material-icons-round {
-    font-size: 30px !important; /* Крупный квадрат чекбокса */
-    margin-right: 15px !important;
-}
-
-.sub-task-row span {
-    font-size: 19px !important; /* Крупный текст шага */
-}
-
-.sub-input {
-    font-size: 18px !important; /* Крупный текст в поле "Шаг..." */
-    padding: 15px !important;
-}
-
-/* Найти существующий .goal-card и добавить туда эти три строки */
-.goal-card {
-    /* ... твои старые стили ... */
-    word-wrap: break-word;       /* Перенос длинных слов */
-    overflow-wrap: break-word;   /* Современный стандарт переноса */
-    word-break: break-word;      /* Для поддержки старых браузеров */
-}
-/* Контейнер стакана */
+/* ВОДА */
 .glass-icon {
-    width: 45px;
-    height: 55px;
+    width: 45px; height: 55px;
     border: 3px solid #e1f5fe;
-    border-top: 2px solid rgba(225, 245, 254, 0.5); /* Верхний край едва заметен */
+    border-top: 2px solid rgba(225, 245, 254, 0.5);
     border-radius: 4px 4px 12px 12px;
-    position: relative;
-    cursor: pointer;
+    position: relative; cursor: pointer;
     transition: all 0.3s ease;
     background: rgba(255, 255, 255, 0.5);
-    overflow: hidden; /* Чтобы вода не выливалась за края в коде */
+    overflow: hidden;
     box-shadow: inset 0 0 5px rgba(0,0,0,0.05);
 }
 
-/* Сама вода */
 .glass-icon .water {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 0%; 
+    position: absolute; bottom: 0; left: 0; width: 100%; height: 0%; 
     background: linear-gradient(180deg, #4fc3f7 0%, #2196f3 100%);
-    /* Убираем постоянный transition отсюда */
 }
 
-/* Анимация только при добавлении класса .animating */
-.glass-icon.animating .water {
-    transition: height 1s cubic-bezier(0.4, 0, 0.2, 1);
-}
+.glass-icon.animating .water { transition: height 1s cubic-bezier(0.4, 0, 0.2, 1); }
+.glass-icon.active { border-color: #2196f3; }
+.glass-icon.active .water { height: 85%; }
 
-/* Эффект волны (оставляем как был) */
-.glass-icon .water::before {
-    content: "";
-    position: absolute;
-    top: -10px;
-    left: 0;
-    width: 200%;
-    height: 20px;
-    background: rgba(255, 255, 255, 0.3);
-    border-radius: 40%;
-    animation: wave 3s infinite linear;
-    display: none;
-}
-
-.glass-icon.active {
-    border-color: #2196f3;
-}
-
-.glass-icon.active .water {
-    height: 85%; 
-}
-
-.glass-icon.active .water::before {
-    display: block; 
-}
-
-/* Фикс для полей даты, чтобы они не раздували окно на iOS */
-input[type="datetime-local"] {
-    -webkit-appearance: none;
-    min-height: 1.2em;
-}
-
-/* Принудительный сброс ширины для всех модалок */
-#sleep-modal > div, #water-modal > div {
-    max-width: 92% !important;
-    margin: 0 auto;
-}
-
-/* Контейнер для прокрутки графика */
-.chart-scroll-container {
-    width: 100%;
-    overflow-x: auto; /* Включаем горизонтальную прокрутку */
-    -webkit-overflow-scrolling: touch;
-    margin-bottom: 20px;
-}
-
-.chart-wrapper {
-    min-width: 600px; /* Фиксированная ширина, чтобы столбики не сужались */
-    height: 200px;
-}
-
-/* Исправление вылетов за рамки */
-#sleep-modal .modal-content, 
-#water-modal .modal-content {
-    width: 92% !important;
-    max-width: 350px;
-    box-sizing: border-box; /* Чтобы padding не раздувал ширину */
-}
-
-/* Скрытый список истории */
-#sleep-history-container {
-    display: none; /* По умолчанию скрыт */
-    margin-top: 15px;
-    border-top: 1px solid #eee;
-}
-
-/* Стили женского календаря */
-.cycle-tracker {
-    margin-top: 20px;
-    padding: 20px;
-    background: white;
-    border-radius: 20px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-}
-
-.calendar-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 15px;
-}
-
-.calendar-grid {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap: 5px;
-    text-align: center;
-}
-
-.day-name { font-size: 12px; color: var(--text-sec); font-weight: bold; padding-bottom: 5px; }
-
-.calendar-day {
-    aspect-ratio: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 14px;
-    border-radius: 50%;
-    cursor: pointer;
-    transition: 0.2s;
-    position: relative;
-}
-
-/* Цвета периодов */
-.day-period { background-color: #ffb7c5 !important; color: white; } /* Месячные */
-.day-prediction { border: 2px dashed #ffb7c5; } /* Прогноз */
-.day-fertile { 
-    background-color: #e0f2fe !important; 
-    color: #0284c7 !important; 
-    border-radius: 50%;
-} /* Фертильность */
-.day-today { border: 2px solid var(--primary); font-weight: bold; }
-
-/* Блок подсказок */
-.cycle-info-card {
-    background: #fff5f7;
-    border-radius: 15px;
-    padding: 15px;
-    margin-top: 15px;
-    font-size: 13px;
-    line-height: 1.4;
-    border-left: 4px solid #ffb7c5;
-}
-
-/* Сетка для категорий */
-.lists-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-    gap: 15px;
-    margin-top: 20px;
-}
-
-.list-card {
-    background: #fff; /* Или твой цвет карточки */
-    padding: 20px;
-    border-radius: 12px;
-    text-align: center;
-    cursor: pointer;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    transition: transform 0.2s;
-    position: relative;
-}
-
-.list-card:hover { transform: translateY(-3px); }
-
-/* Элементы внутри списка */
-.list-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-    flex-wrap: wrap;
-    gap: 10px;
-}
-
-.item-card {
-    background: #fff;
-    padding: 15px;
-    margin-bottom: 10px;
-    border-radius: 10px;
-    border-left: 5px solid var(--primary, #6200ea); /* Цвет полоски */
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-}
-
-.item-info h4 { margin: 0 0 5px 0; font-size: 18px; }
-.item-meta { font-size: 13px; color: #666; display: flex; gap: 10px; align-items: center;}
-.item-note { margin-top: 8px; font-size: 14px; font-style: italic; color: #444; background: #f9f9f9; padding: 5px; border-radius: 5px;}
-.rating-stars { color: #ffc107; letter-spacing: 2px; }
-
-/* Кнопки управления */
-.btn-control {
-    background: none; border: none; cursor: pointer; opacity: 0.6;
-}
-.btn-control:hover { opacity: 1; }
-.delete-icon { color: #e74c3c; }
-
-/* --- СТИЛИ ДЛЯ СПИСКОВ И КНОПОК --- */
-
-.item-card {
-    /* Делаем карточку чуть просторнее */
-    padding: 15px 15px 15px 20px; 
-    align-items: center; /* Центрируем содержимое по вертикали */
-}
-
-/* Контейнер для кнопок справа */
-.item-controls {
-    display: flex;
-    flex-direction: column; /* Кнопки одна под другой */
-    gap: 15px; /* БОЛЬШОЕ расстояние между карандашом и урной */
-    margin-left: 10px;
-    padding-left: 10px;
-    border-left: 1px solid #eee;
-}
-
-/* Общий стиль для кнопок управления */
-.btn-control {
-    background: #f5f5f5; /* Легкий фон, чтобы видеть границы */
-    border: none;
-    cursor: pointer;
-    padding: 12px; /* Увеличиваем "мясо" вокруг иконки */
-    border-radius: 12px; /* Скругленные углы */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.2s;
-    /* Убираем стандартную прозрачность, делаем ярко */
-    opacity: 1; 
-    width: 45px;  /* Фиксированная ширина */
-    height: 45px; /* Фиксированная высота */
-}
-
-/* При нажатии эффект */
-.btn-control:active {
-    transform: scale(0.95);
-}
-
-/* Иконки внутри кнопок */
-.btn-control span {
-    font-size: 24px; /* Сама иконка крупнее */
-}
-
-/* Индивидуальные цвета */
-.edit-btn {
-    color: var(--primary); /* Синий/фиолетовый */
-}
-
-.delete-btn {
-    color: #ff4d4d; /* Красный */
-    background: #fff0f0; /* Бледно-красный фон */
-}
-
-/* Звезды */
-.rating-stars {
-    letter-spacing: 2px;
-}
-
-/* --- СТИЛИ ДЛЯ ДНЕВНИКА --- */
-
-.month-navigator {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background: white;
-    padding: 15px 20px;
-    border-radius: 16px;
-    margin: 10px 20px 20px 20px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.03);
-}
-
-.month-navigator span {
-    font-size: 18px;
-    font-weight: bold;
-    color: var(--primary);
-}
-
-.nav-arrow {
-    background: none;
-    border: none;
-    color: #aaa;
-    cursor: pointer;
-    padding: 5px;
-}
-
-/* Карточка записи */
-.diary-card {
-    background: white;
-    border-radius: 16px;
-    padding: 20px;
-    margin-bottom: 15px;
-    display: flex;
-    align-items: flex-start; /* Выравнивание по верху */
-    gap: 15px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.02);
-}
-
-/* Число слева (1., 6. и т.д.) */
-.diary-day-number {
-    font-size: 24px;
-    font-weight: 800;
-    color: var(--primary); /* Цвет акцента */
-    min-width: 35px; /* Чтобы цифры стояли ровно */
-    text-align: right;
-    line-height: 1.2;
-}
-
-.diary-content {
-    flex: 1; /* Занимает все место */
-}
-
-.diary-text {
-    font-size: 16px;
-    line-height: 1.5;
-    color: #333;
-    white-space: pre-wrap; /* Сохраняет абзацы */
-    margin-bottom: 10px;
-}
-
-/* 1. ИСПРАВЛЯЕМ ВЫЛЕЗАНИЕ ЗА РАМКИ */
-* {
-    box-sizing: border-box; /* Чтобы padding не раздувал элементы */
-}
-
-body, .page {
-    overflow-x: hidden; /* Запрещаем горизонтальный скролл */
-    width: 100%;
-}
-
-.content-container {
-    padding: 15px;
-    width: 100%;
-    max-width: 100vw;
-}
-
-/* 2. КРУПНЫЙ ТЕКСТ В ПОЛЯХ ВВОДА (чтобы не было зума на iPhone) */
+/* --- ИСПРАВЛЕНИЯ ПОЛЕЙ ВВОДА И ВЫЛЕТОВ ДАТЫ --- */
 input[type="text"], 
 input[type="number"], 
 input[type="date"], 
+input[type="datetime-local"],
 textarea, 
 select {
-    font-size: 16px !important; /* Минимум 16px для комфортной печати */
+    font-size: 16px !important; 
     width: 100% !important;
-    max-width: 100%;
-    padding: 12px;
+    max-width: 100% !important;
+    box-sizing: border-box !important; /* ГЛАВНЫЙ ФИКС ДАТЫ */
+    padding: 12px !important;
+    -webkit-appearance: none;
 }
 
-/* 3. ОГРОМНЫЕ КНОПКИ УДАЛЕНИЯ И РЕДАКТИРОВАНИЯ (для твоих пальцев) */
-.item-controls, .diary-controls {
-    display: flex;
-    flex-direction: row; /* В ряд, чтобы занимали меньше места по высоте */
-    gap: 20px;
-    margin-top: 10px;
-    justify-content: flex-end;
-}
-
-/* Увеличиваем сами иконки-кнопки */
-.btn-control, .edit-btn, .delete-btn {
-    width: 50px !important;   /* Большая область нажатия */
-    height: 50px !important;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: #f0f0f0;
-    border-radius: 12px;
-    border: none;
-    cursor: pointer;
-}
-
-.btn-control span, .material-icons-round {
-    font-size: 30px !important; /* Сама иконка (карандаш/урна) теперь большая */
-}
-
-.delete-btn {
-    color: #ff4d4d;
-    background: #fff0f0;
-}
-
-.edit-btn {
-    color: #4a90e2;
-    background: #eef5ff;
-}
-
-/* 4. КАРТОЧКА В СПИСКАХ (чтобы звезды не мешали) */
-.item-card {
+/* ГРАФИК */
+.chart-scroll-container {
     width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    margin-bottom: 20px;
+}
+.chart-wrapper { min-width: 600px; height: 200px; }
+
+/* МОДАЛКИ */
+.modal > div {
+    width: 90% !important;
+    max-width: 360px !important;
+    padding: 20px !important;
+    margin: 0 auto;
+    border-radius: 24px;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+/* --- КНОПКИ УПРАВЛЕНИЯ (ДНЕВНИК И СПИСКИ) --- */
+.item-card, .diary-card {
+    background: #fff;
     padding: 15px;
     margin-bottom: 10px;
     border-radius: 15px;
-    background: #fff;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
     display: flex;
-    flex-direction: column; /* Текст сверху, кнопки снизу — так удобнее на узких экранах */
+    flex-direction: row; /* В одну строку */
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
 }
 
-/* Скрываем пустые звезды, если рейтинг 0 */
-.rating-stars:empty {
-    display: none;
+.item-controls, .diary-controls {
+    display: flex;
+    flex-direction: row; /* Кнопки в ряд */
+    gap: 10px; /* Аккуратный отступ */
+    flex-shrink: 0;
 }
 
-/* 5. МОДАЛЬНЫЕ ОКНА (чтобы не вылезали) */
-.modal > div {
-    width: 95% !important;
-    max-width: 380px !important;
-    padding: 20px !important;
-    margin: 0 auto;
+.btn-control {
+    width: 38px !important;  /* Компактный размер */
+    height: 38px !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f5f5f7 !important;
+    border-radius: 10px !important;
+    border: none;
+    cursor: pointer;
+    color: #333;
 }
+
+.btn-control span {
+    font-size: 20px !important; /* Сама иконка аккуратная */
+}
+
+.delete-btn { color: #ff4d4d !important; background: #fff0f0 !important; }
+.edit-btn { color: #4a90e2 !important; background: #eef5ff !important; }
+
+/* КАЛЕНДАРЬ */
+.calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; text-align: center; }
+.calendar-day { aspect-ratio: 1; display: flex; align-items: center; justify-content: center; font-size: 14px; border-radius: 50%; cursor: pointer; }
+.day-period { background-color: #ffb7c5 !important; color: white; }
+.day-today { border: 2px solid var(--primary); font-weight: bold; }
+
+/* СПИСКИ */
+.lists-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 15px; }
+.list-card { background: #fff; padding: 20px; border-radius: 12px; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+.rating-stars { color: #ffc107; letter-spacing: 2px; }
+.rating-stars:empty { display: none; }
