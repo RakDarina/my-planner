@@ -117,12 +117,34 @@ function renderSubTasks(tIdx) {
     `).join('');
 }
 
+// Открывает модальное окно для ввода названия
 function addCategory() {
-    const name = prompt("Название категории:");
+    document.getElementById('modal-category').style.display = 'flex';
+}
+
+// Сохраняет категорию из модального окна
+function saveCategory() {
+    const input = document.getElementById('cat-name-input');
+    const name = input.value.trim();
+    
     if (name) {
-        window.appData.categories.push({ id: Date.now(), title: name, tasks: [] });
-        saveData(); renderCategories();
+        window.appData.categories.push({ 
+            id: Date.now(), 
+            title: name, 
+            tasks: [] 
+        });
+        saveData(); 
+        renderCategories();
+        
+        // Очищаем и закрываем
+        input.value = '';
+        closeModals();
     }
+}
+
+// Общая функция закрытия всех модалок (если её нет)
+function closeModals() {
+    document.querySelectorAll('.modal').forEach(m => m.style.display = 'none');
 }
 
 function addTask() {
