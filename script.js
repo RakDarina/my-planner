@@ -194,11 +194,19 @@ function goBackToGoals() {
 }
 
 function switchTab(id, btn) {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    // 1. Сначала плавно прокручиваем наверх ту страницу, КОТОРУЮ открываем
+    const targetPage = document.getElementById(id);
+    if (targetPage) {
+        targetPage.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // 2. Убираем активность у всех страниц и кнопок
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
     document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
-    document.getElementById(id).classList.add('active');
-    if(btn) btn.classList.add('active');
+
+    // 3. Активируем нужную страницу и кнопку
+    if (targetPage) targetPage.classList.add('active');
+    if (btn) btn.classList.add('active');
 }
 
 function deleteTask(idx) {
