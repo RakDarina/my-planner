@@ -32,14 +32,17 @@ function updateTotalProgress() {
     const total = allTasks.length;
     const completed = allTasks.filter(t => t.completed).length;
     const percent = total > 0 ? Math.round((completed / total) * 100) : 0;
-    document.getElementById('total-progress-fill').style.width = percent + '%';
-    document.getElementById('total-percent').innerText = percent + '%';
+    
+    const fill = document.getElementById('total-progress-fill');
+    const text = document.getElementById('total-percent');
+    if(fill) fill.style.width = percent + '%';
+    if(text) text.innerText = percent + '%';
 }
 
 function renderCategories() {
     const list = document.getElementById('goals-list');
     if (!list) return;
-    list.innerHTML = ''; // Очищаем только список карточек
+    list.innerHTML = ''; 
     
     window.appData.categories.forEach(cat => {
         const total = cat.tasks.length;
@@ -75,13 +78,10 @@ function openCategory(id) {
 
 function renderTasks() {
     const list = document.getElementById('tasks-list');
+    if (!list) return;
     list.innerHTML = '';
     const cat = window.appData.categories.find(c => c.id === currentCatId);
-
-    function renderTasks() {
-    const list = document.getElementById('tasks-list');
-    list.innerHTML = '';
-    const cat = window.appData.categories.find(c => c.id === currentCatId);
+    if (!cat) return;
 
     cat.tasks.forEach((task, index) => {
         const item = document.createElement('div');
@@ -119,6 +119,8 @@ function renderTasks() {
 function renderSubTasks(tIdx) {
     const subList = document.getElementById(`subs-list-${tIdx}`);
     const cat = window.appData.categories.find(c => c.id === currentCatId);
+    if (!subList || !cat.tasks[tIdx]) return;
+
     subList.innerHTML = cat.tasks[tIdx].subs.map((sub, sIdx) => `
         <div class="sub-task-row" style="display:flex; align-items:center; margin-bottom:10px">
             <span class="material-icons-round" style="margin-right:10px; color:${sub.completed ? '#4caf50' : '#D1D1D6'}" onclick="toggleSubDone(${tIdx}, ${sIdx})">
@@ -136,18 +138,21 @@ function renderSubTasks(tIdx) {
 
 function addCategory() {
     const name = prompt("Название категории:");
-    if (name) {
-        window.appData.categories.push({ id: Date.now(), title: name, tasks: [] });
-        saveData(); renderCategories();
+    if (name && name.trim() !== "") {
+        window.appData.categories.push({ id: Date.now(), title: name.trim(), tasks: [] });
+        saveData(); 
+        renderCategories();
     }
 }
 
 function addTask() {
     const input = document.getElementById('new-task-input');
-    if (!input.value.trim()) return;
+    if (!input || !input.value.trim()) return;
     const cat = window.appData.categories.find(c => c.id === currentCatId);
     cat.tasks.push({ text: input.value.trim(), completed: false, subs: [] });
-    input.value = ''; saveData(); renderTasks();
+    input.value = ''; 
+    saveData(); 
+    renderTasks();
 }
 
 function toggleTaskDone(idx) {
@@ -158,10 +163,12 @@ function toggleTaskDone(idx) {
 
 function addSubTask(tIdx) {
     const input = document.getElementById(`sub-input-${tIdx}`);
-    if (!input.value.trim()) return;
+    if (!input || !input.value.trim()) return;
     const cat = window.appData.categories.find(c => c.id === currentCatId);
     cat.tasks[tIdx].subs.push({ text: input.value.trim(), completed: false });
-    input.value = ''; saveData(); renderSubTasks(tIdx);
+    input.value = ''; 
+    saveData(); 
+    renderSubTasks(tIdx);
 }
 
 function toggleSubDone(tIdx, sIdx) {
@@ -172,7 +179,7 @@ function toggleSubDone(tIdx, sIdx) {
 
 function toggleSubtasks(idx) {
     const el = document.getElementById(`subs-${idx}`);
-    el.style.display = el.style.display === 'none' ? 'block' : 'none';
+    if (el) el.style.display = el.style.display === 'none' ? 'block' : 'none';
 }
 
 function goBackToGoals() {
@@ -184,7 +191,7 @@ function switchTab(id, btn) {
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
     document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
     document.getElementById(id).classList.add('active');
-    btn.classList.add('active');
+    if(btn) btn.classList.add('active');
 }
 
 function deleteTask(idx) {
@@ -197,23 +204,21 @@ function editYearTitle() {
     const newYear = prompt("Введите заголовок (например, 2026):", window.appData.year);
     if (newYear !== null && newYear.trim() !== "") {
         window.appData.year = newYear.trim();
-        saveData(); // Сохраняем в localStorage
-        updateYearDisplay(); // Обновляем текст на экране
+        saveData();
+        updateYearDisplay();
     }
 }
 
 function deleteCurrentCategory() {
     if (confirm("Вы уверены, что хотите удалить всю категорию и все задачи в ней?")) {
-        // Фильтруем массив, оставляя все категории, кроме текущей
         window.appData.categories = window.appData.categories.filter(c => c.id !== currentCatId);
-        
-        saveData();           // Сохраняем изменения в localStorage
-        renderCategories();   // Перерисовываем главный список
-        goBackToGoals();      // Возвращаемся на главный экран
+        saveData();
+        renderCategories();
+        goBackToGoals();
     }
 }
 
-    // Новые функции с префиксом script_ для исключения конфликтов
+// Новые функции с префиксом script_
 function script_editTask(idx) {
     const cat = window.appData.categories.find(c => c.id === currentCatId);
     const newText = prompt("Редактировать задачу:", cat.tasks[idx].text);
