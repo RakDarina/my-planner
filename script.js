@@ -23,7 +23,10 @@ function saveData() {
 }
 
 function updateYearDisplay() {
-    document.getElementById('year-title').innerHTML = `${window.appData.year} <span class="material-icons-round" style="font-size:20px; opacity:0.3">edit</span>`;
+    const el = document.getElementById('year-title');
+    if (el) {
+        el.innerHTML = `${window.appData.year} <span class="material-icons-round" style="font-size:20px; opacity:0.3">edit</span>`;
+    }
 }
 
 function updateTotalProgress() {
@@ -32,14 +35,17 @@ function updateTotalProgress() {
     const total = allTasks.length;
     const completed = allTasks.filter(t => t.completed).length;
     const percent = total > 0 ? Math.round((completed / total) * 100) : 0;
-    document.getElementById('total-progress-fill').style.width = percent + '%';
-    document.getElementById('total-percent').innerText = percent + '%';
+    
+    const fill = document.getElementById('total-progress-fill');
+    const text = document.getElementById('total-percent');
+    if (fill) fill.style.width = percent + '%';
+    if (text) text.innerText = percent + '%';
 }
 
 function renderCategories() {
     const list = document.getElementById('goals-list');
     if (!list) return;
-    list.innerHTML = ''; // Очищаем только список карточек
+    list.innerHTML = ''; 
     
     window.appData.categories.forEach(cat => {
         const total = cat.tasks.length;
@@ -75,6 +81,7 @@ function openCategory(id) {
 
 function renderTasks() {
     const list = document.getElementById('tasks-list');
+    if (!list) return;
     list.innerHTML = '';
     const cat = window.appData.categories.find(c => c.id === currentCatId);
 
@@ -117,36 +124,35 @@ function renderSubTasks(tIdx) {
     `).join('');
 }
 
-// Открывает модальное окно для ввода названия
-function addCategory() {
-    document.getElementById('modal-category').style.display = 'flex';
+// --- НОВЫЕ ФУНКЦИИ МОДАЛОК ДЛЯ ЦЕЛЕЙ ---
+
+function openGoalModal() {
+    document.getElementById('modal-goal-category').style.display = 'flex';
 }
 
-// Сохраняет категорию из модального окна
 function saveGoalCategory() {
-    // Используем именно инпут из модалки целей (проверьте ID в HTML или используйте этот)
-    const input = document.getElementById('cat-name-input'); 
+    const input = document.getElementById('goal-name-input'); 
     const name = input.value.trim();
     
     if (name) {
-        // Добавляем в массив целей
         window.appData.categories.push({ 
             id: Date.now(), 
             title: name, 
             tasks: [] 
         });
         saveData(); 
-        renderCategories(); // Рисуем карточку на странице Целей
+        renderCategories(); 
         
         input.value = '';
         closeModals();
     }
 }
 
-// Общая функция закрытия всех модалок (если её нет)
 function closeModals() {
     document.querySelectorAll('.modal').forEach(m => m.style.display = 'none');
 }
+
+// --- ОСТАЛЬНЫЕ ФУНКЦИИ ---
 
 function addTask() {
     const input = document.getElementById('new-task-input');
@@ -191,6 +197,9 @@ function switchTab(id, btn) {
     document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
     document.getElementById(id).classList.add('active');
     btn.classList.add('active');
+    
+    // Автоскролл наверх при смене вкладки
+    window.scrollTo(0, 0);
 }
 
 function deleteTask(idx) {
@@ -203,18 +212,16 @@ function editYearTitle() {
     const newYear = prompt("Введите заголовок (например, 2026):", window.appData.year);
     if (newYear !== null && newYear.trim() !== "") {
         window.appData.year = newYear.trim();
-        saveData(); // Сохраняем в localStorage
-        updateYearDisplay(); // Обновляем текст на экране
+        saveData(); 
+        updateYearDisplay(); 
     }
 }
 
 function deleteCurrentCategory() {
-    if (confirm("Вы уверены, что хотите удалить всю категорию и все задачи в ней?")) {
-        // Фильтруем массив, оставляя все категории, кроме текущей
+    if (confirm("Вы уверены, что хотите удалить всю категорию?")) {
         window.appData.categories = window.appData.categories.filter(c => c.id !== currentCatId);
-        
-        saveData();           // Сохраняем изменения в localStorage
-        renderCategories();   // Перерисовываем главный список
-        goBackToGoals();      // Возвращаемся на главный экран
+        saveData();           
+        renderCategories();   
+        goBackToGoals();      
     }
 }
