@@ -202,6 +202,10 @@
             <span class="material-icons-round">check_circle_outline</span>
             <span class="nav-label">Чек-лист</span>
         </button>
+        <button class="nav-item" onclick="switchTab('view-settings', this)">
+    <span class="material-icons-round">settings</span>
+    <span class="nav-label">Настройки</span>
+</button>
     </nav>
     
     
@@ -281,6 +285,45 @@
             </div>
         </div>
     </div>
+
+    <div id="view-settings" class="page">
+    <header class="app-header">
+        <h1>Настройки</h1>
+    </header>
+    <div class="content-container">
+        <div class="card" style="padding: 20px; background: white; border-radius: 20px; margin-bottom: 20px; display: flex; align-items: center; gap: 15px;">
+            <div style="width: 50px; height: 50px; background: #E5E5EA; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                <span class="material-icons-round" style="color: #8E8E93;">person</span>
+            </div>
+            <div>
+                <div style="font-weight: 700; font-size: 18px;">Пользователь</div>
+                <div style="font-size: 14px; color: var(--text-sec);">Локальное хранилище</div>
+            </div>
+        </div>
+
+        <div class="card" style="padding: 20px; background: white; border-radius: 20px;">
+            <h3 style="margin-top: 0; font-size: 18px; display: flex; align-items: center; gap: 10px;">
+                <span class="material-icons-round" style="color: var(--primary);">backup</span>
+                Данные
+            </h3>
+            <p style="font-size: 13px; color: var(--text-sec); line-height: 1.5; margin-bottom: 15px;">
+                Экспортируйте код для сохранения копии всех ваших данных (цели, списки, дневники, трекеры).
+            </p>
+            
+            <textarea id="settings-backup-area" placeholder="Код появится здесь..." rows="5" 
+                style="width:100%; border:1px solid #F2F2F7; border-radius:15px; padding:12px; font-size:12px; font-family:monospace; outline:none; resize:none; box-sizing:border-box; background: #F9F9F9; color: #3A3A3C;"></textarea>
+            
+            <div style="display:flex; gap:10px; margin-top:15px;">
+                <button onclick="settings_export()" style="flex:1; padding:15px; border:none; background:var(--primary); color:white; border-radius:14px; font-size:14px; font-weight:600;">Экспорт</button>
+                <button onclick="settings_import()" style="flex:1; padding:15px; border:1px solid var(--primary); background:white; color:var(--primary); border-radius:14px; font-size:14px; font-weight:600;">Импорт</button>
+            </div>
+        </div>
+
+        <div style="margin-top: 30px; text-align: center; color: var(--text-sec); font-size: 12px;">
+            Версия приложения: 1.0.4<br>Все данные хранятся локально
+        </div>
+    </div>
+</div>
     
     <script src="script.js"></script> 
     <script src="mental.js"></script>
