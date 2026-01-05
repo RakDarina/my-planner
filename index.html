@@ -142,7 +142,42 @@
         </div>
     </div>
 
-    <div id="view-lists" class="page center-content"><h2>Списки</h2></div>
+    <div id="view-lists-main" class="page">
+        <header class="app-header">
+            <h1>Мои списки</h1>
+        </header>
+        <div class="content-container">
+            <div id="lists-container"></div>
+            <button class="add-category-btn" onclick="lists_createNewList()">
+                <span class="material-icons-round">add</span>
+                Создать новый список
+            </button>
+        </div>
+    </div>
+
+    <div id="view-list-details" class="page">
+        <header class="app-header with-back" style="display:flex; align-items:center; justify-content:space-between; width:100%; padding: 40px 20px 20px 20px;">
+            <button class="icon-btn" onclick="lists_goBack()">
+                <span class="material-icons-round">arrow_back_ios</span>
+            </button>
+            <h2 id="lists-details-title" onclick="lists_editCurrentListName()" style="flex:1; text-align:center; margin:0; font-size: 24px; cursor:pointer;">Название</h2>
+            <div style="width: 40px;"></div>
+        </header>
+
+        <div class="content-container">
+            <div class="lists-sort-bar" style="display:flex; gap:10px; margin-bottom:20px; justify-content: center;">
+                <button onclick="lists_sort('date')" style="background:#eee; border:none; padding:8px 12px; border-radius:10px; font-size:12px;">Дата</button>
+                <button onclick="lists_sort('alpha')" style="background:#eee; border:none; padding:8px 12px; border-radius:10px; font-size:12px;">А-Я</button>
+                <button onclick="lists_sort('rank')" style="background:#eee; border:none; padding:8px 12px; border-radius:10px; font-size:12px;">Рейтинг</button>
+            </div>
+
+            <div id="lists-items-list"></div>
+            
+            <button class="lists-fab" onclick="lists_openModal()" style="position:fixed; bottom:100px; right:20px; width:60px; height:60px; background:var(--primary); color:white; border-radius:50%; border:none; box-shadow:0 4px 10px rgba(0,0,0,0.2); z-index:99;">
+                <span class="material-icons-round" style="font-size:30px">add</span>
+            </button>
+        </div>
+    </div>
     <div id="view-diary" class="page center-content"><h2>Дневник</h2></div>
     <div id="view-checklist" class="page center-content"><h2>Чек-лист</h2></div>
 
@@ -155,7 +190,7 @@
             <span class="material-icons-round">spa</span>
             <span class="nav-label">Менталка</span>
         </button>
-        <button class="nav-item" onclick="switchTab('view-lists', this)">
+        <button class="nav-item" onclick="switchTab('view-lists-main', this); lists_renderMain();">
             <span class="material-icons-round">format_list_bulleted</span>
             <span class="nav-label">Списки</span>
         </button>
@@ -224,6 +259,29 @@
     </div>
 </div>
 
+    <div id="lists-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:1300; align-items:center; justify-content:center;">
+        <div style="background:white; width:90%; max-width:400px; padding:25px; border-radius:24px; display:flex; flex-direction:column; gap:15px; box-sizing:border-box;">
+            <h3 style="margin:0">Новая запись</h3>
+            
+            <input type="text" id="lists-input-name" placeholder="Название" style="width:100%; padding:14px; border:1px solid #eee; border-radius:12px; font-size:16px; background:#f9f9f9; outline:none; box-sizing:border-box;">
+            
+            <div id="lists-star-rating" style="display:flex; justify-content:center; gap:10px; font-size:30px;">
+                <span class="material-icons-round" onclick="lists_setRating(1)" style="cursor:pointer; color:#8E8E93">star_border</span>
+                <span class="material-icons-round" onclick="lists_setRating(2)" style="cursor:pointer; color:#8E8E93">star_border</span>
+                <span class="material-icons-round" onclick="lists_setRating(3)" style="cursor:pointer; color:#8E8E93">star_border</span>
+                <span class="material-icons-round" onclick="lists_setRating(4)" style="cursor:pointer; color:#8E8E93">star_border</span>
+                <span class="material-icons-round" onclick="lists_setRating(5)" style="cursor:pointer; color:#8E8E93">star_border</span>
+            </div>
+
+            <textarea id="lists-input-note" placeholder="Короткая заметка..." rows="3" style="width:100%; padding:14px; border:1px solid #eee; border-radius:12px; font-size:16px; background:#f9f9f9; outline:none; resize:none; box-sizing:border-box; overflow:hidden;"></textarea>
+            
+            <div style="display:flex; gap:10px; margin-top:5px;">
+                <button onclick="lists_closeModal()" style="flex:1; padding:15px; border:none; background:#f0f0f0; border-radius:14px; font-weight:600;">Отмена</button>
+                <button onclick="lists_addItem()" style="flex:1; padding:15px; border:none; background:var(--primary); color:white; border-radius:14px; font-weight:600;">Добавить</button>
+            </div>
+        </div>
+    </div>
+    
     <script src="script.js"></script> 
     <script src="mental.js"></script>
     <script src="lists.js"></script>
