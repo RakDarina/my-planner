@@ -1,159 +1,197 @@
-// 1. ХРАНИЛИЩЕ ДАННЫХ
-let appData = JSON.parse(localStorage.getItem('myPlannerData')) || {
-    categories: [],
-    lists: [],
-    diaryEntries: [],
-    moods: {},
-    waterCurrent: 0
+window.appData = JSON.parse(localStorage.getItem('myPlannerData')) || {
+    year: "2026",
+    categories: [{ id: 1, title: "Обязательно", tasks: [] }],
+    water: { goal: 2000, current: 0, glassSize: 250, lastDate: "" },
+    mental: {
+        gratitude: [],
+        emotions: [],
+        achievements: [],
+        good_day: []
+    }
+};
+
+let currentCatId = null;
+
+window.onload = () => {
+    updateYearDisplay();
+    renderCategories();
 };
 
 function saveData() {
-    localStorage.setItem('myPlannerData', JSON.stringify(appData));
+    localStorage.setItem('myPlannerData', JSON.stringify(window.appData));
     updateTotalProgress();
 }
 
-// 2. НАВИГАЦИЯ
-function switchTab(tabId, btn) {
-    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-    document.getElementById(tabId).classList.add('active');
-    btn.classList.add('active');
-    
-    if(tabId === 'view-goals') renderGoals();
-    if(tabId === 'view-mental') { renderMood(); renderWater(); }
-    if(tabId === 'view-lists') renderLists();
-    if(tabId === 'view-diary') renderDiary();
+function updateYearDisplay() {
+    document.getElementById('year-title').innerHTML = `${window.appData.year} <span class="material-icons-round" style="font-size:20px; opacity:0.3">edit</span>`;
 }
-
-function openModal(id) { document.getElementById(id).style.display = 'flex'; }
-function closeModals() { document.querySelectorAll('.modal').forEach(m => m.style.display = 'none'); }
-
-// 3. ЦЕЛИ
-function renderGoals() {
-    const container = document.getElementById('goals-list');
-    container.innerHTML = '';
-    appData.categories.forEach((cat, idx) => {
-        const div = document.createElement('div');
-        div.className = 'goal-card';
-        div.innerHTML = `<h3>${cat.title}</h3><p style="color:gray">Нажмите, чтобы открыть (в разработке)</p>`;
-        container.appendChild(div);
-    });
-}
-
-function saveGoalCategory() {
-    const val = document.getElementById('goal-name-input').value;
-    if(val) {
-        appData.categories.push({title: val, tasks: []});
-        saveData(); renderGoals(); closeModals();
-        document.getElementById('goal-name-input').value = '';
-    }
-}
-
-// 4. ВОДА И НАСТРОЕНИЕ
-function renderWater() {
-    const container = document.getElementById('glasses-container');
-    document.getElementById('water-current').innerText = appData.waterCurrent;
-    container.innerHTML = '';
-    for(let i=0; i<8; i++) {
-        const glass = document.createElement('div');
-        glass.innerHTML = `<span class="material-icons-round" style="font-size:40px; color:${i*250 < appData.waterCurrent ? '#2196f3' : '#eee'}; cursor:pointer">water_drop</span>`;
-        glass.onclick = () => { appData.waterCurrent = (i+1)*250; saveData(); renderWater(); };
-        container.appendChild(glass);
-    }
-}
-
-let moodDate = new Date();
-function renderMood() {
-    const grid = document.getElementById('mood-pixel-grid');
-    document.getElementById('mood-month-title').innerText = moodDate.toLocaleDateString('ru-RU', {month:'long'});
-    grid.innerHTML = '';
-    const days = new Date(moodDate.getFullYear(), moodDate.getMonth()+1, 0).getDate();
-    for(let d=1; d<=days; d++) {
-        const key = `${moodDate.getFullYear()}-${moodDate.getMonth()}-${d}`;
-        const p = document.createElement('div');
-        p.className = `mood-pixel ${appData.moods[key] || ''}`;
-        p.onclick = () => { window.currentMoodKey = key; openModal('modal-mood'); };
-        grid.appendChild(p);
-    }
-}
-function setMood(type) { appData.moods[window.currentMoodKey] = type; saveData(); renderMood(); closeModals(); }
-function changeMoodMonth(v) { moodDate.setMonth(moodDate.getMonth()+v); renderMood(); }
-
-// 5. СПИСКИ
-let currentListId = null;
-function renderLists() {
-    const container = document.getElementById('lists-categories-container');
-    container.innerHTML = '';
-    appData.lists.forEach((list, idx) => {
-        const div = document.createElement( 'div');
-        div.className = 'goal-card';
-        div.onclick = () => {
-            currentListId = idx;
-            document.getElementById('lists-view-main').style.display = 'none';
-            document.getElementById('lists-view-details').style.display = 'block';
-            document.getElementById('current-list-title').innerText = list.title;
-            renderItems();
-        };
-        div.innerHTML = `<h3>${list.title}</h3><small>${list.items.length} пунктов</small>`;
-        container.appendChild(div);
-    });
-}
-function saveListCategory() {
-    const val = document.getElementById('list-name-input').value;
-    if(val) {
-        appData.lists.push({title: val, items: []});
-        saveData(); renderLists(); closeModals();
-        document.getElementById('list-name-input').value = '';
-    }
-}
-function renderItems() {
-    const list = appData.lists[currentListId];
-    document.getElementById('list-items-container').innerHTML = list.items.map(i => `<div class="item-card">${i}</div>`).join('');
-}
-function addListItem() {
-    const val = document.getElementById('list-item-input').value;
-    if(val) {
-        appData.lists[currentListId].items.push(val);
-        saveData(); renderItems();
-        document.getElementById('list-item-input').value = '';
-    }
-}
-function goBackToLists() {
-    document.getElementById('lists-view-main').style.display = 'block';
-    document.getElementById('lists-view-details').style.display = 'none';
-}
-
-// 6. ДНЕВНИК
-let diaryMonth = new Date();
-function renderDiary() {
-    const container = document.getElementById('diary-list-container');
-    document.getElementById('diary-month-title').innerText = diaryMonth.toLocaleDateString('ru-RU', {month:'long', year:'numeric'});
-    container.innerHTML = '';
-    const entries = appData.diaryEntries.filter(e => {
-        const d = new Date(e.date);
-        return d.getMonth() === diaryMonth.getMonth() && d.getFullYear() === diaryMonth.getFullYear();
-    });
-    entries.forEach(e => {
-        const div = document.createElement('div');
-        div.className = 'diary-card';
-        div.innerHTML = `<div class="diary-day-number">${new Date(e.date).getDate()}</div><div>${e.text}</div>`;
-        container.appendChild(div);
-    });
-}
-function saveDiaryEntry() {
-    const text = document.getElementById('diary-text-input').value;
-    const date = document.getElementById('diary-date-input').value;
-    if(text && date) {
-        appData.diaryEntries.push({text, date});
-        saveData(); renderDiary(); closeModals();
-    }
-}
-function changeDiaryMonth(v) { diaryMonth.setMonth(diaryMonth.getMonth()+v); renderDiary(); }
 
 function updateTotalProgress() {
-    // Упрощенная логика для примера
-    document.getElementById('total-percent').innerText = '0%';
+    let allTasks = [];
+    window.appData.categories.forEach(c => { allTasks = allTasks.concat(c.tasks); });
+    const total = allTasks.length;
+    const completed = allTasks.filter(t => t.completed).length;
+    const percent = total > 0 ? Math.round((completed / total) * 100) : 0;
+    document.getElementById('total-progress-fill').style.width = percent + '%';
+    document.getElementById('total-percent').innerText = percent + '%';
 }
 
-// ЗАПУСК
-window.onload = () => { renderGoals(); };
+function renderCategories() {
+    const list = document.getElementById('goals-list');
+    if (!list) return;
+    list.innerHTML = ''; // Очищаем только список карточек
+    
+    window.appData.categories.forEach(cat => {
+        const total = cat.tasks.length;
+        const done = cat.tasks.filter(t => t.completed).length;
+        const percent = total > 0 ? Math.round((done / total) * 100) : 0;
+        
+        const div = document.createElement('div');
+        div.className = 'goal-card';
+        div.onclick = () => openCategory(cat.id);
+        div.innerHTML = `
+            <div style="display:flex; justify-content:space-between; margin-bottom:10px">
+                <span style="font-weight:700; font-size:20px">${cat.title}</span>
+                <span style="color:var(--text-sec)">${percent}%</span>
+            </div>
+            <div class="progress-container">
+                <div class="progress-fill" style="width:${percent}%"></div>
+            </div>
+        `;
+        list.appendChild(div);
+    });
+
+    updateTotalProgress();
+}
+
+function openCategory(id) {
+    currentCatId = id;
+    const cat = window.appData.categories.find(c => c.id === id);
+    document.getElementById('category-title').innerText = cat.title;
+    document.getElementById('view-goals').classList.remove('active');
+    document.getElementById('view-goal-details').classList.add('active');
+    renderTasks();
+}
+
+function renderTasks() {
+    const list = document.getElementById('tasks-list');
+    list.innerHTML = '';
+    const cat = window.appData.categories.find(c => c.id === currentCatId);
+
+    cat.tasks.forEach((task, index) => {
+        const item = document.createElement('div');
+        item.className = 'task-item';
+        item.innerHTML = `
+            <div class="task-header">
+                <div class="task-main" onclick="toggleSubtasks(${index})">
+                    <span class="material-icons-round" style="color:${task.completed ? '#4caf50' : '#4A90E2'}" onclick="event.stopPropagation(); toggleTaskDone(${index})">
+                        ${task.completed ? 'check_circle' : 'radio_button_unchecked'}
+                    </span>
+                    <span class="task-text ${task.completed ? 'done' : ''}">${task.text}</span>
+                </div>
+                <button class="icon-btn" onclick="event.stopPropagation(); deleteTask(${index})"><span class="material-icons-round" style="color:var(--danger)">delete_outline</span></button>
+            </div>
+            <div id="subs-${index}" class="sub-tasks" style="display:none">
+                <div id="subs-list-${index}"></div>
+                <div class="sub-input-line">
+                    <input type="text" id="sub-input-${index}" placeholder="Шаг..." class="sub-input">
+                    <button onclick="addSubTask(${index})" class="material-icons-round" style="color:var(--primary); background:none; border:none; font-size:30px">add_circle</button>
+                </div>
+            </div>
+        `;
+        list.appendChild(item);
+        renderSubTasks(index);
+    });
+}
+
+function renderSubTasks(tIdx) {
+    const subList = document.getElementById(`subs-list-${tIdx}`);
+    const cat = window.appData.categories.find(c => c.id === currentCatId);
+    subList.innerHTML = cat.tasks[tIdx].subs.map((sub, sIdx) => `
+        <div class="sub-task-row">
+            <span class="material-icons-round" style="margin-right:10px; color:${sub.completed ? '#4caf50' : '#D1D1D6'}" onclick="toggleSubDone(${tIdx}, ${sIdx})">
+                ${sub.completed ? 'check_box' : 'check_box_outline_blank'}
+            </span>
+            <span style="flex:1; ${sub.completed ? 'text-decoration:line-through; color:var(--text-sec)' : ''}">${sub.text}</span>
+        </div>
+    `).join('');
+}
+
+function addCategory() {
+    const name = prompt("Название категории:");
+    if (name) {
+        window.appData.categories.push({ id: Date.now(), title: name, tasks: [] });
+        saveData(); renderCategories();
+    }
+}
+
+function addTask() {
+    const input = document.getElementById('new-task-input');
+    if (!input.value.trim()) return;
+    const cat = window.appData.categories.find(c => c.id === currentCatId);
+    cat.tasks.push({ text: input.value.trim(), completed: false, subs: [] });
+    input.value = ''; saveData(); renderTasks();
+}
+
+function toggleTaskDone(idx) {
+    const cat = window.appData.categories.find(c => c.id === currentCatId);
+    cat.tasks[idx].completed = !cat.tasks[idx].completed;
+    saveData(); renderTasks(); renderCategories();
+}
+
+function addSubTask(tIdx) {
+    const input = document.getElementById(`sub-input-${tIdx}`);
+    if (!input.value.trim()) return;
+    const cat = window.appData.categories.find(c => c.id === currentCatId);
+    cat.tasks[tIdx].subs.push({ text: input.value.trim(), completed: false });
+    input.value = ''; saveData(); renderSubTasks(tIdx);
+}
+
+function toggleSubDone(tIdx, sIdx) {
+    const cat = window.appData.categories.find(c => c.id === currentCatId);
+    cat.tasks[tIdx].subs[sIdx].completed = !cat.tasks[tIdx].subs[sIdx].completed;
+    saveData(); renderSubTasks(tIdx);
+}
+
+function toggleSubtasks(idx) {
+    const el = document.getElementById(`subs-${idx}`);
+    el.style.display = el.style.display === 'none' ? 'block' : 'none';
+}
+
+function goBackToGoals() {
+    document.getElementById('view-goal-details').classList.remove('active');
+    document.getElementById('view-goals').classList.add('active');
+}
+
+function switchTab(id, btn) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    btn.classList.add('active');
+}
+
+function deleteTask(idx) {
+    const cat = window.appData.categories.find(c => c.id === currentCatId);
+    cat.tasks.splice(idx, 1);
+    saveData(); renderTasks();
+}
+
+function editYearTitle() {
+    const newYear = prompt("Введите заголовок (например, 2026):", window.appData.year);
+    if (newYear !== null && newYear.trim() !== "") {
+        window.appData.year = newYear.trim();
+        saveData(); // Сохраняем в localStorage
+        updateYearDisplay(); // Обновляем текст на экране
+    }
+}
+
+function deleteCurrentCategory() {
+    if (confirm("Вы уверены, что хотите удалить всю категорию и все задачи в ней?")) {
+        // Фильтруем массив, оставляя все категории, кроме текущей
+        window.appData.categories = window.appData.categories.filter(c => c.id !== currentCatId);
+        
+        saveData();           // Сохраняем изменения в localStorage
+        renderCategories();   // Перерисовываем главный список
+        goBackToGoals();      // Возвращаемся на главный экран
+    }
+}
