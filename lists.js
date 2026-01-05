@@ -1,4 +1,4 @@
-// Инициализация данных
+// 1. Инициализация данных
 if (!window.appData.myLists) {
     window.appData.myLists = [];
 }
@@ -6,13 +6,15 @@ if (!window.appData.myLists) {
 let lists_currentId = null;
 let lists_selectedRating = 0;
 
-function lists_scrollTop() {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+// Функция для сохранения (вызывает глобальную saveData из script.js)
+function lists_save() {
+    if (typeof saveData === 'function') {
+        saveData();
+    }
 }
 
-// 1. Рендер главных списков
+// 2. Рендер главной страницы списков
 function lists_renderMain() {
-    lists_scrollTop();
     const container = document.getElementById('lists-container');
     if (!container) return;
     container.innerHTML = '';
@@ -20,39 +22,49 @@ function lists_renderMain() {
     window.appData.myLists.forEach(list => {
         const card = document.createElement('div');
         card.className = 'goal-card';
-        // ИСПРАВЛЕНО: Теперь весь блок кликабелен
-        card.onclick = () => lists_openDetails(list.id);
         card.style.cursor = 'pointer';
+        card.style.display = 'flex';
+        card.style.justifyContent = 'space-between';
+        card.style.alignItems = 'center';
         
+        // Клик по всей карточке открывает детали
+        card.onclick = () => lists_openDetails(list.id);
+
         card.innerHTML = `
-            <div style="display:flex; justify-content:space-between; align-items:center; width:100%">
-                <span style="font-weight:700; font-size:18px; flex:1">${list.title}</span>
-                <div style="display:flex; gap:10px">
-                    <button class="icon-btn" onclick="event.stopPropagation(); lists_editListName(${list.id})">
-                        <span class="material-icons-round" style="color:var(--text-sec); font-size:20px">edit</span>
-                    </button>
-                    <button class="icon-btn" onclick="event.stopPropagation(); lists_deleteList(${list.id})">
-                        <span class="material-icons-round" style="color:var(--danger); font-size:20px">delete_outline</span>
-                    </button>
-                </div>
+            <span style="font-weight:700; font-size:18px;">${list.title}</span>
+            <div style="display:flex; gap:12px;">
+                <span class="material-icons-round" style="color:var(--text-sec); font-size:20px;" 
+                    onclick="event.stopPropagation(); lists_editListName(${list.id})">edit</span>
+                <span class="material-icons-round" style="color:var(--danger); font-size:20px;" 
+                    onclick="event.stopPropagation(); lists_deleteList(${list.id})">delete_outline</span>
             </div>
         `;
         container.appendChild(card);
     });
 }
 
-// 2. Редактирование названия списка (ИСПРАВЛЕНО)
+// 3. Создание и Редактирование названия списка
+function lists_createNewList() {
+    const name = prompt("Введите название списка:");
+    if (name && name.trim()) {
+        const newList = { id: Date.now(), title: name.trim(), items: [] };
+        window.appData.myLists.push(newList);
+        lists_save();
+        lists_renderMain();
+    }
+}
+
 function lists_editListName(id) {
     const list = window.appData.myLists.find(l => l.id === id);
     const newName = prompt("Новое название списка:", list.title);
     if (newName && newName.trim()) {
         list.title = newName.trim();
-        saveData();
+        lists_save();
         lists_renderMain();
     }
 }
 
-// Открытие списка
+// 4. Работа с деталями списка
 function lists_openDetails(id) {
     lists_currentId = id;
     const list = window.appData.myLists.find(l => l.id === id);
@@ -63,51 +75,52 @@ function lists_openDetails(id) {
     lists_renderItems();
 }
 
-// 3. Рендер элементов внутри списка
+function lists_goBack() {
+    document.getElementById('view-list-details').classList.remove('active');
+    document.getElementById('view-lists-main').classList.add('active');
+    lists_renderMain();
+}
+
+// 5. Рендер элементов (фильмов/книг) внутри списка
 function lists_renderItems() {
-    lists_scrollTop();
     const list = window.appData.myLists.find(l => l.id === lists_currentId);
     const container = document.getElementById('lists-items-list');
+    if (!container) return;
     container.innerHTML = '';
 
     list.items.forEach((item, index) => {
         const div = document.createElement('div');
-        div.className = 'lists-item-card';
+        div.className = 'goal-card'; // Используем твой стиль карточек
+        div.style.flexDirection = 'column';
+        div.style.alignItems = 'flex-start';
+        
         div.innerHTML = `
-            <div class="lists-item-date">${item.date}</div>
-            <div class="lists-item-header">
-                <div style="font-weight:700; font-size:18px">${item.name}</div>
-                <div class="lists-stars-display">${'★'.repeat(item.rating)}${'☆'.repeat(5 - item.rating)}</div>
+            <div style="width:100%; display:flex; justify-content:space-between; align-items:center;">
+                <div style="font-weight:700; font-size:17px;">${item.name}</div>
+                <div style="color:#FFCC00; letter-spacing:2px;">${'★'.repeat(item.rating)}${'☆'.repeat(5-item.rating)}</div>
             </div>
-            ${item.note ? `<div style="margin-top:10px; font-size:14px; white-space:pre-wrap;">${item.note}</div>` : ''}
-            <div style="display:flex; justify-content:flex-end; gap:15px; margin-top:10px; padding-top:10px; border-top:1px solid #F2F2F7">
-                <span class="material-icons-round" style="color:var(--text-sec); font-size:18px; cursor:pointer" onclick="lists_editItem(${index})">edit</span>
-                <span class="material-icons-round" style="color:var(--danger); font-size:18px; cursor:pointer" onclick="lists_deleteItem(${index})">delete_outline</span>
+            ${item.note ? `<div style="font-size:14px; color:var(--text-sec); margin-top:8px;">${item.note}</div>` : ''}
+            <div style="display:flex; gap:15px; margin-top:12px; width:100%; justify-content:flex-end; border-top:1px solid #f0f0f0; padding-top:8px;">
+                <span class="material-icons-round" style="font-size:18px; color:var(--text-sec);" onclick="lists_editItem(${index})">edit</span>
+                <span class="material-icons-round" style="font-size:18px; color:var(--danger);" onclick="lists_deleteItem(${index})">delete_outline</span>
             </div>
         `;
         container.appendChild(div);
     });
 }
 
-// ИСПРАВЛЕНО: Редактирование конкретной записи в списке
-function lists_editItem(index) {
-    const list = window.appData.myLists.find(l => l.id === lists_currentId);
-    const item = list.items[index];
-    
-    const newName = prompt("Изменить название:", item.name);
-    if (newName === null) return;
-    
-    const newNote = prompt("Изменить заметку:", item.note);
-    if (newNote === null) return;
-
-    item.name = newName.trim() || item.name;
-    item.note = newNote.trim();
-    
-    saveData();
-    lists_renderItems();
+// 6. Управление Модальным окном и Звездами
+function lists_openModal() {
+    document.getElementById('lists-modal').style.display = 'flex';
+    lists_setRating(0); // Сброс при открытии
 }
 
-// ИСПРАВЛЕНО: Звездочки теперь нажимаются
+function lists_closeModal() {
+    document.getElementById('lists-modal').style.display = 'none';
+    document.getElementById('lists-input-name').value = '';
+    document.getElementById('lists-input-note').value = '';
+}
+
 function lists_setRating(n) {
     lists_selectedRating = n;
     const stars = document.querySelectorAll('#lists-star-rating span');
@@ -122,27 +135,7 @@ function lists_setRating(n) {
     });
 }
 
-// Остальные функции (без изменений, но убедись, что они есть)
-function lists_createNewList() {
-    const name = prompt("Название нового списка:");
-    if (name && name.trim()) {
-        window.appData.myLists.push({ id: Date.now(), title: name.trim(), items: [] });
-        saveData();
-        lists_renderMain();
-    }
-}
-
-function lists_openModal() {
-    document.getElementById('lists-modal').style.display = 'flex';
-    lists_setRating(0);
-}
-
-function lists_closeModal() {
-    document.getElementById('lists-modal').style.display = 'none';
-    document.getElementById('lists-input-name').value = '';
-    document.getElementById('lists-input-note').value = '';
-}
-
+// 7. Добавление/Удаление/Редактирование записей
 function lists_addItem() {
     const name = document.getElementById('lists-input-name').value;
     const note = document.getElementById('lists-input-note').value;
@@ -157,34 +150,41 @@ function lists_addItem() {
         timestamp: Date.now()
     });
 
-    saveData();
+    lists_save();
     lists_closeModal();
     lists_renderItems();
+}
+
+function lists_editItem(index) {
+    const list = window.appData.myLists.find(l => l.id === lists_currentId);
+    const item = list.items[index];
+    const newName = prompt("Название:", item.name);
+    if (newName !== null) {
+        item.name = newName.trim() || item.name;
+        item.note = prompt("Заметка:", item.note) || "";
+        lists_save();
+        lists_renderItems();
+    }
+}
+
+function lists_deleteItem(index) {
+    if (confirm("Удалить запись?")) {
+        const list = window.appData.myLists.find(l => l.id === lists_currentId);
+        list.items.splice(index, 1);
+        lists_save();
+        lists_renderItems();
+    }
 }
 
 function lists_deleteList(id) {
     if (confirm("Удалить весь список?")) {
         window.appData.myLists = window.appData.myLists.filter(l => l.id !== id);
-        saveData();
+        lists_save();
         lists_renderMain();
     }
 }
 
-function lists_deleteItem(idx) {
-    if (confirm("Удалить эту запись?")) {
-        const list = window.appData.myLists.find(l => l.id === lists_currentId);
-        list.items.splice(idx, 1);
-        saveData();
-        lists_renderItems();
-    }
-}
-
-function lists_goBack() {
-    document.getElementById('view-list-details').classList.remove('active');
-    document.getElementById('view-lists-main').classList.add('active');
-    lists_renderMain();
-}
-
+// 8. Сортировка
 function lists_sort(mode) {
     const list = window.appData.myLists.find(l => l.id === lists_currentId);
     if (mode === 'date') list.items.sort((a, b) => b.timestamp - a.timestamp);
