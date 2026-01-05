@@ -5,86 +5,40 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Мой Планировщик</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Icons+Round">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="style.css"> 
 </head>
 <body>
 
     <div id="view-goals" class="page active">
         <header class="app-header">
-            <h1 id="year-title" onclick="editYearTitle()" style="cursor:pointer">
-                2026 <span class="material-icons-round" style="font-size: 20px; opacity: 0.5;">edit</span>
-            </h1>
+            <h1 id="year-title">2026</h1>
         </header>
-        
         <div class="total-progress-wrapper">
-            <div class="total-progress-info">
-                <span>Общий прогресс</span>
-                <span id="total-percent">0%</span>
-            </div>
-            <div class="progress-container">
-                <div id="total-progress-fill" class="progress-fill"></div>
-            </div>
+            <div class="total-progress-info"><span>Общий прогресс</span><span id="total-percent">0%</span></div>
+            <div class="progress-container"><div id="total-progress-fill" class="progress-fill"></div></div>
         </div>
-        
         <div class="content-container">
             <div id="goals-list"></div> 
-            <button class="add-category-btn" onclick="openGoalModal()">
-                <span class="material-icons-round">add</span>
-                Добавить категорию цели
+            <button class="add-category-btn" onclick="openModal('modal-goal-category')">
+                <span class="material-icons-round">add</span>Добавить цель
             </button>
-        </div>
-    </div>
-
-    <div id="view-goal-details" class="page">
-        <header class="app-header with-back" style="display:flex; align-items:center; justify-content:space-between; width:100%; padding: 40px 20px 20px 20px;">
-            <button class="icon-btn" onclick="goBackToGoals()">
-                <span class="material-icons-round">arrow_back_ios</span>
-            </button>
-            <h2 id="category-title" style="flex:1; text-align:center; margin:0; font-size: 24px;">Название</h2>
-            <button class="icon-btn" onclick="deleteCurrentCategory()">
-                <span class="material-icons-round" style="color:var(--danger); font-size: 28px;">delete_outline</span>
-            </button>
-        </header>
-        <div class="content-container">
-            <div id="tasks-list"></div>
-            <div class="input-area">
-                <input type="text" id="new-task-input" placeholder="Новая задача...">
-                <button onclick="addTask()">
-                    <span class="material-icons-round">arrow_upward</span>
-                </button>
-            </div>
         </div>
     </div>
 
     <div id="view-mental" class="page">
         <header class="app-header"><h2>Здоровье</h2></header>
         <div class="content-container">
-            <div class="water-tracker card" style="padding: 20px; background: white; border-radius: 20px; margin-bottom: 20px;">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                    <h3 style="margin: 0; font-size: 18px;">Трекер воды</h3>
-                    <span class="material-icons-round" style="cursor: pointer; opacity: 0.5;" onclick="openWaterSettings()">settings</span>
-                </div>
-                <div style="text-align: center; margin-bottom: 15px;">
-                    <span id="water-current" style="font-size: 24px; font-weight: bold; color: var(--primary);">0</span>
-                    <span style="font-size: 18px; color: var(--text-sec);"> / </span>
-                    <span id="water-goal" style="font-size: 18px; color: var(--text-sec);">2000</span>
-                </div>
-                <div id="glasses-container" style="display: flex; flex-wrap: wrap; gap: 10px; justify-content: center;"></div>
+            <div class="card" style="padding:20px; background:white; border-radius:20px; margin-bottom:20px;">
+                <h3 style="margin-bottom:15px;">Вода: <span id="water-current">0</span> / 2000 мл</h3>
+                <div id="glasses-container" style="display:flex; flex-wrap:wrap; gap:10px; justify-content:center;"></div>
             </div>
-
-            <div class="card" style="padding: 20px; background: white; border-radius: 20px; margin-bottom: 20px;">
-                <div style="display: flex; justify-content: space-between; margin-bottom: 15px;">
+            <div class="card" style="padding:20px; background:white; border-radius:20px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
                     <button onclick="changeMoodMonth(-1)" class="icon-btn"><span class="material-icons-round">chevron_left</span></button>
-                    <h3 id="mood-month-title" style="margin: 0;">Месяц</h3>
+                    <h3 id="mood-month-title">Месяц</h3>
                     <button onclick="changeMoodMonth(1)" class="icon-btn"><span class="material-icons-round">chevron_right</span></button>
                 </div>
-                <div id="mood-pixel-grid" style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px;"></div>
-                
-                <div style="margin-top: 20px; display: flex; align-items: center; gap: 15px;">
-                    <div id="mood-pie-chart" style="width: 80px; height: 80px; border-radius: 50%;"></div>
-                    <div id="mood-legend" style="font-size: 12px;"></div>
-                </div>
+                <div id="mood-pixel-grid" style="display:grid; grid-template-columns:repeat(7, 1fr); gap:8px;"></div>
             </div>
         </div>
     </div>
@@ -93,102 +47,76 @@
         <div id="lists-view-main">
             <header class="app-header"><h2>Списки</h2></header>
             <div class="content-container">
-                <button class="add-category-btn" onclick="openListModal()" style="margin-bottom: 20px;">
-                    <span class="material-icons-round">add_circle_outline</span> Создать новый список
+                <button class="add-category-btn" onclick="openModal('modal-list-category')">
+                    <span class="material-icons-round">add_circle_outline</span> Новый список
                 </button>
-                <div id="lists-categories-container" class="content-container" style="padding:0;"></div>
+                <div id="lists-categories-container"></div>
             </div>
         </div>
-
-        <div id="lists-view-details" style="display: none;">
+        <div id="lists-view-details" style="display:none;">
             <header class="app-header" style="display:flex; align-items:center; gap:10px;">
                 <button onclick="goBackToLists()" class="icon-btn"><span class="material-icons-round">arrow_back</span></button>
-                <h2 id="current-list-title" style="margin: 0;">Название</h2>
+                <h2 id="current-list-title"></h2>
             </header>
             <div class="content-container">
                 <div id="list-items-container"></div>
                 <div class="input-area">
-                    <input type="text" id="list-item-input" placeholder="Добавить в список...">
-                    <button onclick="addListItem()"><span class="material-icons-round">arrow_upward</span></button>
+                    <input type="text" id="list-item-input" placeholder="Добавить...">
+                    <button onclick="addListItem()"><span class="material-icons-round">add</span></button>
                 </div>
             </div>
         </div>
     </div>
 
     <div id="view-diary" class="page">
-        <header class="app-header" style="display: flex; justify-content: space-between; align-items: center;">
+        <header class="app-header" style="display:flex; justify-content:space-between; align-items:center;">
             <h2>Дневник</h2>
-            <div style="display: flex; align-items: center; gap: 10px;">
+            <div>
                 <button onclick="changeDiaryMonth(-1)" class="icon-btn"><span class="material-icons-round">chevron_left</span></button>
-                <span id="diary-month-title" style="font-weight: bold;"></span>
                 <button onclick="changeDiaryMonth(1)" class="icon-btn"><span class="material-icons-round">chevron_right</span></button>
             </div>
         </header>
         <div class="content-container">
+            <h3 id="diary-month-title" style="margin-bottom:15px; padding:0 10px;"></h3>
             <div id="diary-list-container"></div>
-            <button class="add-category-btn" onclick="openDiaryModal()">
-                <span class="material-icons-round">edit_note</span> Добавить воспоминание
+            <button class="add-category-btn" onclick="openModal('modal-diary')">
+                <span class="material-icons-round">edit_note</span> Добавить запись
             </button>
         </div>
     </div>
 
     <nav class="bottom-nav">
         <button class="nav-item active" onclick="switchTab('view-goals', this)"><span class="material-icons-round">flag</span><span>Цели</span></button>
-        <button class="nav-item" onclick="switchTab('view-mental', this)"><span class="material-icons-round">spa</span><span>Менталка</span></button>
+        <button class="nav-item" onclick="switchTab('view-mental', this)"><span class="material-icons-round">spa</span><span>Здоровье</span></button>
         <button class="nav-item" onclick="switchTab('view-lists', this)"><span class="material-icons-round">format_list_bulleted</span><span>Списки</span></button>
         <button class="nav-item" onclick="switchTab('view-diary', this)"><span class="material-icons-round">book</span><span>Дневник</span></button>
     </nav>
-    
-    <div id="modal-goal-category" class="modal" style="display: none;">
-        <div class="modal-content">
-            <h3>Новая цель</h3>
-            <input type="text" id="goal-name-input" placeholder="Название цели" style="margin: 20px 0;">
-            <div style="display:flex; gap:10px;">
-                <button onclick="closeModals()" class="btn-cancel">Отмена</button>
-                <button onclick="saveGoalCategory()" class="btn-save">Создать</button>
-            </div>
-        </div>
-    </div>
 
-    <div id="modal-list-category" class="modal" style="display: none;">
-        <div class="modal-content">
-            <h3>Новый список</h3>
-            <input type="text" id="list-name-input" placeholder="Название (например: Фильмы)" style="margin: 20px 0;">
-            <div style="display:flex; gap:10px;">
-                <button onclick="closeModals()" class="btn-cancel">Отмена</button>
-                <button onclick="saveListCategory()" class="btn-save">Создать</button>
-            </div>
-        </div>
-    </div>
+    <div id="modal-goal-category" class="modal"><div class="modal-content">
+        <h3>Новая цель</h3><input type="text" id="goal-name-input"><br>
+        <div style="display:flex; gap:10px;"><button onclick="closeModals()" class="btn-cancel">Отмена</button><button onclick="saveGoalCategory()" class="btn-save">Создать</button></div>
+    </div></div>
 
-    <div id="modal-diary" class="modal" style="display: none;">
-        <div class="modal-content">
-            <h3 id="diary-modal-title">Новая запись</h3>
-            <input type="date" id="diary-date-input" style="margin: 15px 0;">
-            <textarea id="diary-text-input" rows="5" placeholder="Дорогой дневник..." style="margin-bottom:20px;"></textarea>
-            <div style="display:flex; gap:10px;">
-                <button onclick="closeModals()" class="btn-cancel">Отмена</button>
-                <button onclick="saveDiaryEntry()" class="btn-save">Сохранить</button>
-            </div>
-        </div>
-    </div>
+    <div id="modal-list-category" class="modal"><div class="modal-content">
+        <h3>Новый список</h3><input type="text" id="list-name-input"><br>
+        <div style="display:flex; gap:10px;"><button onclick="closeModals()" class="btn-cancel">Отмена</button><button onclick="saveListCategory()" class="btn-save">Создать</button></div>
+    </div></div>
 
-    <div id="modal-mood" class="modal" style="display: none;">
-        <div class="modal-content">
-            <h3 id="mood-date-display">Дата</h3>
-            <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 20px;">
-                <button onclick="setMood('good')" style="background: #4CD964; color: white; border: none; padding: 15px; border-radius: 12px;">Хорошее</button>
-                <button onclick="setMood('neutral')" style="background: #007AFF; color: white; border: none; padding: 15px; border-radius: 12px;">Нейтральное</button>
-                <button onclick="setMood('bad')" style="background: #FF3B30; color: white; border: none; padding: 15px; border-radius: 12px;">Плохое</button>
-                <button onclick="closeMoodModal()" style="background: #eee; border: none; padding: 10px; border-radius: 12px; margin-top: 10px;">Закрыть</button>
-            </div>
-        </div>
-    </div>
+    <div id="modal-diary" class="modal"><div class="modal-content">
+        <h3>Новая запись</h3><input type="date" id="diary-date-input"><textarea id="diary-text-input" rows="4"></textarea>
+        <div style="display:flex; gap:10px;"><button onclick="closeModals()" class="btn-cancel">Отмена</button><button onclick="saveDiaryEntry()" class="btn-save">Сохранить</button></div>
+    </div></div>
 
-    <script src="script.js"></script> 
-    <script src="mental.js"></script>
-    <script src="lists.js"></script>
-    <script src="diary_tab.js"></script>
-    <script src="checklist.js"></script>
+    <div id="modal-mood" class="modal"><div class="modal-content">
+        <h3>Как настроение?</h3>
+        <div style="display:flex; flex-direction:column; gap:10px; margin-top:15px;">
+            <button onclick="setMood('good')" class="btn-save" style="background:#4CD964">Хорошее</button>
+            <button onclick="setMood('neutral')" class="btn-save" style="background:#007AFF">Обычное</button>
+            <button onclick="setMood('bad')" class="btn-save" style="background:#FF3B30">Плохое</button>
+            <button onclick="closeModals()" class="btn-cancel">Закрыть</button>
+        </div>
+    </div></div>
+
+    <script src="script.js"></script>
 </body>
 </html>
