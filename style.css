@@ -330,3 +330,58 @@ input[type="datetime-local"] {
     line-height: 1.4;
     border-left: 4px solid #ffb7c5;
 }
+
+/* Сетка для категорий */
+.lists-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.list-card {
+    background: #fff; /* Или твой цвет карточки */
+    padding: 20px;
+    border-radius: 12px;
+    text-align: center;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    transition: transform 0.2s;
+    position: relative;
+}
+
+.list-card:hover { transform: translateY(-3px); }
+
+/* Элементы внутри списка */
+.list-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.item-card {
+    background: #fff;
+    padding: 15px;
+    margin-bottom: 10px;
+    border-radius: 10px;
+    border-left: 5px solid var(--primary, #6200ea); /* Цвет полоски */
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.item-info h4 { margin: 0 0 5px 0; font-size: 18px; }
+.item-meta { font-size: 13px; color: #666; display: flex; gap: 10px; align-items: center;}
+.item-note { margin-top: 8px; font-size: 14px; font-style: italic; color: #444; background: #f9f9f9; padding: 5px; border-radius: 5px;}
+.rating-stars { color: #ffc107; letter-spacing: 2px; }
+
+/* Кнопки управления */
+.btn-control {
+    background: none; border: none; cursor: pointer; opacity: 0.6;
+}
+.btn-control:hover { opacity: 1; }
+.delete-icon { color: #e74c3c; }
