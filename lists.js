@@ -8,11 +8,11 @@ window.addEventListener('DOMContentLoaded', () => {
     if (!window.appData.lists) {
         window.appData.lists = []; 
     }
-    renderCategories();
+    renderListCategories();
 });
 
-// --- КАТЕГОРИИ ---
-function renderCategories() {
+// --- КАТЕГОРИИ СПИСКОВ ---
+function renderListCategories() {
     const container = document.getElementById('lists-categories-container');
     if(!container) return;
     
@@ -21,11 +21,12 @@ function renderCategories() {
     window.appData.lists.forEach(list => {
         const div = document.createElement('div');
         div.className = 'list-card';
+        div.style.position = 'relative'; // Для позиционирования кнопки удаления
         div.innerHTML = `
             <h3 onclick="openList(${list.id})">${list.title}</h3>
-            <div style="font-size:12px; color:#888; margin-bottom:10px;">${list.items.length} записей</div>
+            <div style="font-size:12px; color:#888; margin-bottom:10px;">${list.items ? list.items.length : 0} записей</div>
             <div style="position:absolute; top:10px; right:10px;">
-                <button onclick="deleteCategory(${list.id})" class="btn-control delete-icon">✕</button>
+                <button onclick="deleteListCategory(${list.id})" class="btn-control delete-icon" style="background:none; border:none; cursor:pointer; color:var(--danger)">✕</button>
             </div>
         `;
         container.appendChild(div);
@@ -33,12 +34,17 @@ function renderCategories() {
 }
 
 function openListModal() {
-    document.getElementById('modal-category').style.display = 'flex';
-    document.getElementById('cat-name-input').value = '';
+    const modal = document.getElementById('modal-list-category');
+    if (modal) {
+        modal.style.display = 'flex';
+        document.getElementById('list-name-input').value = '';
+    }
 }
 
-function saveCategory() {
-    const name = document.getElementById('cat-name-input').value.trim();
+function saveListCategory() {
+    const input = document.getElementById('list-name-input');
+    const name = input.value.trim();
+    
     if (!name) return alert("Введите название!");
 
     const newList = {
@@ -47,17 +53,19 @@ function saveCategory() {
         items: []
     };
 
+    if (!window.appData.lists) window.appData.lists = [];
     window.appData.lists.push(newList);
-    saveData();
-    renderCategories();
-    closeModals();
+    
+    saveListData();
+    renderListCategories();
+    closeAllModals();
 }
 
-function deleteCategory(id) {
+function deleteListCategory(id) {
     if(confirm('Удалить весь список и все записи в нем?')) {
         window.appData.lists = window.appData.lists.filter(l => l.id !== id);
-        saveData();
-        renderCategories();
+        saveListData();
+        renderListCategories();
     }
 }
 
@@ -71,171 +79,73 @@ function openList(id) {
     document.getElementById('lists-view-details').style.display = 'block';
     document.getElementById('current-list-title').innerText = list.title;
     
-    renderItems();
+    renderListItems();
 }
 
 function backToCategories() {
     currentListId = null;
     document.getElementById('lists-view-main').style.display = 'block';
     document.getElementById('lists-view-details').style.display = 'none';
-    renderCategories();
+    renderListCategories();
 }
 
-// --- ЗАПИСИ (ЭЛЕМЕНТЫ СПИСКА) ---
-function renderItems() {
+// --- ЗАПИСИ ВНУТРИ СПИСКА ---
+function renderListItems() {
     const container = document.getElementById('list-items-container');
-    const sortMode = document.getElementById('sort-select').value;
-    const list = window.appData.lists.find(l => l.id === currentListId);
+    if (!container) return;
     
-    if (!list || !container) return;
+    const list = window.appData.lists.find(l => l.id === currentListId);
+    if (!list) return;
     
     container.innerHTML = '';
 
-    let sortedItems = [...list.items];
+    // Если в HTML нет селектора сортировки, просто выводим список
+    let items = [...list.items];
 
-    // Сортировка
-    if (sortMode === 'year') {
-        // По году выхода произведения (который ты вводишь вручную)
-        sortedItems.sort((a, b) => (b.year || 0) - (a.year || 0));
-    } else if (sortMode === 'alpha') {
-        sortedItems.sort((a, b) => a.title.localeCompare(b.title));
-    } else if (sortMode === 'rating') {
-        sortedItems.sort((a, b) => b.rating - a.rating);
-    } else {
-        // По дате добавления (используем ID, так как это timestamp)
-        // Новые сверху
-        sortedItems.sort((a, b) => b.id - a.id);
-    }
-
-    sortedItems.forEach(item => {
-        // Логика звезд: если рейтинг > 0, рисуем звезды. Если 0 - пустую строку.
+    items.forEach(item => {
         let starsHtml = '';
         if (item.rating && item.rating > 0) {
-            starsHtml = `<span class="rating-stars" style="color: #ffc107; font-size: 16px;">${'★'.repeat(item.rating)}</span>`;
+            starsHtml = `<span style="color: #ffc107;">${'★'.repeat(item.rating)}</span>`;
         }
-
-        // Логика даты добавления
-        const dateAddedStr = item.dateAdded || 'Дата не указана';
 
         const div = document.createElement('div');
         div.className = 'item-card';
+        div.style.background = 'white';
+        div.style.padding = '15px';
+        div.style.borderRadius = '15px';
+        div.style.marginBottom = '10px';
+        div.style.display = 'flex';
+        div.style.justifyContent = 'space-between';
+        
         div.innerHTML = `
-            <div class="item-info" style="flex:1;">
-                <div style="display:flex; justify-content:space-between; align-items:flex-start;">
-                    <h4 style="margin:0 0 5px 0; font-size: 18px;">${item.title}</h4>
-                </div>
-                
-                <div class="item-meta" style="font-size: 13px; color: #666; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 6px;">
-                    ${starsHtml}
-                    ${item.year ? `<span style="background:#eee; padding:2px 8px; border-radius:6px; font-weight:bold;">${item.year} г.</span>` : ''}
-                </div>
-
-                <div style="font-size: 11px; color: #aaa; margin-bottom: 8px;">
-                    Добавлено: ${dateAddedStr}
-                </div>
-
-                ${item.note ? `<div class="item-note">${item.note}</div>` : ''}
+            <div>
+                <h4 style="margin:0">${item.title}</h4>
+                <div style="font-size:13px; margin:5px 0;">${starsHtml} ${item.year ? `• ${item.year} г.` : ''}</div>
+                ${item.note ? `<div style="font-size:12px; color:#666;">${item.note}</div>` : ''}
             </div>
-            
-            <div class="item-controls">
-                <button onclick="editItem(${item.id})" class="btn-control edit-btn">
-                    <span class="material-icons-round">edit</span>
-                </button>
-                <button onclick="deleteItem(${item.id})" class="btn-control delete-btn">
-                    <span class="material-icons-round">delete</span>
-                </button>
+            <div class="item-controls" style="display:flex; gap:10px;">
+                 <button onclick="deleteListItem(${item.id})" style="border:none; background:none; color:var(--danger)" class="material-icons-round">delete</button>
             </div>
         `;
         container.appendChild(div);
     });
 }
 
-function openItemModal() {
-    editingItemId = null;
-    document.getElementById('modal-item').style.display = 'flex';
-    document.getElementById('item-modal-title').innerText = "Добавить запись";
-    
-    document.getElementById('item-name').value = '';
-    document.getElementById('item-year').value = '';
-    document.getElementById('item-rating').value = '0';
-    document.getElementById('item-note').value = '';
-}
-
-function editItem(itemId) {
-    editingItemId = itemId;
-    const list = window.appData.lists.find(l => l.id === currentListId);
-    const item = list.items.find(i => i.id === itemId);
-
-    if (!item) return;
-
-    document.getElementById('modal-item').style.display = 'flex';
-    document.getElementById('item-modal-title').innerText = "Редактировать";
-    
-    document.getElementById('item-name').value = item.title;
-    document.getElementById('item-year').value = item.year || '';
-    document.getElementById('item-rating').value = item.rating;
-    document.getElementById('item-note').value = item.note || '';
-}
-
-function saveItem() {
-    const title = document.getElementById('item-name').value.trim();
-    const year = parseInt(document.getElementById('item-year').value);
-    const rating = parseInt(document.getElementById('item-rating').value);
-    const note = document.getElementById('item-note').value.trim();
-
-    if (!title) return alert("Введите название!");
-
-    const listIndex = window.appData.lists.findIndex(l => l.id === currentListId);
-    if (listIndex === -1) return;
-
-    // Форматируем текущую дату: "5 января 2026 г."
-    const today = new Date().toLocaleDateString('ru-RU', {
-        day: 'numeric',
-        month: 'long',
-        year: 'numeric'
-    });
-
-    if (editingItemId) {
-        // Редактирование
-        const itemIndex = window.appData.lists[listIndex].items.findIndex(i => i.id === editingItemId);
-        if (itemIndex > -1) {
-            const oldItem = window.appData.lists[listIndex].items[itemIndex];
-            window.appData.lists[listIndex].items[itemIndex] = {
-                ...oldItem,
-                title, year, rating, note
-                // При редактировании дату добавления НЕ меняем, оставляем старую
-            };
-        }
-    } else {
-        // Создание нового
-        const newItem = {
-            id: Date.now(),
-            title, year, rating, note,
-            dateAdded: today // Сохраняем дату добавления
-        };
-        window.appData.lists[listIndex].items.push(newItem);
-    }
-
-    saveData();
-    renderItems();
-    closeModals();
-}
-
-function deleteItem(itemId) {
+function deleteListItem(itemId) {
     if (!confirm('Удалить эту запись?')) return;
     
-    const listIndex = window.appData.lists.findIndex(l => l.id === currentListId);
-    if (listIndex > -1) {
-        window.appData.lists[listIndex].items = window.appData.lists[listIndex].items.filter(i => i.id !== itemId);
-        saveData();
-        renderItems();
+    const list = window.appData.lists.find(l => l.id === currentListId);
+    if (list) {
+        list.items = list.items.filter(i => i.id !== itemId);
+        saveListData();
+        renderListItems();
     }
 }
 
-function closeModals() {
+function closeAllModals() {
     document.querySelectorAll('.modal').forEach(m => m.style.display = 'none');
 }
 
-function saveData() {
+function saveListData() {
     localStorage.setItem('myPlannerData', JSON.stringify(window.appData));
 }
