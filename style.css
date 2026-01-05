@@ -18,7 +18,7 @@
 body {
     background-color: var(--bg-body);
     padding-bottom: 120px;
-    overflow-x: hidden;
+    overflow-x: hidden; /* Фикс вылетов */
     width: 100%;
 }
 
@@ -56,35 +56,22 @@ body {
     transition: width 0.3s;
 }
 
-/* --- КОНТЕЙНЕРЫ --- */
+/* --- КАРТОЧКИ КАТЕГОРИЙ --- */
 .content-container { 
     padding: 0 15px; 
     width: 100%;
     max-width: 100vw;
 }
 
-/* --- КАРТОЧКИ --- */
-.goal-card, .list-category-card {
+.goal-card {
     background: var(--bg-card);
     padding: 22px;
     border-radius: 20px;
     margin-bottom: 15px;
     box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-    border: none;
-    width: 100%;
-    text-align: left;
-    cursor: pointer;
-    font-weight: 600;
-    font-size: 17px;
-    word-wrap: break-word;
-}
-
-/* Сетки для списков и кнопок менталки */
-.lists-grid, .mental-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 15px;
-    margin-bottom: 20px;
+    word-wrap: break-word;      
+    overflow-wrap: break-word;   
+    word-break: break-word;      
 }
 
 /* ПУНКТИРНАЯ КНОПКА */
@@ -104,6 +91,8 @@ body {
     margin-top: 10px;
     cursor: pointer;
 }
+
+.add-category-btn .material-icons-round { font-size: 28px; }
 
 /* --- ЗАДАЧИ --- */
 .task-item {
@@ -154,133 +143,163 @@ body {
     justify-content: center;
 }
 
-/* --- КАЛЕНДАРЬ (ЦИКЛ И ПИКСЕЛИ) --- */
-.calendar-grid, #mood-pixel-grid {
-    display: grid !important;
-    grid-template-columns: repeat(7, 1fr) !important;
-    gap: 8px;
-    margin: 15px 0;
-}
+/* ШАГИ */
+.sub-tasks { margin-top: 15px; display: flex; flex-direction: column; }
+.sub-task-row { display: flex; align-items: center; padding: 15px 0 !important; border-top: 1px solid #F2F2F7; }
+.sub-task-row .material-icons-round { font-size: 30px !important; margin-right: 15px !important; }
+.sub-task-row span { font-size: 19px !important; }
 
-.calendar-day, .mood-pixel {
-    aspect-ratio: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 8px;
-    font-size: 13px;
-    cursor: pointer;
-    background: white;
-    transition: transform 0.2s;
-}
+.sub-input-line { display: flex; gap: 10px; margin-top: 10px; }
+.sub-input { flex: 1; background: #F2F2F7; border: none; padding: 15px !important; border-radius: 10px; outline: none; font-size: 18px !important; }
 
-.mood-pixel { background: #f0f0f2; color: #aaa; font-weight: bold; }
-.mood-pixel.good { background-color: #4CD964 !important; color: white; }
-.mood-pixel.neutral { background-color: #007AFF !important; color: white; }
-.mood-pixel.bad { background-color: #FF3B30 !important; color: white; }
-
-/* --- ДНЕВНИК И СПИСКИ (КАРТОЧКИ) --- */
-.diary-card, .item-card {
-    background: #fff;
-    padding: 15px;
-    margin-bottom: 12px;
-    border-radius: 18px;
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-}
-
-.diary-day-number {
-    font-size: 20px;
-    font-weight: 800;
-    color: var(--primary);
-    min-width: 35px;
-}
-
-.diary-card-content {
-    flex: 1;
-    padding: 0 10px;
-    white-space: pre-wrap; /* Перенос строк */
-    word-wrap: break-word; /* Перенос длинных слов */
-    overflow-wrap: break-word;
-    font-size: 16px;
-    line-height: 1.4;
-}
-
-.btn-control {
-    width: 36px;
-    height: 36px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: #f5f5f7;
-    border-radius: 10px;
-    border: none;
-    color: #333;
-}
-
-.delete-btn { color: #ff4d4d; background: #fff0f0; }
-
-/* --- ЧЕК-ЛИСТ --- */
-.checklist-item {
-    display: flex;
-    align-items: center;
-    background: white;
-    padding: 16px;
-    border-radius: 15px;
-    margin-bottom: 10px;
-    gap: 12px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-}
-
-.checklist-checkbox {
-    width: 24px; height: 24px;
-    border: 2px solid #ddd;
-    border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-}
-
-.checklist-checkbox span { font-size: 18px; color: white; display: none; }
-
-.checklist-item.completed .checklist-checkbox { background: #4CD964; border-color: #4CD964; }
-.checklist-item.completed .checklist-checkbox span { display: block; }
-.checklist-item.completed .checklist-text { text-decoration: line-through; color: #aaa; }
-
-/* --- НАВИГАЦИЯ --- */
+/* НАВИГАЦИЯ */
 .bottom-nav {
     position: fixed; bottom: 0; width: 100%; height: var(--nav-height);
     background: white; border-top: 1px solid #E5E5EA;
     display: flex; justify-content: space-around; align-items: center; padding-bottom: 15px;
-    z-index: 100;
 }
 .nav-item { background: none; border: none; color: var(--text-sec); display: flex; flex-direction: column; align-items: center; flex: 1; }
 .nav-item.active { color: var(--primary); }
 
-/* --- ВОДА --- */
+/* ВОДА */
 .glass-icon {
     width: 45px; height: 55px;
     border: 3px solid #e1f5fe;
+    border-top: 2px solid rgba(225, 245, 254, 0.5);
     border-radius: 4px 4px 12px 12px;
-    position: relative; overflow: hidden;
+    position: relative; cursor: pointer;
+    transition: all 0.3s ease;
+    background: rgba(255, 255, 255, 0.5);
+    overflow: hidden;
+    box-shadow: inset 0 0 5px rgba(0,0,0,0.05);
 }
-.glass-icon .water { position: absolute; bottom: 0; left: 0; width: 100%; height: 0%; background: #2196f3; transition: height 0.5s; }
+
+.glass-icon .water {
+    position: absolute; bottom: 0; left: 0; width: 100%; height: 0%; 
+    background: linear-gradient(180deg, #4fc3f7 0%, #2196f3 100%);
+}
+
+.glass-icon.animating .water { transition: height 1s cubic-bezier(0.4, 0, 0.2, 1); }
+.glass-icon.active { border-color: #2196f3; }
 .glass-icon.active .water { height: 85%; }
 
-/* --- ГРАФИК --- */
-.chart-scroll-container { width: 100%; overflow-x: auto; margin-bottom: 20px; }
+/* --- ИСПРАВЛЕНИЯ ПОЛЕЙ ВВОДА И ВЫЛЕТОВ ДАТЫ --- */
+input[type="text"], 
+input[type="number"], 
+input[type="date"], 
+input[type="datetime-local"],
+textarea, 
+select {
+    font-size: 16px !important; 
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important; /* ГЛАВНЫЙ ФИКС ДАТЫ */
+    padding: 12px !important;
+    -webkit-appearance: none;
+}
+
+/* ГРАФИК */
+.chart-scroll-container {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    margin-bottom: 20px;
+}
 .chart-wrapper { min-width: 600px; height: 200px; }
 
-/* --- МОДАЛКИ --- */
-.modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:2000; align-items:center; justify-content:center; }
-.modal > div { background: white; width: 90% !important; max-width: 360px !important; padding: 25px !important; border-radius: 24px; }
+/* МОДАЛКИ */
+.modal > div {
+    width: 90% !important;
+    max-width: 360px !important;
+    padding: 20px !important;
+    margin: 0 auto;
+    border-radius: 24px;
+    box-sizing: border-box;
+    overflow: hidden;
+}
 
-/* Фикс инпутов для iPhone */
-input, textarea, select {
-    font-size: 16px !important;
-    width: 100%;
-    padding: 12px;
-    border: 1px solid #eee;
-    border-radius: 12px;
-    -webkit-appearance: none;
+/* --- КНОПКИ УПРАВЛЕНИЯ (ДНЕВНИК И СПИСКИ) --- */
+
+/* Списки оставляем с центровкой (center) */
+.item-card {
+    background: #fff;
+    padding: 15px;
+    margin-bottom: 10px;
+    border-radius: 15px;
+    display: flex;
+    flex-direction: row;
+    align-items: center; 
+    justify-content: space-between;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+/* Дневник делаем с выравниванием по верху (flex-start) */
+.diary-card {
+    background: #fff;
+    padding: 15px;
+    margin-bottom: 10px;
+    border-radius: 15px;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start; /* ДАТА ТЕПЕРЬ БУДЕТ ВВЕРХУ */
+    justify-content: space-between;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+/* Настройка самой цифры даты */
+.diary-day-number {
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--primary);
+    min-width: 28px;
+    line-height: 1.4; /* Выравнивание по высоте первой строки текста */
+    margin-top: 2px;  /* Микро-корректировка, чтобы цифра была ровно по тексту */
+}
+
+.item-controls, .diary-controls {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    flex-shrink: 0;
+    align-self: flex-start; /* Чтобы кнопки тоже не улетали вниз в длинных записях */
+}
+
+.btn-control {
+    width: 38px !important;
+    height: 38px !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f5f5f7 !important;
+    border-radius: 10px !important;
+    border: none;
+    cursor: pointer;
+    color: #333;
+}
+
+.btn-control span {
+    font-size: 20px !important;
+}
+
+.delete-btn { color: #ff4d4d !important; background: #fff0f0 !important; }
+.edit-btn { color: #4a90e2 !important; background: #eef5ff !important; }
+
+/* Квадратики настроения */
+.mood-pixel {
+    aspect-ratio: 1;
+    background: #f0f0f2;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+.mood-pixel:active { transform: scale(0.9); }
+
+/* Цвета настроения */
+.mood-pixel.good { background-color: #4CD964 !important; }
+.mood-pixel.neutral { background-color: #007AFF !important; }
+.mood-pixel.bad { background-color: #FF3B30 !important; }
+
+/* Плавная диаграмма */
+#mood-pie-chart {
+    transition: background 0.5s ease;
 }
