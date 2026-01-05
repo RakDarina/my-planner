@@ -123,20 +123,21 @@ function addCategory() {
 }
 
 // Сохраняет категорию из модального окна
-function saveCategory() {
-    const input = document.getElementById('cat-name-input');
+function saveGoalCategory() {
+    // Используем именно инпут из модалки целей (проверьте ID в HTML или используйте этот)
+    const input = document.getElementById('cat-name-input'); 
     const name = input.value.trim();
     
     if (name) {
+        // Добавляем в массив целей
         window.appData.categories.push({ 
             id: Date.now(), 
             title: name, 
             tasks: [] 
         });
         saveData(); 
-        renderCategories();
+        renderCategories(); // Рисуем карточку на странице Целей
         
-        // Очищаем и закрываем
         input.value = '';
         closeModals();
     }
