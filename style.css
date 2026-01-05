@@ -385,3 +385,63 @@ input[type="datetime-local"] {
 }
 .btn-control:hover { opacity: 1; }
 .delete-icon { color: #e74c3c; }
+
+/* --- СТИЛИ ДЛЯ СПИСКОВ И КНОПОК --- */
+
+.item-card {
+    /* Делаем карточку чуть просторнее */
+    padding: 15px 15px 15px 20px; 
+    align-items: center; /* Центрируем содержимое по вертикали */
+}
+
+/* Контейнер для кнопок справа */
+.item-controls {
+    display: flex;
+    flex-direction: column; /* Кнопки одна под другой */
+    gap: 15px; /* БОЛЬШОЕ расстояние между карандашом и урной */
+    margin-left: 10px;
+    padding-left: 10px;
+    border-left: 1px solid #eee;
+}
+
+/* Общий стиль для кнопок управления */
+.btn-control {
+    background: #f5f5f5; /* Легкий фон, чтобы видеть границы */
+    border: none;
+    cursor: pointer;
+    padding: 12px; /* Увеличиваем "мясо" вокруг иконки */
+    border-radius: 12px; /* Скругленные углы */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    /* Убираем стандартную прозрачность, делаем ярко */
+    opacity: 1; 
+    width: 45px;  /* Фиксированная ширина */
+    height: 45px; /* Фиксированная высота */
+}
+
+/* При нажатии эффект */
+.btn-control:active {
+    transform: scale(0.95);
+}
+
+/* Иконки внутри кнопок */
+.btn-control span {
+    font-size: 24px; /* Сама иконка крупнее */
+}
+
+/* Индивидуальные цвета */
+.edit-btn {
+    color: var(--primary); /* Синий/фиолетовый */
+}
+
+.delete-btn {
+    color: #ff4d4d; /* Красный */
+    background: #fff0f0; /* Бледно-красный фон */
+}
+
+/* Звезды */
+.rating-stars {
+    letter-spacing: 2px;
+}
