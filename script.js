@@ -78,6 +78,11 @@ function renderTasks() {
     list.innerHTML = '';
     const cat = window.appData.categories.find(c => c.id === currentCatId);
 
+    function renderTasks() {
+    const list = document.getElementById('tasks-list');
+    list.innerHTML = '';
+    const cat = window.appData.categories.find(c => c.id === currentCatId);
+
     cat.tasks.forEach((task, index) => {
         const item = document.createElement('div');
         item.className = 'task-item';
@@ -89,7 +94,14 @@ function renderTasks() {
                     </span>
                     <span class="task-text ${task.completed ? 'done' : ''}">${task.text}</span>
                 </div>
-                <button class="icon-btn" onclick="event.stopPropagation(); deleteTask(${index})"><span class="material-icons-round" style="color:var(--danger)">delete_outline</span></button>
+                <div class="task-actions" style="display:flex; gap:5px">
+                    <button class="icon-btn" onclick="event.stopPropagation(); script_editTask(${index})">
+                        <span class="material-icons-round" style="color:var(--text-sec); font-size:20px">edit</span>
+                    </button>
+                    <button class="icon-btn" onclick="event.stopPropagation(); deleteTask(${index})">
+                        <span class="material-icons-round" style="color:var(--danger); font-size:20px">delete_outline</span>
+                    </button>
+                </div>
             </div>
             <div id="subs-${index}" class="sub-tasks" style="display:none">
                 <div id="subs-list-${index}"></div>
@@ -108,11 +120,16 @@ function renderSubTasks(tIdx) {
     const subList = document.getElementById(`subs-list-${tIdx}`);
     const cat = window.appData.categories.find(c => c.id === currentCatId);
     subList.innerHTML = cat.tasks[tIdx].subs.map((sub, sIdx) => `
-        <div class="sub-task-row">
+        <div class="sub-task-row" style="display:flex; align-items:center; margin-bottom:10px">
             <span class="material-icons-round" style="margin-right:10px; color:${sub.completed ? '#4caf50' : '#D1D1D6'}" onclick="toggleSubDone(${tIdx}, ${sIdx})">
                 ${sub.completed ? 'check_box' : 'check_box_outline_blank'}
             </span>
-            <span style="flex:1; ${sub.completed ? 'text-decoration:line-through; color:var(--text-sec)' : ''}">${sub.text}</span>
+            <span onclick="script_editSubTask(${tIdx}, ${sIdx})" style="flex:1; cursor:pointer; ${sub.completed ? 'text-decoration:line-through; color:var(--text-sec)' : ''}">
+                ${sub.text}
+            </span>
+            <button class="icon-btn" onclick="script_deleteSubTask(${tIdx}, ${sIdx})" style="padding:0; background:none; border:none;">
+                <span class="material-icons-round" style="color:var(--danger); font-size:18px; opacity:0.5">close</span>
+            </button>
         </div>
     `).join('');
 }
@@ -193,5 +210,36 @@ function deleteCurrentCategory() {
         saveData();           // Сохраняем изменения в localStorage
         renderCategories();   // Перерисовываем главный список
         goBackToGoals();      // Возвращаемся на главный экран
+    }
+}
+
+    // Новые функции с префиксом script_ для исключения конфликтов
+function script_editTask(idx) {
+    const cat = window.appData.categories.find(c => c.id === currentCatId);
+    const newText = prompt("Редактировать задачу:", cat.tasks[idx].text);
+    if (newText !== null && newText.trim() !== "") {
+        cat.tasks[idx].text = newText.trim();
+        saveData();
+        renderTasks();
+    }
+}
+
+function script_editSubTask(tIdx, sIdx) {
+    const cat = window.appData.categories.find(c => c.id === currentCatId);
+    const currentText = cat.tasks[tIdx].subs[sIdx].text;
+    const newText = prompt("Редактировать шаг:", currentText);
+    if (newText !== null && newText.trim() !== "") {
+        cat.tasks[tIdx].subs[sIdx].text = newText.trim();
+        saveData();
+        renderSubTasks(tIdx);
+    }
+}
+
+function script_deleteSubTask(tIdx, sIdx) {
+    if (confirm("Удалить этот шаг?")) {
+        const cat = window.appData.categories.find(c => c.id === currentCatId);
+        cat.tasks[tIdx].subs.splice(sIdx, 1);
+        saveData();
+        renderSubTasks(tIdx);
     }
 }
