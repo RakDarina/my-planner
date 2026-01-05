@@ -184,3 +184,70 @@ function closeDiaryModal() {
 function saveData() {
     localStorage.setItem('myPlannerData', JSON.stringify(window.appData));
 }
+let moodDate = new Date();
+let moodKey = null;
+
+function renderMood() {
+    const grid = document.getElementById('mood-pixel-grid');
+    const title = document.getElementById('mood-month-title');
+    if (!grid) return;
+
+    grid.innerHTML = '';
+    const year = moodDate.getFullYear();
+    const month = moodDate.getMonth();
+    title.innerText = new Intl.DateTimeFormat('ru-RU', { month: 'long', year: 'numeric' }).format(moodDate);
+
+    const days = new Date(year, month + 1, 0).getDate();
+    const data = JSON.parse(localStorage.getItem('moodStorage') || '{}');
+    let counts = { good: 0, neutral: 0, bad: 0 };
+
+    for (let d = 1; d <= days; d++) {
+        const key = `${year}-${month + 1}-${d}`;
+        const pixel = document.createElement('div');
+        pixel.className = 'mood-pixel';
+        if (data[key]) {
+            pixel.classList.add(data[key]);
+            counts[data[key]]++;
+        }
+        pixel.onclick = () => {
+            moodKey = key;
+            document.getElementById('mood-date-display').innerText = d + ' ' + title.innerText;
+            document.getElementById('modal-mood').style.display = 'flex';
+        };
+        grid.appendChild(pixel);
+    }
+    updateMoodPie(counts);
+}
+
+function updateMoodPie(counts) {
+    const total = counts.good + counts.neutral + counts.bad;
+    const chart = document.getElementById('mood-pie-chart');
+    if (!chart) return;
+    if (total === 0) {
+        chart.style.background = '#eee';
+        document.getElementById('mood-legend').innerHTML = 'Нет данных';
+        return;
+    }
+    const gP = (counts.good / total) * 100;
+    const nP = (counts.neutral / total) * 100;
+    chart.style.background = `conic-gradient(#4CD964 0% ${gP}%, #007AFF ${gP}% ${gP+nP}%, #FF3B30 ${gP+nP}% 100%)`;
+    document.getElementById('mood-legend').innerHTML = `
+        <div style="color:#4CD964">● Хорошее: ${Math.round(gP)}%</div>
+        <div style="color:#007AFF">● Нейтральное: ${Math.round(nP)}%</div>
+        <div style="color:#FF3B30">● Плохое: ${Math.round((counts.bad/total)*100)}%</div>
+    `;
+}
+
+function setMood(type) {
+    const data = JSON.parse(localStorage.getItem('moodStorage') || '{}');
+    data[moodKey] = type;
+    localStorage.setItem('moodStorage', JSON.stringify(data));
+    renderMood();
+    closeMoodModal();
+}
+
+function closeMoodModal() { document.getElementById('modal-mood').style.display = 'none'; }
+function changeMoodMonth(v) { moodDate.setMonth(moodDate.getMonth() + v); renderMood(); }
+
+// Запуск
+document.addEventListener('DOMContentLoaded', renderMood);
