@@ -2,19 +2,17 @@ window.appData = JSON.parse(localStorage.getItem('myPlannerData')) || {
     year: "2026",
     categories: [{ id: 1, title: "Обязательно", tasks: [] }],
     water: { goal: 2000, current: 0, glassSize: 250, lastDate: "" },
-    mental: {
-        gratitude: [],
-        emotions: [],
-        achievements: [],
-        good_day: []
-    }
+    mental: { gratitude: [], emotions: [], achievements: [], good_day: [] }
 };
 
 let currentCatId = null;
 
 window.onload = () => {
     updateYearDisplay();
-    renderCategories();
+    renderCategories(); // Рисуем категории целей
+    // Проверяем наличие функций из других файлов перед запуском
+    if (typeof updateWaterUI === 'function') updateWaterUI();
+    if (typeof renderCalendar === 'function') renderCalendar();
 };
 
 function saveData() {
@@ -23,10 +21,8 @@ function saveData() {
 }
 
 function updateYearDisplay() {
-    const el = document.getElementById('year-title');
-    if (el) {
-        el.innerHTML = `${window.appData.year} <span class="material-icons-round" style="font-size:20px; opacity:0.3">edit</span>`;
-    }
+    const titleEl = document.getElementById('year-title');
+    if (titleEl) titleEl.innerHTML = `${window.appData.year} <span class="material-icons-round" style="font-size:20px; opacity:0.3">edit</span>`;
 }
 
 function updateTotalProgress() {
@@ -35,7 +31,6 @@ function updateTotalProgress() {
     const total = allTasks.length;
     const completed = allTasks.filter(t => t.completed).length;
     const percent = total > 0 ? Math.round((completed / total) * 100) : 0;
-    
     const fill = document.getElementById('total-progress-fill');
     const text = document.getElementById('total-percent');
     if (fill) fill.style.width = percent + '%';
@@ -45,7 +40,7 @@ function updateTotalProgress() {
 function renderCategories() {
     const list = document.getElementById('goals-list');
     if (!list) return;
-    list.innerHTML = ''; 
+    list.innerHTML = '';
     
     window.appData.categories.forEach(cat => {
         const total = cat.tasks.length;
@@ -66,7 +61,6 @@ function renderCategories() {
         `;
         list.appendChild(div);
     });
-
     updateTotalProgress();
 }
 
@@ -96,7 +90,7 @@ function renderTasks() {
                     </span>
                     <span class="task-text ${task.completed ? 'done' : ''}">${task.text}</span>
                 </div>
-                <button class="icon-btn" onclick="event.stopPropagation(); deleteTask(${index})"><span class="material-icons-round" style="color:var(--danger)">delete_outline</span></button>
+                <button class="icon-btn" onclick="event.stopPropagation(); deleteTask(${index})" style="background:none; border:none;"><span class="material-icons-round" style="color:var(--danger)">delete_outline</span></button>
             </div>
             <div id="subs-${index}" class="sub-tasks" style="display:none">
                 <div id="subs-list-${index}"></div>
@@ -124,42 +118,23 @@ function renderSubTasks(tIdx) {
     `).join('');
 }
 
-// --- НОВЫЕ ФУНКЦИИ МОДАЛОК ДЛЯ ЦЕЛЕЙ ---
-
-function openGoalModal() {
-    document.getElementById('modal-goal-category').style.display = 'flex';
-}
-
-function saveGoalCategory() {
-    const input = document.getElementById('goal-name-input'); 
-    const name = input.value.trim();
-    
+function addCategory() {
+    const name = prompt("Название цели:");
     if (name) {
-        window.appData.categories.push({ 
-            id: Date.now(), 
-            title: name, 
-            tasks: [] 
-        });
+        window.appData.categories.push({ id: Date.now(), title: name, tasks: [] });
         saveData(); 
-        renderCategories(); 
-        
-        input.value = '';
-        closeModals();
+        renderCategories();
     }
 }
 
-function closeModals() {
-    document.querySelectorAll('.modal').forEach(m => m.style.display = 'none');
-}
-
-// --- ОСТАЛЬНЫЕ ФУНКЦИИ ---
-
 function addTask() {
     const input = document.getElementById('new-task-input');
-    if (!input.value.trim()) return;
+    if (!input || !input.value.trim()) return;
     const cat = window.appData.categories.find(c => c.id === currentCatId);
     cat.tasks.push({ text: input.value.trim(), completed: false, subs: [] });
-    input.value = ''; saveData(); renderTasks();
+    input.value = ''; 
+    saveData(); 
+    renderTasks();
 }
 
 function toggleTaskDone(idx) {
@@ -198,8 +173,11 @@ function switchTab(id, btn) {
     document.getElementById(id).classList.add('active');
     btn.classList.add('active');
     
-    // Автоскролл наверх при смене вкладки
-    window.scrollTo(0, 0);
+    // Авто-обновление при переходе на менталку
+    if (id === 'view-mental') {
+        if (typeof updateWaterUI === 'function') updateWaterUI();
+        if (typeof renderCalendar === 'function') renderCalendar();
+    }
 }
 
 function deleteTask(idx) {
@@ -209,19 +187,21 @@ function deleteTask(idx) {
 }
 
 function editYearTitle() {
-    const newYear = prompt("Введите заголовок (например, 2026):", window.appData.year);
-    if (newYear !== null && newYear.trim() !== "") {
+    const newYear = prompt("Введите заголовок:", window.appData.year);
+    if (newYear) {
         window.appData.year = newYear.trim();
-        saveData(); 
-        updateYearDisplay(); 
+        saveData();
+        updateYearDisplay();
     }
 }
 
 function deleteCurrentCategory() {
-    if (confirm("Вы уверены, что хотите удалить всю категорию?")) {
+    if (confirm("Удалить цель?")) {
         window.appData.categories = window.appData.categories.filter(c => c.id !== currentCatId);
-        saveData();           
-        renderCategories();   
-        goBackToGoals();      
+        saveData(); renderCategories(); goBackToGoals();
     }
+}
+
+function closeModals() {
+    document.querySelectorAll('.modal, #mental-modal, #water-modal, #sleep-modal').forEach(m => m.style.display = 'none');
 }
