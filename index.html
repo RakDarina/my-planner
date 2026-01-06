@@ -223,7 +223,7 @@
     <div style="background:white; width:90%; max-width:350px; padding:25px; border-radius:24px; text-align: center;">
         <h3 style="margin-top: 0;">Как вы себя чувствуете?</h3>
         
-        <input type="date" id="diary_tab-mood-date" style="padding: 10px; border: 1px solid #eee; border-radius: 10px; margin-bottom: 20px; font-family: inherit;">
+        <input type="date" id="diary_tab-mood-date" onchange="diary_tab_checkMoodForDate()" style="padding: 10px; border: 1px solid #eee; border-radius: 10px; margin-bottom: 20px; font-family: inherit; width: 100%; box-sizing: border-box;">
 
         <div style="display: flex; justify-content: space-between; margin-bottom: 20px;">
             <div class="mood-option" onclick="diary_tab_selectMood(5)" id="mood-opt-5">
@@ -252,6 +252,9 @@
 
         <div style="display: flex; gap: 10px;">
             <button onclick="diary_tab_closeMoodModal()" style="flex:1; padding:12px; border:none; background:#f0f0f0; border-radius:12px;">Отмена</button>
+            
+            <button id="diary_tab-btn-delete-mood" onclick="diary_tab_deleteCurrentMood()" style="display:none; flex:1; padding:12px; border:none; background:#ffebee; color:var(--danger); border-radius:12px;">Удалить</button>
+            
             <button onclick="diary_tab_saveMood()" style="flex:1; padding:12px; border:none; background:var(--primary); color:white; border-radius:12px;">Сохранить</button>
         </div>
     </div>
