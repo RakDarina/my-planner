@@ -495,3 +495,67 @@ button, .goal-card, .nav-item {
     max-height: 100px;    /* Чтобы не раздуло на весь экран */
     line-height: 1.4;
 }
+
+/* --- СТИЛИ ДЛЯ ДНЕВНИКА (diary_tab) --- */
+
+/* Опции выбора настроения */
+.mood-option {
+    cursor: pointer;
+    opacity: 0.5;
+    transition: 0.2s;
+    transform: scale(0.9);
+}
+.mood-option.selected {
+    opacity: 1;
+    transform: scale(1.1);
+}
+
+/* Сетка "Год в точках" */
+.pixels-cell {
+    width: 100%;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background-color: #eee;
+}
+
+/* Запись в дневнике (левая колонка дата, правая текст) */
+.diary_tab-list-item {
+    background: white;
+    padding: 20px;
+    border-radius: 20px;
+    margin-bottom: 15px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+    position: relative;
+}
+
+.diary_tab-list-layout {
+    display: flex;
+    gap: 15px;
+    align-items: baseline; /* Выравнивание по первой строке текста */
+}
+
+.diary_tab-date-col {
+    width: 85px;       /* Фиксированная ширина для даты */
+    flex-shrink: 0;    /* Не сжимать дату */
+    font-weight: 700;
+    color: var(--primary);
+    font-size: 14px;
+    text-align: right;
+}
+
+.diary_tab-text-col {
+    flex: 1;           /* Текст занимает все остальное место */
+    font-size: 15px;
+    line-height: 1.5;
+    color: var(--text-main);
+    white-space: pre-wrap; /* Сохраняет абзацы и переносы строк */
+}
+
+/* Меню действий с записью (удалить/изменить) */
+.diary_tab-actions {
+    margin-top: 10px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    opacity: 0.5;
+}
