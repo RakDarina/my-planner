@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Мой Планировщик</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Icons+Round">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -48,14 +48,15 @@
         </header>
 
         <div class="content-container">
-    <div id="tasks-list"></div>
-    <div class="input-area">
-        <textarea id="new-task-input" placeholder="Новая задача..." rows="1"></textarea>
-        <button onclick="addTask()">
-            <span class="material-icons-round">arrow_upward</span>
-        </button>
+            <div id="tasks-list"></div>
+            <div class="input-area">
+                <input type="text" id="new-task-input" placeholder="Новая задача...">
+                <button onclick="addTask()">
+                    <span class="material-icons-round">arrow_upward</span>
+                </button>
+            </div>
+        </div>
     </div>
-</div>
 
     <div id="view-mental" class="page">
         <header class="app-header"><h2>Здоровье</h2></header>
