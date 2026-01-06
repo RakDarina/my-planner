@@ -50,11 +50,11 @@
         <div class="content-container">
             <div id="tasks-list"></div>
             <div class="input-area">
-                <input type="text" id="new-task-input" placeholder="Новая задача...">
-                <button onclick="addTask()">
-                    <span class="material-icons-round">arrow_upward</span>
-                </button>
-            </div>
+    <textarea id="new-task-input" placeholder="Новая задача..." rows="1"></textarea>
+    <button onclick="addTask()">
+        <span class="material-icons-round">arrow_upward</span>
+    </button>
+</div>
         </div>
     </div>
 
@@ -267,7 +267,8 @@
         <div style="background:white; width:90%; max-width:400px; padding:25px; border-radius:24px; display:flex; flex-direction:column; gap:15px; box-sizing:border-box;">
             <h3 style="margin:0">Новая запись</h3>
             
-            <input type="text" id="lists-input-name" placeholder="Название" style="width:100%; padding:14px; border:1px solid #eee; border-radius:12px; font-size:16px; background:#f9f9f9; outline:none; box-sizing:border-box;">
+           
+            <textarea id="lists-input-name" placeholder="Название" rows="1" style="width:100%; padding:14px; border:1px solid #eee; border-radius:12px; font-size:16px; background:#f9f9f9; outline:none; box-sizing:border-box; resize:none;"></textarea>
             
             <div id="lists-star-rating" style="display:flex; justify-content:center; gap:10px; font-size:30px;">
                 <span class="material-icons-round" onclick="lists_setRating(1)" style="cursor:pointer; color:#8E8E93">star_border</span>
