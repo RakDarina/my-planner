@@ -358,17 +358,34 @@ function settings_import() {
     }
 }
 
-// Добавь это в конец файла script.js
+// Ждем загрузки страницы и настраиваем поле ввода
 document.addEventListener('DOMContentLoaded', () => {
-    const inputField = document.getElementById('new-task-input');
-    if (inputField) {
-        inputField.addEventListener('keydown', function(e) {
-            // Если нажат Enter без клавиши Shift
+    const taskInput = document.getElementById('new-task-input');
+    
+    if (taskInput) {
+        // Убираем все обработчики, которые могли отправлять форму по Enter
+        taskInput.addEventListener('keydown', function(e) {
             if (e.key === 'Enter' && !e.shiftKey) {
-                // Мы НИЧЕГО не делаем. 
-                // В textarea это автоматически создаст новую строку (абзац).
-                // addTask() НЕ вызовется.
+                // Разрешаем стандартное поведение (перенос строки)
+                // и ПРЕРЫВАЕМ выполнение других скриптов, если они есть
+                e.stopPropagation();
             }
+        });
+
+        // Автоматическое увеличение высоты при наборе текста
+        taskInput.addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = (this.scrollHeight) + 'px';
         });
     }
 });
+
+// Обнови функцию addTask, чтобы она сбрасывала высоту поля
+const originalAddTask = window.addTask;
+window.addTask = function() {
+    const input = document.getElementById('new-task-input');
+    if (originalAddTask) originalAddTask();
+    if (input) {
+        input.style.height = '44px'; // Возвращаем к начальной высоте
+    }
+};
