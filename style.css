@@ -130,14 +130,24 @@ body {
     z-index: 50;
 }
 
-.input-area input {
+.input-area textarea {
     flex: 1;
     background: white;
     border: 1px solid #E5E5EA;
-    padding: 15px;
+    padding: 12px 15px;
     border-radius: 15px;
     font-size: 16px;
     outline: none;
+    font-family: inherit; /* Чтобы шрифт был как во всем приложении */
+    resize: none;         /* Убираем ручное изменение размера */
+    max-height: 120px;    /* Чтобы поле не закрыло весь экран */
+    overflow-y: auto;     /* Добавляем скролл, если текста слишком много */
+    line-height: 1.4;
+}
+
+/* Настройка самой области ввода для поддержки textarea */
+.input-area {
+    align-items: flex-end; /* Чтобы кнопка всегда была внизу, если текст длинный */
 }
 
 .input-area button {
