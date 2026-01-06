@@ -27,16 +27,14 @@ html, body {
 .page { 
     display: none; 
     flex-direction: column; 
-    height: 100%; /* Страница строго по высоте экрана */
-    width: 100%;
-    overflow-y: auto; /* Прокрутка появится ТОЛЬКО если контент не влезет */
-    -webkit-overflow-scrolling: touch; /* Плавность на iPhone */
+    height: auto; 
+    min-height: calc(100vh - var(--nav-height)); /* Занимает экран за вычетом меню */
     box-sizing: border-box;
 }
 
 /* Добавляем отступ только для контента внутри, чтобы он не уходил под меню */
 .content-container { 
-    padding: 0 20px 200px 20px !important; 
+    padding: 0 20px 120px 20px !important; /* Уменьшили до 120px, чтобы не было дыр */
 }
 
 .page.active { display: flex; }
@@ -511,4 +509,13 @@ button, .goal-card, .nav-item {
     min-height: 45px;     /* Высота как у обычного input */
     max-height: 100px;    /* Чтобы не раздуло на весь экран */
     line-height: 1.4;
+}
+
+/* Добавляем отступ самому нижнему элементу в менталке */
+.cycle-tracker {
+    margin-bottom: 40px; /* Отступ от календаря до конца его блока */
+}
+
+.cycle-info-card {
+    margin-bottom: 120px; /* Чтобы розовый блок не прятался за кнопками */
 }
