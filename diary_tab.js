@@ -30,17 +30,60 @@ function diary_tab_renderMain() {
 }
 
 // --- БЛОК 1: НАСТРОЕНИЕ ---
+// --- БЛОК 1: НАСТРОЕНИЕ (ОБНОВЛЕННЫЙ) ---
 
 function diary_tab_openMoodModal() {
-    document.getElementById('diary_tab-mood-modal').style.display = 'flex';
+    const modal = document.getElementById('diary_tab-mood-modal');
+    modal.style.display = 'flex';
+    
     // По умолчанию ставим сегодня
-    document.getElementById('diary_tab-mood-date').valueAsDate = new Date();
-    diary_tab_selectMood(null); // Сброс выбора
-    document.getElementById('diary_tab-mood-note').value = '';
+    const dateInput = document.getElementById('diary_tab-mood-date');
+    dateInput.valueAsDate = new Date();
+    
+    // Сразу проверяем, есть ли запись за сегодня
+    diary_tab_checkMoodForDate();
 }
 
 function diary_tab_closeMoodModal() {
     document.getElementById('diary_tab-mood-modal').style.display = 'none';
+}
+
+// НОВАЯ ФУНКЦИЯ: Проверяет, есть ли запись при смене даты
+function diary_tab_checkMoodForDate() {
+    const dateStr = document.getElementById('diary_tab-mood-date').value;
+    const existingMood = diary_tab_moods.find(m => m.date === dateStr);
+    const deleteBtn = document.getElementById('diary_tab-btn-delete-mood');
+    const noteInput = document.getElementById('diary_tab-mood-note');
+
+    if (existingMood) {
+        // Если запись есть: выбираем смайлик, заполняем текст, показываем кнопку "Удалить"
+        diary_tab_selectMood(existingMood.rating);
+        noteInput.value = existingMood.note || '';
+        deleteBtn.style.display = 'block'; // Показываем кнопку
+    } else {
+        // Если записи нет: очищаем всё
+        diary_tab_selectMood(null);
+        noteInput.value = '';
+        deleteBtn.style.display = 'none'; // Скрываем кнопку
+    }
+}
+
+// НОВАЯ ФУНКЦИЯ: Удаление прямо из модалки
+function diary_tab_deleteCurrentMood() {
+    const dateStr = document.getElementById('diary_tab-mood-date').value;
+    
+    if(confirm('Удалить настроение за ' + dateStr + '?')) {
+        // Удаляем
+        diary_tab_moods = diary_tab_moods.filter(m => m.date !== dateStr);
+        localStorage.setItem('diary_tab_moods', JSON.stringify(diary_tab_moods));
+        
+        // Обновляем интерфейс
+        diary_tab_renderMoodWidget();
+        diary_tab_closeMoodModal();
+        
+        // Если открыт график, его тоже стоит обновить (если вдруг он виден на фоне)
+        // Но обычно модалка перекрывает всё.
+    }
 }
 
 function diary_tab_selectMood(rating) {
@@ -49,6 +92,7 @@ function diary_tab_selectMood(rating) {
     for (let i = 1; i <= 5; i++) {
         const el = document.getElementById(`mood-opt-${i}`);
         if (el) {
+            // Если rating null (сброс), то убираем класс у всех
             el.classList.toggle('selected', i === rating);
         }
     }
@@ -61,7 +105,10 @@ function diary_tab_saveMood() {
     }
 
     const dateStr = document.getElementById('diary_tab-mood-date').value;
-    if (!dateStr) return;
+    if (!dateStr) {
+        alert('Выберите дату');
+        return;
+    }
 
     const note = document.getElementById('diary_tab-mood-note').value;
 
@@ -72,7 +119,7 @@ function diary_tab_saveMood() {
         note: note
     };
 
-    // Удаляем старую запись за эту дату, если есть (одна эмоция в день)
+    // Удаляем старую запись за эту дату (перезапись)
     diary_tab_moods = diary_tab_moods.filter(m => m.date !== dateStr);
     diary_tab_moods.push(newMood);
 
@@ -94,19 +141,11 @@ function diary_tab_renderMoodWidget() {
                 <span class="material-icons-round" style="color: ${config.color}; font-size: 60px;">${config.icon}</span>
                 <div style="font-weight: bold; color: ${config.color};">${config.label}</div>
                 <div style="font-size: 12px; color: #8E8E93;">${todayMood.note || ''}</div>
-                <button onclick="diary_tab_deleteMood('${todayMood.date}')" style="margin-top:5px; border:none; background:none; color:var(--danger); font-size:12px;">Удалить</button>
+                <button onclick="diary_tab_openMoodModal()" style="margin-top:5px; border:none; background:none; color:var(--primary); font-size:12px;">Изменить</button>
             </div>
         `;
     } else {
         container.innerHTML = `<div style="color:#8E8E93; font-size:14px; margin: 10px 0;">Сегодня еще нет записи</div>`;
-    }
-}
-
-function diary_tab_deleteMood(dateStr) {
-    if(confirm('Удалить отметку настроения?')) {
-        diary_tab_moods = diary_tab_moods.filter(m => m.date !== dateStr);
-        localStorage.setItem('diary_tab_moods', JSON.stringify(diary_tab_moods));
-        diary_tab_renderMoodWidget();
     }
 }
 
