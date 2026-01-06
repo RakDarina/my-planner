@@ -15,27 +15,13 @@
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
-html, body {
-    height: 100%;
-    margin: 0;
-    padding: 0;
+body {
     background-color: var(--bg-body);
-    /* Здесь НЕТ строки overflow: hidden */
+    padding-bottom: 120px;
 }
 
 /* --- СТРАНИЦЫ --- */
-.page { 
-    display: none; 
-    flex-direction: column; 
-    height: auto; /* Страница подстраивается под контент */
-    min-height: 100vh; /* Но фон всегда на весь экран */
-    box-sizing: border-box;
-}
-
-.content-container { 
-    padding: 0 20px 140px 20px !important; 
-}
-
+.page { display: none; flex-direction: column; min-height: 100vh; }
 .page.active { display: flex; }
 
 /* --- ШАПКА И ПРОГРЕСС --- */
@@ -67,6 +53,9 @@ html, body {
     height: 100%;
     transition: width 0.3s;
 }
+
+/* --- КАРТОЧКИ КАТЕГОРИЙ --- */
+.content-container { padding: 0 20px; }
 
 .goal-card {
     background: var(--bg-card);
@@ -117,6 +106,7 @@ html, body {
 }
 .task-text.done { text-decoration: line-through; color: var(--text-sec); opacity: 0.6; }
 
+/* ВВОД ЗАДАЧИ ВНИЗУ (ИСПРАВЛЕНИЕ) */
 .input-area {
     position: fixed;
     bottom: var(--nav-height);
@@ -127,7 +117,6 @@ html, body {
     display: flex;
     gap: 10px;
     z-index: 50;
-    box-shadow: 0 -5px 15px rgba(0,0,0,0.03); /* Легкая тень, чтобы отделить от контента */
 }
 
 .input-area input {
@@ -505,13 +494,4 @@ button, .goal-card, .nav-item {
     min-height: 45px;     /* Высота как у обычного input */
     max-height: 100px;    /* Чтобы не раздуло на весь экран */
     line-height: 1.4;
-}
-
-/* Добавляем отступ самому нижнему элементу в менталке */
-.cycle-tracker {
-    margin-bottom: 40px; /* Отступ от календаря до конца его блока */
-}
-
-.cycle-info-card {
-    margin-bottom: 120px; /* Чтобы розовый блок не прятался за кнопками */
 }
