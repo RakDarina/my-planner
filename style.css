@@ -559,3 +559,88 @@ button, .goal-card, .nav-item {
     gap: 10px;
     opacity: 0.5;
 }
+
+/* --- СТИЛИ ДЛЯ ЧЕК-ЛИСТА (checklist) --- */
+
+.checklist-menu-btn {
+    border: none;
+    border-radius: 20px;
+    padding: 30px 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    font-weight: 700;
+    font-size: 16px;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    transition: transform 0.1s;
+}
+
+.checklist-menu-btn:active {
+    transform: scale(0.98);
+}
+
+/* Карточка задачи */
+.checklist-item {
+    background: white;
+    padding: 15px;
+    border-radius: 16px;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+}
+
+/* Галочка (чекбокс) */
+.checklist-checkbox {
+    min-width: 24px;
+    height: 24px;
+    border: 2px solid var(--primary);
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    margin-top: 2px;
+}
+
+.checklist-checkbox.checked {
+    background-color: var(--primary);
+}
+
+.checklist-checkbox .material-icons-round {
+    color: white;
+    font-size: 18px;
+    display: none;
+}
+.checklist-checkbox.checked .material-icons-round {
+    display: block;
+}
+
+/* Текст задачи */
+.checklist-text {
+    flex: 1;
+    font-size: 15px;
+    line-height: 1.5;
+    white-space: pre-wrap; /* Сохраняет абзацы */
+    color: var(--text-main);
+}
+
+.checklist-text.completed {
+    text-decoration: line-through;
+    color: #8E8E93;
+}
+
+/* Бейджик с информацией (дата/частота) */
+.checklist-badge {
+    display: inline-block;
+    background: #f0f0f0;
+    color: #666;
+    font-size: 11px;
+    padding: 2px 6px;
+    border-radius: 6px;
+    margin-top: 5px;
+}
