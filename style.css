@@ -15,23 +15,28 @@
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
-body {
-    background-color: var(--bg-body);
+html, body {
+    height: 100%;
     margin: 0;
     padding: 0;
-    overflow-x: hidden;
-    min-height: 100vh; /* Фон теперь растягивается здесь */
+    overflow: hidden; /* Запрещаем общую прокрутку */
+    background-color: var(--bg-body);
 }
 
 /* --- СТРАНИЦЫ --- */
 .page { 
     display: none; 
     flex-direction: column; 
-    /* Убрали min-height: 100vh; */
-    height: auto; 
-    /* Оставляем отступ только для того, чтобы контент не перекрывался меню */
-    padding-bottom: 180px; 
+    height: 100%; /* Страница строго по высоте экрана */
+    width: 100%;
+    overflow-y: auto; /* Прокрутка появится ТОЛЬКО если контент не влезет */
+    -webkit-overflow-scrolling: touch; /* Плавность на iPhone */
     box-sizing: border-box;
+}
+
+/* Добавляем отступ только для контента внутри, чтобы он не уходил под меню */
+.content-container { 
+    padding: 0 20px 200px 20px !important; 
 }
 
 .page.active { display: flex; }
@@ -118,7 +123,6 @@ body {
 }
 .task-text.done { text-decoration: line-through; color: var(--text-sec); opacity: 0.6; }
 
-/* ВВОД ЗАДАЧИ ВНИЗУ (ИСПРАВЛЕНИЕ) */
 .input-area {
     position: fixed;
     bottom: var(--nav-height);
@@ -129,6 +133,7 @@ body {
     display: flex;
     gap: 10px;
     z-index: 50;
+    box-shadow: 0 -5px 15px rgba(0,0,0,0.03); /* Легкая тень, чтобы отделить от контента */
 }
 
 .input-area input {
