@@ -19,24 +19,21 @@ html, body {
     height: 100%;
     margin: 0;
     padding: 0;
-    /* overflow: hidden;  <-- УДАЛИ ЭТУ СТРОКУ, если она есть */
-    overflow-x: hidden; 
     background-color: var(--bg-body);
+    /* Здесь НЕТ строки overflow: hidden */
 }
 
 /* --- СТРАНИЦЫ --- */
 .page { 
     display: none; 
     flex-direction: column; 
-    min-height: 100vh; 
-    width: 100%;
+    height: auto; /* Страница подстраивается под контент */
+    min-height: 100vh; /* Но фон всегда на весь экран */
     box-sizing: border-box;
-    /* Убираем отсюда padding-bottom, он будет только в контейнере ниже */
 }
 
-/* Добавляем отступ только для контента внутри, чтобы он не уходил под меню */
 .content-container { 
-    padding: 0 20px 180px 20px !important; 
+    padding: 0 20px 140px 20px !important; 
 }
 
 .page.active { display: flex; }
@@ -70,9 +67,6 @@ html, body {
     height: 100%;
     transition: width 0.3s;
 }
-
-/* --- КАРТОЧКИ КАТЕГОРИЙ --- */
-.content-container { padding: 0 20px; }
 
 .goal-card {
     background: var(--bg-card);
