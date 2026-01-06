@@ -178,7 +178,123 @@
             </button>
         </div>
     </div>
-    <div id="view-diary" class="page center-content"><h2>Дневник</h2></div>
+    <div id="view-diary" class="page">
+    <header class="app-header">
+        <h1>Дневник</h1>
+    </header>
+
+    <div class="content-container">
+        <div class="card" style="padding: 20px; background: white; border-radius: 20px; margin-bottom: 20px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <h3 style="margin: 0;">Мое настроение</h3>
+                <button onclick="diary_tab_openStatsModal()" style="background: none; border: none; color: var(--primary); font-size: 14px; font-weight: 600; cursor: pointer;">
+                    <span class="material-icons-round" style="vertical-align: middle;">bar_chart</span> График
+                </button>
+            </div>
+
+            <div id="diary_tab-today-mood-display" style="text-align: center; padding: 10px;">
+                </div>
+            
+            <button class="add-category-btn" onclick="diary_tab_openMoodModal()" style="margin-top: 10px; padding: 15px;">
+                <span class="material-icons-round">add_reaction</span> Отметить настроение
+            </button>
+        </div>
+
+        <div class="diary-section">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; padding: 0 10px;">
+                <h3 style="margin: 0;">Записи</h3>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <button onclick="diary_tab_changeMonth(-1)" style="background:none; border:none;"><span class="material-icons-round">chevron_left</span></button>
+                    <span id="diary_tab-current-month-label" style="font-weight: 600; font-size: 15px;">Январь 2026</span>
+                    <button onclick="diary_tab_changeMonth(1)" style="background:none; border:none;"><span class="material-icons-round">chevron_right</span></button>
+                </div>
+            </div>
+
+            <div id="diary_tab-entries-list"></div>
+
+            <button class="add-category-btn" onclick="diary_tab_openEntryModal()" style="margin-top: 20px;">
+                <span class="material-icons-round">edit</span> Новая запись
+            </button>
+        </div>
+    </div>
+</div>
+
+<div id="diary_tab-mood-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:1500; align-items:center; justify-content:center;">
+    <div style="background:white; width:90%; max-width:350px; padding:25px; border-radius:24px; text-align: center;">
+        <h3 style="margin-top: 0;">Как вы себя чувствуете?</h3>
+        
+        <input type="date" id="diary_tab-mood-date" style="padding: 10px; border: 1px solid #eee; border-radius: 10px; margin-bottom: 20px; font-family: inherit;">
+
+        <div style="display: flex; justify-content: space-between; margin-bottom: 20px;">
+            <div class="mood-option" onclick="diary_tab_selectMood(5)" id="mood-opt-5">
+                <span class="material-icons-round" style="color: #2ECC71; font-size: 40px;">sentiment_very_satisfied</span>
+                <div style="font-size: 11px; margin-top: 5px;">Супер</div>
+            </div>
+            <div class="mood-option" onclick="diary_tab_selectMood(4)" id="mood-opt-4">
+                <span class="material-icons-round" style="color: #A0D468; font-size: 40px;">sentiment_satisfied</span>
+                <div style="font-size: 11px; margin-top: 5px;">Хорошо</div>
+            </div>
+            <div class="mood-option" onclick="diary_tab_selectMood(3)" id="mood-opt-3">
+                <span class="material-icons-round" style="color: #4A90E2; font-size: 40px;">sentiment_neutral</span>
+                <div style="font-size: 11px; margin-top: 5px;">Норм</div>
+            </div>
+            <div class="mood-option" onclick="diary_tab_selectMood(2)" id="mood-opt-2">
+                <span class="material-icons-round" style="color: #FF9F43; font-size: 40px;">sentiment_dissatisfied</span>
+                <div style="font-size: 11px; margin-top: 5px;">Плохо</div>
+            </div>
+            <div class="mood-option" onclick="diary_tab_selectMood(1)" id="mood-opt-1">
+                <span class="material-icons-round" style="color: #FF3B30; font-size: 40px;">sentiment_very_dissatisfied</span>
+                <div style="font-size: 11px; margin-top: 5px;">Ужасно</div>
+            </div>
+        </div>
+
+        <input type="text" id="diary_tab-mood-note" placeholder="Короткая заметка (необязательно)" style="width: 100%; padding: 12px; border: 1px solid #eee; border-radius: 12px; margin-bottom: 20px; box-sizing: border-box;">
+
+        <div style="display: flex; gap: 10px;">
+            <button onclick="diary_tab_closeMoodModal()" style="flex:1; padding:12px; border:none; background:#f0f0f0; border-radius:12px;">Отмена</button>
+            <button onclick="diary_tab_saveMood()" style="flex:1; padding:12px; border:none; background:var(--primary); color:white; border-radius:12px;">Сохранить</button>
+        </div>
+    </div>
+</div>
+
+<div id="diary_tab-stats-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:white; z-index:1600; overflow-y: auto;">
+    <div style="padding: 20px; max-width: 600px; margin: 0 auto;">
+        <header style="display: flex; align-items: center; margin-bottom: 20px;">
+            <button onclick="diary_tab_closeStatsModal()" style="background:none; border:none; padding: 10px;"><span class="material-icons-round">arrow_back_ios</span></button>
+            <h2 style="flex: 1; text-align: center; margin: 0;">Статистика настроения</h2>
+            <div style="width: 44px;"></div>
+        </header>
+
+        <div class="card" style="padding: 20px; background: white; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 20px;">
+            <h3>Настроение за месяц</h3>
+            <canvas id="diary_tab-pie-chart" style="max-height: 250px;"></canvas>
+        </div>
+
+        <div class="card" style="padding: 20px; background: white; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+            <h3>Год в точках (2026)</h3>
+            <div id="diary_tab-pixels-grid" style="display: grid; grid-template-columns: repeat(13, 1fr); gap: 2px; margin-top: 10px; overflow-x: auto;">
+                </div>
+            <div style="display: flex; justify-content: space-between; font-size: 10px; color: #8E8E93; margin-top: 10px;">
+                <span>Янв</span><span>Дек</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="diary_tab-entry-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:1550; align-items:center; justify-content:center;">
+    <div style="background:white; width:90%; max-width:500px; padding:25px; border-radius:24px; display: flex; flex-direction: column; gap: 15px;">
+        <h3 style="margin: 0;">Запись в дневник</h3>
+        
+        <input type="date" id="diary_tab-entry-date" style="padding: 12px; border: 1px solid #ddd; border-radius: 12px; font-family: inherit;">
+        
+        <textarea id="diary_tab-entry-text" rows="6" placeholder="Что произошло сегодня?..." style="padding: 12px; border: 1px solid #ddd; border-radius: 12px; font-family: inherit; resize: none;"></textarea>
+
+        <div style="display: flex; gap: 10px;">
+            <button onclick="diary_tab_closeEntryModal()" style="flex:1; padding:12px; border:none; background:#f0f0f0; border-radius:12px;">Отмена</button>
+            <button onclick="diary_tab_saveEntry()" style="flex:1; padding:12px; border:none; background:var(--primary); color:white; border-radius:12px;">Сохранить</button>
+        </div>
+    </div>
+</div>
     <div id="view-checklist" class="page center-content"><h2>Чек-лист</h2></div>
 
     <nav class="bottom-nav">
