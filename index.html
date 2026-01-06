@@ -298,7 +298,85 @@
         </div>
     </div>
 </div>
-    <div id="view-checklist" class="page center-content"><h2>Чек-лист</h2></div>
+    <div id="view-checklist" class="page">
+    <header class="app-header">
+        <h1>Чек-листы</h1>
+    </header>
+
+    <div class="content-container">
+        
+        <div id="checklist_menu" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px;">
+            <button onclick="checklist_openSection('cleaning')" class="checklist-menu-btn" style="background: #E3F2FD; color: #1565C0;">
+                <span class="material-icons-round" style="font-size: 40px;">cleaning_services</span>
+                <span>Уборка</span>
+            </button>
+            <button onclick="checklist_openSection('selfcare')" class="checklist-menu-btn" style="background: #FCE4EC; color: #C2185B;">
+                <span class="material-icons-round" style="font-size: 40px;">self_improvement</span>
+                <span>Уход за собой</span>
+            </button>
+            <button onclick="checklist_openSection('planner')" class="checklist-menu-btn" style="background: #E8F5E9; color: #2E7D32;">
+                <span class="material-icons-round" style="font-size: 40px;">event_note</span>
+                <span>Ежедневник</span>
+            </button>
+            <button onclick="checklist_openSection('misc')" class="checklist-menu-btn" style="background: #FFF3E0; color: #EF6C00;">
+                <span class="material-icons-round" style="font-size: 40px;">checklist</span>
+                <span>Разное</span>
+            </button>
+        </div>
+
+        <div id="checklist_section_view" style="display: none;">
+            <div style="display: flex; align-items: center; margin-bottom: 20px;">
+                <button onclick="checklist_backToMenu()" style="background: none; border: none; padding: 0; color: var(--text-sec);">
+                    <span class="material-icons-round">arrow_back_ios</span>
+                </button>
+                <h2 id="checklist_section_title" style="margin: 0 0 0 15px; flex: 1;">Заголовок</h2>
+                
+                <button id="checklist_toggle_view_btn" onclick="checklist_toggleViewMode()" style="background: #f0f0f0; border: none; border-radius: 8px; padding: 5px 10px; font-size: 12px; font-weight: 600; display: none;">
+                    Показать все
+                </button>
+            </div>
+
+            <div id="checklist_items_container"></div>
+
+            <button class="add-category-btn" onclick="checklist_openModal()" style="margin-top: 20px;">
+                <span class="material-icons-round">add</span> Добавить задачу
+            </button>
+        </div>
+
+    </div>
+</div>
+
+<div id="checklist_modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:1500; align-items:center; justify-content:center;">
+    <div style="background:white; width:90%; max-width:400px; padding:25px; border-radius:24px; display: flex; flex-direction: column; gap: 15px;">
+        <h3 id="checklist_modal_title" style="margin: 0;">Новая задача</h3>
+        
+        <textarea id="checklist_input_text" rows="3" placeholder="Что нужно сделать?" style="padding: 12px; border: 1px solid #ddd; border-radius: 12px; font-family: inherit; resize: none; width: 100%; box-sizing: border-box;"></textarea>
+        
+        <div id="checklist_freq_settings" style="display: none;">
+            <label style="font-size: 13px; color: var(--text-sec);">Как часто повторять?</label>
+            <select id="checklist_input_freq" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 10px; margin-top: 5px; background: white;">
+                <option value="1">Каждый день</option>
+                <option value="2">Раз в 2 дня</option>
+                <option value="3">Раз в 3 дня</option>
+                <option value="7">Раз в неделю</option>
+                <option value="14">Раз в 2 недели</option>
+                <option value="30">Раз в месяц</option>
+                <option value="90">Раз в 3 месяца</option>
+                <option value="365">Раз в год</option>
+            </select>
+        </div>
+
+        <div id="checklist_deadline_settings" style="display: none;">
+            <label style="font-size: 13px; color: var(--text-sec);">Срок выполнения:</label>
+            <input type="text" id="checklist_input_deadline" placeholder="Например: до пятницы" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 10px; margin-top: 5px; box-sizing: border-box;">
+        </div>
+
+        <div style="display: flex; gap: 10px; margin-top: 10px;">
+            <button onclick="checklist_closeModal()" style="flex:1; padding:12px; border:none; background:#f0f0f0; border-radius:12px;">Отмена</button>
+            <button onclick="checklist_saveTask()" style="flex:1; padding:12px; border:none; background:var(--primary); color:white; border-radius:12px;">Сохранить</button>
+        </div>
+    </div>
+</div>
 
     <nav class="bottom-nav">
         <button class="nav-item active" onclick="switchTab('view-goals', this)">
