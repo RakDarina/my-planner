@@ -99,31 +99,27 @@
     </div>
 </div>
 
-            <div class="mental-grid" style="display:grid; grid-template-columns:1fr 1fr; gap:15px; margin-top:20px">
+           <div class="mental-grid" style="display:grid; grid-template-columns:1fr 1fr; gap:15px; margin-top:20px">
                 <button class="goal-card" onclick="openDiary('gratitude', 'Дневник благодарности')">Благодарность</button>
                 <button class="goal-card" onclick="openDiary('emotions', 'Дневник эмоций')">Эмоции</button>
                 <button class="goal-card" onclick="openDiary('achievements', 'Мои достижения')">Достижения</button>
                 <button class="goal-card" onclick="openDiary('good_day', 'Хорошее за день')">Хорошее за день</button>
             </div>
-        </div>
 
-        <div class="cycle-tracker">
-    <div class="calendar-header">
-        <h3 id="calendar-month-year" style="font-size: 18px; margin: 0;">Январь 2026</h3>
-        <div>
-            <button onclick="changeMonth(-1)" style="background:none; border:none; color:var(--primary);"><span class="material-icons-round">chevron_left</span></button>
-            <button onclick="changeMonth(1)" style="background:none; border:none; color:var(--primary);"><span class="material-icons-round">chevron_right</span></button>
-        </div>
-    </div>
-
-    <div class="calendar-grid" id="calendar-days">
-        </div>
-
-    <div id="cycle-tips" class="cycle-info-card">
-        <b>Совет дня:</b> Нажмите на дату, чтобы отметить начало или конец цикла.
-    </div>
-</div>
-    </div>
+            <div class="cycle-tracker">
+                <div class="calendar-header">
+                    <h3 id="calendar-month-year" style="font-size: 18px; margin: 0;">Январь 2026</h3>
+                    <div>
+                        <button onclick="changeMonth(-1)" style="background:none; border:none; color:var(--primary);"><span class="material-icons-round">chevron_left</span></button>
+                        <button onclick="changeMonth(1)" style="background:none; border:none; color:var(--primary);"><span class="material-icons-round">chevron_right</span></button>
+                    </div>
+                </div>
+                <div class="calendar-grid" id="calendar-days"></div>
+                <div id="cycle-tips" class="cycle-info-card">
+                    <b>Совет дня:</b> Нажмите на дату, чтобы отметить начало или конец цикла.
+                </div>
+            </div>
+        </div> 
 
     <div id="view-diary-details" class="page">
         <header class="app-header with-back" style="display:flex; align-items:center; justify-content:space-between; width:100%; padding: 40px 20px 20px 20px;">
