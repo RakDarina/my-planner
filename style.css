@@ -15,13 +15,23 @@
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
-body {
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
     background-color: var(--bg-body);
-    padding-bottom: 120px;
+    overflow-x: hidden;
+    overflow-y: auto; /* Разрешаем прокрутку по вертикали */
 }
 
 /* --- СТРАНИЦЫ --- */
-.page { display: none; flex-direction: column; min-height: 100vh; }
+.page { 
+    display: none; 
+    flex-direction: column; 
+    min-height: 100vh; 
+    width: 100%;
+    box-sizing: border-box;
+}
 .page.active { display: flex; }
 
 /* --- ШАПКА И ПРОГРЕСС --- */
@@ -55,7 +65,11 @@ body {
 }
 
 /* --- КАРТОЧКИ КАТЕГОРИЙ --- */
-.content-container { padding: 0 20px; }
+.content-container { 
+    padding: 0 20px 160px 20px !important; /* Даем запас внизу, чтобы контент не скрылся за меню */
+    width: 100%;
+    box-sizing: border-box;
+}
 
 .goal-card {
     background: var(--bg-card);
