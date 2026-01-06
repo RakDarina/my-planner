@@ -19,7 +19,8 @@ html, body {
     height: 100%;
     margin: 0;
     padding: 0;
-    overflow: hidden; /* Запрещаем общую прокрутку */
+    /* overflow: hidden;  <-- УДАЛИ ЭТУ СТРОКУ, если она есть */
+    overflow-x: hidden; 
     background-color: var(--bg-body);
 }
 
@@ -27,14 +28,15 @@ html, body {
 .page { 
     display: none; 
     flex-direction: column; 
-    height: auto; 
-    min-height: calc(100vh - var(--nav-height)); /* Занимает экран за вычетом меню */
+    min-height: 100vh; 
+    width: 100%;
     box-sizing: border-box;
+    /* Убираем отсюда padding-bottom, он будет только в контейнере ниже */
 }
 
 /* Добавляем отступ только для контента внутри, чтобы он не уходил под меню */
 .content-container { 
-    padding: 0 20px 120px 20px !important; /* Уменьшили до 120px, чтобы не было дыр */
+    padding: 0 20px 180px 20px !important; 
 }
 
 .page.active { display: flex; }
