@@ -17,11 +17,21 @@
 
 body {
     background-color: var(--bg-body);
-    padding-bottom: 120px;
+    /* Удаляем padding-bottom: 120px; */
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden; /* Защита от случайных вылетов по ширине */
 }
 
 /* --- СТРАНИЦЫ --- */
-.page { display: none; flex-direction: column; min-height: 100vh; }
+.page { 
+    display: none; 
+    flex-direction: column; 
+    min-height: 100vh; 
+    /* Высота меню (75px) + поле ввода + запас */
+    padding-bottom: 160px; 
+    box-sizing: border-box;
+}
 .page.active { display: flex; }
 
 /* --- ШАПКА И ПРОГРЕСС --- */
