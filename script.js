@@ -153,10 +153,21 @@ function addCategory() {
 
 function addTask() {
     const input = document.getElementById('new-task-input');
+    // .trim() убирает случайные пробелы и пустые переносы строк в начале и конце
     if (!input || !input.value.trim()) return;
+    
     const cat = window.appData.categories.find(c => c.id === currentCatId);
-    cat.tasks.push({ text: input.value.trim(), completed: false, subs: [] });
-    input.value = ''; 
+    
+    // Сохраняем текст «как есть» (с твоими абзацами)
+    cat.tasks.push({ 
+        text: input.value.trim(), 
+        completed: false, 
+        subs: [] 
+    });
+    
+    input.value = ''; // Очищаем поле
+    input.style.height = '45px'; // Возвращаем стандартную высоту, если она увеличивалась
+    
     saveData(); 
     renderTasks();
 }
