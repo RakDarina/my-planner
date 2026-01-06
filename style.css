@@ -17,21 +17,23 @@
 
 body {
     background-color: var(--bg-body);
-    /* Удаляем padding-bottom: 120px; */
     margin: 0;
     padding: 0;
-    overflow-x: hidden; /* Защита от случайных вылетов по ширине */
+    overflow-x: hidden;
+    min-height: 100vh; /* Фон теперь растягивается здесь */
 }
 
 /* --- СТРАНИЦЫ --- */
 .page { 
     display: none; 
     flex-direction: column; 
-    min-height: 100vh; 
-    /* Высота меню (75px) + поле ввода + запас */
-    padding-bottom: 160px; 
+    /* Убрали min-height: 100vh; */
+    height: auto; 
+    /* Оставляем отступ только для того, чтобы контент не перекрывался меню */
+    padding-bottom: 180px; 
     box-sizing: border-box;
 }
+
 .page.active { display: flex; }
 
 /* --- ШАПКА И ПРОГРЕСС --- */
