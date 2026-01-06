@@ -157,7 +157,6 @@ function addTask() {
     const cat = window.appData.categories.find(c => c.id === currentCatId);
     cat.tasks.push({ text: input.value.trim(), completed: false, subs: [] });
     input.value = ''; 
-    input.style.height = 'auto'; // Добавь эту строку, чтобы поле сбросило размер после отправки
     saveData(); 
     renderTasks();
 }
@@ -195,19 +194,11 @@ function goBackToGoals() {
 }
 
 function switchTab(id, btn) {
-    // 1. Сначала плавно прокручиваем наверх ту страницу, КОТОРУЮ открываем
-    const targetPage = document.getElementById(id);
-    if (targetPage) {
-        targetPage.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-
-    // 2. Убираем активность у всех страниц и кнопок
+    window.scrollTo({ top: 0, behavior: 'smooth' });
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
     document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
-
-    // 3. Активируем нужную страницу и кнопку
-    if (targetPage) targetPage.classList.add('active');
-    if (btn) btn.classList.add('active');
+    document.getElementById(id).classList.add('active');
+    if(btn) btn.classList.add('active');
 }
 
 function deleteTask(idx) {
@@ -357,35 +348,3 @@ function settings_import() {
         }
     }
 }
-
-// Ждем загрузки страницы и настраиваем поле ввода
-document.addEventListener('DOMContentLoaded', () => {
-    const taskInput = document.getElementById('new-task-input');
-    
-    if (taskInput) {
-        // Убираем все обработчики, которые могли отправлять форму по Enter
-        taskInput.addEventListener('keydown', function(e) {
-            if (e.key === 'Enter' && !e.shiftKey) {
-                // Разрешаем стандартное поведение (перенос строки)
-                // и ПРЕРЫВАЕМ выполнение других скриптов, если они есть
-                e.stopPropagation();
-            }
-        });
-
-        // Автоматическое увеличение высоты при наборе текста
-        taskInput.addEventListener('input', function() {
-            this.style.height = 'auto';
-            this.style.height = (this.scrollHeight) + 'px';
-        });
-    }
-});
-
-// Обнови функцию addTask, чтобы она сбрасывала высоту поля
-const originalAddTask = window.addTask;
-window.addTask = function() {
-    const input = document.getElementById('new-task-input');
-    if (originalAddTask) originalAddTask();
-    if (input) {
-        input.style.height = '44px'; // Возвращаем к начальной высоте
-    }
-};
