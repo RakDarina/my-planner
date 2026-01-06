@@ -157,6 +157,7 @@ function addTask() {
     const cat = window.appData.categories.find(c => c.id === currentCatId);
     cat.tasks.push({ text: input.value.trim(), completed: false, subs: [] });
     input.value = ''; 
+    input.style.height = 'auto'; // Добавь эту строку, чтобы поле сбросило размер после отправки
     saveData(); 
     renderTasks();
 }
@@ -356,3 +357,18 @@ function settings_import() {
         }
     }
 }
+
+// Добавь это в конец файла script.js
+document.addEventListener('DOMContentLoaded', () => {
+    const inputField = document.getElementById('new-task-input');
+    if (inputField) {
+        inputField.addEventListener('keydown', function(e) {
+            // Если нажат Enter без клавиши Shift
+            if (e.key === 'Enter' && !e.shiftKey) {
+                // Мы НИЧЕГО не делаем. 
+                // В textarea это автоматически создаст новую строку (абзац).
+                // addTask() НЕ вызовется.
+            }
+        });
+    }
+});
