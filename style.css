@@ -96,7 +96,14 @@ body {
 
 .task-header { display: flex; align-items: center; justify-content: space-between; }
 .task-main { display: flex; align-items: center; gap: 12px; flex: 1; }
-.task-text { font-size: 18px; font-weight: 600; }
+.task-text {
+    font-size: 18px;
+    font-weight: 600;
+    flex: 1;                 /* Позволяет тексту занимать все место до кнопок */
+    word-break: break-word;  /* Переносит длинные слова (твои скриншоты 1 и 2) */
+    white-space: pre-wrap;   /* ПОЗВОЛЯЕТ ВИДЕТЬ АБЗАЦЫ (переносы строк) */
+    line-height: 1.3;        /* Делает текст более читаемым, если строк много */
+}
 .task-text.done { text-decoration: line-through; color: var(--text-sec); opacity: 0.6; }
 
 /* ВВОД ЗАДАЧИ ВНИЗУ (ИСПРАВЛЕНИЕ) */
@@ -354,11 +361,6 @@ input[type="datetime-local"] {
     background: #E5E5EA;
 }
 
-/* Перенос длинного текста, чтобы не ломать кнопки */
-.task-text {
-    flex: 1;
-    word-break: break-word;
-}
 
 /* КСС ДЛЯ СТРАНИЦЫ СПИСКИ */
 /* Специальные стили для страницы списков */
